@@ -13,12 +13,14 @@ namespace Testing
             var cards = game.Shuffle();
             var deal = game.Deal(cards, 4);
 
-            foreach (var stack in deal)
+            foreach (var hand in deal)
             {
-                Debug.Print("Player " + stack.Key.ToString());
-                foreach (var card in stack)
+                Debug.Print("Player " + hand.Key.ToString());
+                int index = 0;
+                foreach (var card in hand)
                 {
-                    Debug.Print("- " + card.ToString());
+                    index++;
+                    Debug.Print("- " + card.ToString() + $" ({index})");
                 }
             }
 
