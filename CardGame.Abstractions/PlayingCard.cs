@@ -1,5 +1,8 @@
-﻿namespace CardGame.Abstractions;
+﻿using System.Diagnostics;
 
+namespace CardGame.Abstractions;
+
+[DebuggerDisplay("{Name}")]
 public class Suit(string name, int rank)
 {
     public string Name { get; init; } = name;
