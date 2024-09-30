@@ -1,17 +1,28 @@
 ﻿namespace CardGame.Abstractions;
 
-public abstract class GameDefinition<TCard>
+public abstract class GameDefinition<TState, TCard>(IRepository<TState> repository) where TState : IGameState<TCard>
 {
-    public abstract uint MinPlayers { get; }
-    public abstract uint MaxPlayers { get; }
-    public abstract uint CardsPerHand { get; }
+	private readonly IRepository<TState> _repository = repository;
 
+	public abstract uint MinPlayers { get; }
+    public abstract uint MaxPlayers { get; }    
     public abstract IEnumerable<TCard> Deck { get; }
+
+    public async Task<TState> NewGameAsync(bool devMode, string[] playerNames)
+    {
+        var state = InitializeGame(devMode, playerNames);
+        await _repository.SaveAsync(state);
+        return state;
+    }
+
+    public async Task<TState> LoadGameAsync(int id) => await _repository.GetByIdAsync(id);
+    
+    protected abstract TState InitializeGame(bool devMode, string[] playerNames);
 
     /// <summary>
     /// returns a copy of the Deck in randomized order
     /// </summary>
-    public Queue<TCard> Shuffle()
+    protected Queue<TCard> Shuffle()
     {
         var shuffled = Deck
             .Select(card => new { Card = card, RandomValue = Random.Shared.Next(1000) })
@@ -24,20 +35,5 @@ public abstract class GameDefinition<TCard>
         shuffled.ForEach(result.Enqueue);
 
         return result;
-    }
-
-    public ILookup<int, TCard> Deal(Queue<TCard> cards, int playerCount)
-    {
-        List<(int PlayerIndex, TCard Card)> result = [];
-
-        for (int card = 0; card < CardsPerHand; card++)
-        {
-            for (int player = 0; player < playerCount; player++)
-            {
-                result.Add((player, cards.Dequeue()));
-            }
-        }
-
-        return result.ToLookup(card => card.PlayerIndex, card => card.Card);
-    }
+    }    
 }

@@ -1,30 +1,42 @@
+using CardGame.Abstractions;
 using CardGame.Abstractions.Games;
 using System.Diagnostics;
 
-namespace Testing
+namespace Testing;
+
+[TestClass]
+public class ShuffleAndDeal
 {
-    [TestClass]
-    public class ShuffleAndDeal
+    [TestMethod]
+    public async Task HeartsDeal()
     {
-        [TestMethod]
-        public void HeartsDeal()
+        var hearts = new Hearts(new MockRepository());
+        var game = await hearts.NewGameAsync(false, [ "Adam", "Andy", "Dad", "Becky" ]);
+
+        foreach (var player in game.Players)
         {
-            var game = new Hearts();
-            var cards = game.Shuffle();
-            var deal = game.Deal(cards, 4);
-
-            foreach (var hand in deal)
+            Debug.Print(player.Name);
+            int index = 0;
+            foreach (var card in player.Hand)
             {
-                Debug.Print("Player " + hand.Key.ToString());
-                int index = 0;
-                foreach (var card in hand)
-                {
-                    index++;
-                    Debug.Print("- " + card.ToString() + $" ({index})");
-                }
+                index++;
+                Debug.Print("- " + card.ToString() + $" ({index})");
             }
-
-            Assert.IsTrue(!cards.Any());
         }
+
+        Assert.IsTrue(!game.DrawPile.Any());
     }
+}
+
+internal class MockRepository : IRepository<HeartsGameState>
+{
+	public Task<HeartsGameState> GetByIdAsync(int id)
+	{
+		throw new NotImplementedException();
+	}
+
+	public Task SaveAsync(HeartsGameState data)
+	{
+		throw new NotImplementedException();
+	}
 }
