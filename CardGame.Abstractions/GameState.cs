@@ -17,6 +17,10 @@ public abstract class GameState<TCard>
 	public Queue<TCard> DrawPile { get; set; } = [];
 	public Func<Task>? OnStateChanged { get; set; }
 
+	public abstract (bool IsValid, string? Message) ValidatePlay(string playerName, TCard card);
+
+	public abstract void PlayCard(TCard card);
+
 	protected Player<TCard> NextPlayer()
 	{
 		ArgumentNullException.ThrowIfNull(CurrentPlayer, nameof(CurrentPlayer));
@@ -27,5 +31,7 @@ public abstract class GameState<TCard>
 		if (index > Players.Count) index = 0;
 
 		return PlayersByIndex[index];
-	}	
+	}
+
+	public record Play(string PlayerName, TCard Card);
 }

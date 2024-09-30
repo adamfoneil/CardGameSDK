@@ -18,6 +18,14 @@ public static class Suits
     public static Suit[] All => [Clubs, Diamonds, Hearts, Spades];
 }
 
+public static class NamedRanks
+{
+    public static int Jack => 11;
+    public static int Queen => 12;
+    public static int King => 13;
+    public static int Ace => 14;
+}
+
 public class PlayingCard(int rank, Suit suit)
 {
     public Suit Suit { get; init; } = suit;
@@ -33,9 +41,9 @@ public class PlayingCard(int rank, Suit suit)
         Suits.All.SelectMany(s => 
             Enumerable.Range(2, 8).Select(val => new PlayingCard(val, s)).Concat(
             [
-                new PlayingCard(11, s) { Name = "Jack" },
-                new PlayingCard(12, s) { Name = "Queen" },
-                new PlayingCard(13, s) { Name = "King" },
-                new PlayingCard(14, s) { Name = "Ace" }
+                new PlayingCard(NamedRanks.Jack, s) { Name = nameof(NamedRanks.Jack) },
+                new PlayingCard(NamedRanks.Queen, s) { Name = nameof(NamedRanks.Queen) },
+                new PlayingCard(NamedRanks.King, s) { Name = nameof(NamedRanks.King) },
+                new PlayingCard(NamedRanks.Ace, s) { Name = nameof(NamedRanks.Ace) }
             ]));
 }

@@ -1,4 +1,6 @@
-﻿namespace CardGame.Abstractions.Games;
+﻿using System.Reflection;
+
+namespace CardGame.Abstractions.Games;
 
 public class Hearts : GameDefinition<HeartsGameState, PlayingCard>
 {
@@ -7,8 +9,6 @@ public class Hearts : GameDefinition<HeartsGameState, PlayingCard>
 	public override uint MaxPlayers => 4;
 
 	public override IEnumerable<PlayingCard> Deck => PlayingCard.StandardDeck;
-
-	// first player = hand with 2 of clubs
 
 	public override string Name => "Hearts (4p)";
 	
@@ -31,7 +31,7 @@ public class Hearts : GameDefinition<HeartsGameState, PlayingCard>
 			CurrentPlayer = startPlayer
 		};
 
-		result.AddPlay(new(2, Suits.Clubs));
+		result.PlayCard(new(2, Suits.Clubs));
 
 		return result;
 	}	
@@ -59,47 +59,75 @@ public class HeartsGameState : GameState<PlayingCard>
 	public Suit? LeadingSuit { get; private set; }
 	public bool IsHeartsBroken { get; private set; }
 
-	public readonly List<Play> CurrentPlays = [];
+	public readonly List<Play> CurrentTrick = [];
 	public readonly List<Trick> Tricks = [];
+
+	private static int PointValue(PlayingCard card) =>
+		card.Suit == Suits.Hearts ? 1 :
+		card.Suit == Suits.Spades && card.Rank == NamedRanks.Queen ? 26 :
+		0;
 	
-	public void AddPlay(PlayingCard card)
+	public override void PlayCard(PlayingCard card)
 	{
 		ArgumentNullException.ThrowIfNull(CurrentPlayer, nameof(CurrentPlayer));
 
-		if (CurrentPlays.Count == 0)
+		if (CurrentTrick.Count == 0)
 		{
 			LeadingSuit = card.Suit;
 		}
 
-		CurrentPlays.Add(new(CurrentPlayer.Name, card));		
+		CurrentTrick.Add(new(CurrentPlayer.Name, card));
+		CurrentPlayer.Hand.Remove(card);
 
-		if (CurrentPlays.Count == 4)
+		if (!IsHeartsBroken && card.Suit == Suits.Hearts)
 		{
-			Tricks.Add(new()
-			{
-				Plays = CurrentPlays,
-				Winner = GetWinner(LeadingSuit, CurrentPlays)
-			});
-
-			CurrentPlays.Clear();
-			LeadingSuit = null;
+			// todo: special event architecture?
+			IsHeartsBroken = true;
 		}
 
-		CurrentPlayer = NextPlayer();
+		if (CurrentTrick.Count == 4)
+		{
+			var winner = CurrentTrick.MaxBy(p => p.Card.Rank)!.PlayerName;			
+			Tricks.Add(new()
+			{
+				Plays = CurrentTrick,
+				Winner = winner,
+				Points = CurrentTrick.Sum(play => PointValue(play.Card))
+			});
+
+			CurrentTrick.Clear();
+			LeadingSuit = null;
+			CurrentPlayer = PlayersByName[winner];
+		}
+		else
+		{
+			CurrentPlayer = NextPlayer();
+		}
 
 		OnStateChanged?.Invoke();
 	}
 
-	private Play GetWinner(Suit? leadingSuit, List<Play> currentPlays)
+	public override (bool IsValid, string? Message) ValidatePlay(string playerName, PlayingCard card)
 	{
-		throw new NotImplementedException();
+		if (Tricks.Count == 0 && card.Suit == Suits.Hearts) return (false, "Cannot break hearts on the first trick");
+
+		if (!IsHeartsBroken && card.Suit == Suits.Hearts) return (false, "Hearts not broken yet");
+
+		if (card.Suit != LeadingSuit)
+		{
+			if (PlayersByName[playerName].Hand.Any(card => card.Suit == LeadingSuit))
+			{
+				return (false, "Must play leading suit if you can");
+			}
+		}
+
+		return (true, default);
 	}
 
 	public class Trick
 	{
 		public required List<Play> Plays { get; init; } = [];
-		public required Play Winner { get; init; }
-	}
-
-	public record Play(string PlayerName, PlayingCard Card);	
+		public required string Winner { get; init; }
+		public required int Points { get; init; }
+	}	
 }
