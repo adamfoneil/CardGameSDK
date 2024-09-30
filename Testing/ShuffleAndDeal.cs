@@ -8,10 +8,10 @@ namespace Testing;
 public class ShuffleAndDeal
 {
     [TestMethod]
-    public async Task HeartsDeal()
+    public void HeartsDeal()
     {
-        var hearts = new Hearts(new MockRepository());
-        var game = await hearts.NewGameAsync(false, [ "Adam", "Andy", "Dad", "Becky" ]);
+        var hearts = new Hearts();
+        var game = hearts.InitializeGame(false, [ "Adam", "Andy", "Dad", "Becky" ]);
 
         foreach (var player in game.Players)
         {

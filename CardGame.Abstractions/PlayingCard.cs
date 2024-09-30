@@ -18,25 +18,24 @@ public static class Suits
     public static Suit[] All => [Clubs, Diamonds, Hearts, Spades];
 }
 
-public class PlayingCard
+public class PlayingCard(int rank, Suit suit)
 {
-    public required Suit Suit { get; init; }
-    public int Rank { get; init; }
+    public Suit Suit { get; init; } = suit;
+    public int Rank { get; init; } = rank;
     public string? Name { get; init; }
 
-    public override string ToString() => $"{Name ?? Rank.ToString()} {Suit.Name}";    
+    public override string ToString() => $"{Name ?? Rank.ToString()} {Suit.Name}";
 
-    public static IEnumerable<PlayingCard> StandardDeck =>
+	public override bool Equals(object? obj) => obj is PlayingCard c && Suit.Equals(c.Suit) && Rank == c.Rank;
+	public override int GetHashCode() => HashCode.Combine(Suit, Rank);
+
+	public static IEnumerable<PlayingCard> StandardDeck =>
         Suits.All.SelectMany(s => 
-            Enumerable.Range(2, 8).Select(val => new PlayingCard
-            {
-                Suit = s,
-                Rank = val
-            }).Concat(
+            Enumerable.Range(2, 8).Select(val => new PlayingCard(val, s)).Concat(
             [
-                new PlayingCard() { Suit = s, Name = "Jack", Rank = 11 },
-                new PlayingCard() { Suit = s, Name = "Queen", Rank = 12 },
-                new PlayingCard() { Suit = s, Name = "King", Rank = 13 },
-                new PlayingCard() { Suit = s, Name = "Ace", Rank = 14 }
+                new PlayingCard(11, s) { Name = "Jack" },
+                new PlayingCard(12, s) { Name = "Queen" },
+                new PlayingCard(13, s) { Name = "King" },
+                new PlayingCard(14, s) { Name = "Ace" }
             ]));
 }

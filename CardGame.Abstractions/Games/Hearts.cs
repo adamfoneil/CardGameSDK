@@ -2,7 +2,7 @@
 
 namespace CardGame.Abstractions.Games;
 
-public class Hearts(IRepository<HeartsGameState> repository) : GameDefinition<HeartsGameState, PlayingCard>(repository)
+public class Hearts : GameDefinition<HeartsGameState, PlayingCard>
 {
 	public override uint MinPlayers => 4;
 
@@ -14,13 +14,12 @@ public class Hearts(IRepository<HeartsGameState> repository) : GameDefinition<He
 
 	public bool IsHeartsBroken { get; private set; }
 
-	protected override HeartsGameState InitializeGame(bool devMode, string[] playerNames)
+	public override HeartsGameState InitializeGame(bool devMode, string[] playerNames)
 	{
 		var cards = Shuffle();
 		var hands = Deal(cards, playerNames);
-		var players = BuildPlayers(playerNames, hands);
-		// this not working below
-		var startPlayer = players.Single(p => p.Hand.Contains(new PlayingCard() { Suit = Suits.Clubs, Rank = 2 }));
+		var players = BuildPlayers(playerNames, hands);		
+		var startPlayer = players.Single(p => p.Hand.Contains(new PlayingCard(2, Suits.Clubs)));
 
 		return new()
 		{
