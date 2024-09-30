@@ -6,6 +6,8 @@ public interface IGameState<TCard>
 {
 	int Id { get; }
 	HashSet<Player<TCard>> Players { get; init; }
+	Dictionary<int, Player<TCard>> PlayersByIndex { get; init; }
+	Dictionary<string, Player<TCard>> PlayersByName { get; init; }
 	/// <summary>
 	/// allow logged on player to impersonate all players
 	/// </summary>
@@ -22,6 +24,7 @@ public class Player<TCard>
 	public string Name { get; init; } = default!;
 	public bool Resigned { get; set; }
 	public HashSet<TCard> Hand { get; init; } = [];
+	public int Index { get; init; }
 
 	public override bool Equals(object? obj) =>
 		(obj is Player<TCard> player) && Name.Equals(player.Name, StringComparison.OrdinalIgnoreCase);
