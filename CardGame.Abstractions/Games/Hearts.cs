@@ -58,6 +58,7 @@ public class HeartsGameState : GameState<PlayingCard>
 {
 	public Suit? LeadingSuit { get; private set; }
 	public bool IsHeartsBroken { get; private set; }
+	public string? MoonShotPlayer { get; private set; }
 
 	public readonly List<Play> CurrentTrick = [];
 	public readonly List<Trick> Tricks = [];
@@ -88,6 +89,7 @@ public class HeartsGameState : GameState<PlayingCard>
 		if (CurrentTrick.Count == 4)
 		{
 			var winner = CurrentTrick.MaxBy(p => p.Card.Rank)!.PlayerName;			
+
 			Tricks.Add(new()
 			{
 				Plays = CurrentTrick,
@@ -102,6 +104,21 @@ public class HeartsGameState : GameState<PlayingCard>
 		else
 		{
 			CurrentPlayer = NextPlayer();
+		}
+
+		// on the last trick...
+		if (Tricks.Count == 12)
+		{
+			// did anyone get all the hearts (shoot the moon)?
+			var playersWithHearts = Tricks
+				.SelectMany(t => t.Plays.Where(p => p.Card.Suit == Suits.Hearts).Select(p => p.PlayerName))
+				.Distinct();
+			
+			// if exactly one player has hearts, they must have all by definition
+			if (playersWithHearts.Count() == 1)
+			{
+				MoonShotPlayer = playersWithHearts.First();
+			}
 		}
 
 		OnStateChanged?.Invoke();
@@ -122,6 +139,24 @@ public class HeartsGameState : GameState<PlayingCard>
 		}
 
 		return (true, default);
+	}
+
+	public override Dictionary<string, int> GetScore()
+	{
+		var results = Tricks
+			.GroupBy(t => t.Winner)
+			.ToDictionary(grp => grp.Key, grp => grp.Sum(t => t.Points));
+
+		if (MoonShotPlayer != null)
+		{
+			// add 26 to everyone's score
+			foreach (var kp in results) results[kp.Key] += 26;
+			// but set the moon shooter to 0
+			results[MoonShotPlayer] = 0;
+
+		}
+
+		return results;
 	}
 
 	public class Trick

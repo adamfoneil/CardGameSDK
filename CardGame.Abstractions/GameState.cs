@@ -21,6 +21,8 @@ public abstract class GameState<TCard>
 
 	public abstract void PlayCard(TCard card);
 
+	public abstract Dictionary<string, int> GetScore();
+
 	protected Player<TCard> NextPlayer()
 	{
 		ArgumentNullException.ThrowIfNull(CurrentPlayer, nameof(CurrentPlayer));
