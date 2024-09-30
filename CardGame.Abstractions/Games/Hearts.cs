@@ -142,10 +142,14 @@ public class HeartsGameState : GameState<PlayingCard>
 	}
 
 	public override Dictionary<string, int> GetScore()
-	{
+	{		
 		var results = Tricks
-			.GroupBy(t => t.Winner)
+			.GroupBy(t => t.Winner)			
 			.ToDictionary(grp => grp.Key, grp => grp.Sum(t => t.Points));
+
+		var zeroPointPlayers = Players.Select(p => p.Name).Except(results.Keys);
+
+		foreach (var player in zeroPointPlayers) results.Add(player, 0);
 
 		if (MoonShotPlayer != null)
 		{
@@ -156,7 +160,7 @@ public class HeartsGameState : GameState<PlayingCard>
 
 		}
 
-		return results;
+		return results ?? [];
 	}
 
 	public class Trick
