@@ -19,6 +19,7 @@ public class Hearts(IRepository<HeartsGameState> repository) : GameDefinition<He
 		var cards = Shuffle();
 		var hands = Deal(cards, playerNames);
 		var players = BuildPlayers(playerNames, hands);
+		// this not working below
 		var startPlayer = players.Single(p => p.Hand.Contains(new PlayingCard() { Suit = Suits.Clubs, Rank = 2 }));
 
 		return new()
