@@ -64,7 +64,7 @@ public class HeartsGameState : GameState<PlayingCard>
 
 	private static int PointValue(PlayingCard card) =>
 		card.Suit == Suits.Hearts ? 1 :
-		card.Suit == Suits.Spades && card.Rank == NamedRanks.Queen ? 26 :
+		card.Suit == Suits.Spades && card.Rank == NamedRanks.Queen ? 13 :
 		0;
 	
 	public override void PlayCard(PlayingCard card)
