@@ -28,7 +28,7 @@ public abstract class GameState<TCard>
 		var index = PlayersByName[CurrentPlayer.Name].Index;
 
 		index++;
-		if (index > Players.Count) index = 0;
+		if (index > Players.Count) index = 1;
 
 		return PlayersByIndex[index];
 	}
