@@ -1,8 +1,4 @@
-﻿
-
-using CardGame.Abstractions.Extensions;
-
-namespace CardGame.Abstractions.Games;
+﻿namespace CardGame.Abstractions.Games;
 
 public class Hearts : GameDefinition<HeartsGameState, PlayingCard>
 {
@@ -14,48 +10,31 @@ public class Hearts : GameDefinition<HeartsGameState, PlayingCard>
 
 	// first player = hand with 2 of clubs
 
-	public bool IsHeartsBroken { get; private set; }
-
-	public override string Name => "Hearts (4p)";	
-
+	public override string Name => "Hearts (4p)";
+	
 	public override HeartsGameState InitializeGame(bool devMode, string[] playerNames)
 	{
+		if (playerNames.Length != 4) throw new Exception("Must have 4 players");
+
 		var cards = Shuffle();
 		var hands = Deal(cards, playerNames);
-		var players = BuildPlayers(playerNames, hands);		
-		var playersByIndex = players.ToDictionary(p => p.Index);
-		var playersByName = players.ToDictionary(p => p.Name);
+		var (players, byIndex, byName) = BuildPlayers(playerNames, hands);				
 		var startPlayer = players.Single(p => p.Hand.Contains(new PlayingCard(2, Suits.Clubs)));
 
-		return new()
+		HeartsGameState result = new()
 		{
 			IsDevMode = devMode,
 			Players = players,
-			PlayersByIndex = playersByIndex,
-			PlayersByName = playersByName,
+			PlayersByIndex = byIndex,
+			PlayersByName = byName,
 			DrawPile = cards, // should be empty because all cards are dealt
 			CurrentPlayer = startPlayer
 		};
-	}
 
-	private static HashSet<Player<PlayingCard>> BuildPlayers(string[] playerNames, ILookup<string, PlayingCard> hands)
-	{
-		List<Player<PlayingCard>> result = [];
+		result.AddPlay(new(2, Suits.Clubs));
 
-		int index = 0;
-		foreach (var player in playerNames)
-		{
-			index++;
-			result.Add(new Player<PlayingCard>()
-			{
-				Name = player,
-				Index = index,
-				Hand = hands[player].ToHashSet()
-			});
-		}
-
-		return [.. result];
-	}
+		return result;
+	}	
 
 	private static ILookup<string, PlayingCard> Deal(Queue<PlayingCard> cards, string[] playerNames)
 	{
@@ -75,35 +54,51 @@ public class Hearts : GameDefinition<HeartsGameState, PlayingCard>
 	}
 }
 
-public class HeartsGameState : IGameState<PlayingCard>
+public class HeartsGameState : GameState<PlayingCard>
 {
-	public int Id { get; set; }
-	public bool IsDevMode { get; init; }	
-	public HashSet<Player<PlayingCard>> Players { get; init; } = [];
-	public Player<PlayingCard>? CurrentPlayer { get; set; }
-	public Queue<PlayingCard> DrawPile { get; init; } = [];
-	public Dictionary<int, Player<PlayingCard>> PlayersByIndex { get; init; } = [];
-	public Dictionary<string, Player<PlayingCard>> PlayersByName { get; init; } = [];
+	public Suit? LeadingSuit { get; private set; }
+	public bool IsHeartsBroken { get; private set; }
 
-	private readonly List<Play> _currentPlays = [];	
-
+	public readonly List<Play> CurrentPlays = [];
+	public readonly List<Trick> Tricks = [];
+	
 	public void AddPlay(PlayingCard card)
 	{
 		ArgumentNullException.ThrowIfNull(CurrentPlayer, nameof(CurrentPlayer));
 
-		_currentPlays.Add(new(CurrentPlayer.Name, card));
-		CurrentPlayer = this.NextPlayer();
-
-		if (_currentPlays.Count == 4)
+		if (CurrentPlays.Count == 0)
 		{
-			// determine winner, start new trick
+			LeadingSuit = card.Suit;
 		}
+
+		CurrentPlays.Add(new(CurrentPlayer.Name, card));		
+
+		if (CurrentPlays.Count == 4)
+		{
+			Tricks.Add(new()
+			{
+				Plays = CurrentPlays,
+				Winner = GetWinner(LeadingSuit, CurrentPlays)
+			});
+
+			CurrentPlays.Clear();
+			LeadingSuit = null;
+		}
+
+		CurrentPlayer = NextPlayer();
+
+		OnStateChanged?.Invoke();
+	}
+
+	private Play GetWinner(Suit? leadingSuit, List<Play> currentPlays)
+	{
+		throw new NotImplementedException();
 	}
 
 	public class Trick
 	{
-		public List<Play> Plays { get; init; } = [];
-		public Play Winner { get; init; }
+		public required List<Play> Plays { get; init; } = [];
+		public required Play Winner { get; init; }
 	}
 
 	public record Play(string PlayerName, PlayingCard Card);	

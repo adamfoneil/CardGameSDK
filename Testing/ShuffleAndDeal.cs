@@ -24,6 +24,9 @@ public class ShuffleAndDeal
             }
         }
 
+        Debug.Print($"Current player: {game.CurrentPlayer?.Name ?? "<unknown>"}");
+        Debug.Print($"Leading suit: {game.LeadingSuit.Name}");
+
         Assert.IsTrue(!game.DrawPile.Any());
     }
 }
