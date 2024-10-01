@@ -1,6 +1,6 @@
 ﻿namespace CardGame.Abstractions;
 
-public abstract class GameDefinition<TState, TCard> where TState : GameState<TCard>
+public abstract class GameFactory<TState, TCard> where TState : GameState<TCard>
 {
 	public abstract string Name { get; }
 	public abstract uint MinPlayers { get; }

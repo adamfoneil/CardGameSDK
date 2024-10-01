@@ -1,5 +1,5 @@
 using CardGame.Abstractions;
-using CardGame.Abstractions.Games;
+using CardGame.Abstractions.Games.Hearts;
 using System.Diagnostics;
 
 namespace Testing;
@@ -10,7 +10,7 @@ public class ShuffleAndDeal
     [TestMethod]
     public void HeartsDeal()
     {
-        var hearts = new Hearts();
+        var hearts = new HeartsGameFactory();
         var game = hearts.InitializeGame(false, [ "Adam", "Andy", "Dad", "Becky" ]);
 
         foreach (var player in game.Players)
@@ -29,17 +29,4 @@ public class ShuffleAndDeal
 
         Assert.IsTrue(!game.DrawPile.Any());
     }
-}
-
-internal class MockRepository : IRepository<HeartsGameState>
-{
-	public Task<HeartsGameState> GetByIdAsync(int id)
-	{
-		throw new NotImplementedException();
-	}
-
-	public Task SaveAsync(HeartsGameState data)
-	{
-		throw new NotImplementedException();
-	}
 }
