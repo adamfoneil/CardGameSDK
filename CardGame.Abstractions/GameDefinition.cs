@@ -1,10 +1,10 @@
 ﻿namespace CardGame.Abstractions;
 
 public abstract class GameDefinition<TState, TCard> where TState : GameState<TCard>
-{	
+{
 	public abstract string Name { get; }
 	public abstract uint MinPlayers { get; }
-	public abstract uint MaxPlayers { get; }    
+	public abstract uint MaxPlayers { get; }
 	public abstract IEnumerable<TCard> Deck { get; }
 
 	public abstract TState InitializeGame(bool devMode, string[] playerNames);
@@ -28,8 +28,8 @@ public abstract class GameDefinition<TState, TCard> where TState : GameState<TCa
 	}
 
 	protected static (
-		HashSet<Player<TCard>> HashSet, 
-		Dictionary<int, Player<TCard>> ByIndex, 
+		HashSet<Player<TCard>> HashSet,
+		Dictionary<int, Player<TCard>> ByIndex,
 		Dictionary<string, Player<TCard>> ByName
 	) BuildPlayers(string[] playerNames, ILookup<string, TCard> hands)
 	{

@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-
-namespace CardGame.Abstractions.Games;
+﻿namespace CardGame.Abstractions.Games;
 
 public class Hearts : GameDefinition<HeartsGameState, PlayingCard>
 {
@@ -11,14 +9,14 @@ public class Hearts : GameDefinition<HeartsGameState, PlayingCard>
 	public override IEnumerable<PlayingCard> Deck => PlayingCard.StandardDeck;
 
 	public override string Name => "Hearts (4p)";
-	
+
 	public override HeartsGameState InitializeGame(bool devMode, string[] playerNames)
 	{
 		if (playerNames.Length != 4) throw new Exception("Must have 4 players");
 
 		var cards = Shuffle();
 		var hands = Deal(cards, playerNames);
-		var (players, byIndex, byName) = BuildPlayers(playerNames, hands);				
+		var (players, byIndex, byName) = BuildPlayers(playerNames, hands);
 		var startPlayer = players.Single(p => p.Hand.Contains(new PlayingCard(2, Suits.Clubs)));
 
 		HeartsGameState result = new()
@@ -34,7 +32,7 @@ public class Hearts : GameDefinition<HeartsGameState, PlayingCard>
 		result.PlayCard(new(2, Suits.Clubs));
 
 		return result;
-	}	
+	}
 
 	private static ILookup<string, PlayingCard> Deal(Queue<PlayingCard> cards, string[] playerNames)
 	{
@@ -67,7 +65,7 @@ public class HeartsGameState : GameState<PlayingCard>
 		card.Suit == Suits.Hearts ? 1 :
 		card.Suit == Suits.Spades && card.Rank == NamedRanks.Queen ? 13 :
 		0;
-	
+
 	public override void PlayCard(PlayingCard card)
 	{
 		ArgumentNullException.ThrowIfNull(CurrentPlayer, nameof(CurrentPlayer));
@@ -88,7 +86,7 @@ public class HeartsGameState : GameState<PlayingCard>
 
 		if (CurrentTrick.Count == 4)
 		{
-			var winner = CurrentTrick.MaxBy(p => p.Card.Rank)!.PlayerName;			
+			var winner = CurrentTrick.MaxBy(p => p.Card.Rank)!.PlayerName;
 
 			Tricks.Add(new()
 			{
@@ -113,7 +111,7 @@ public class HeartsGameState : GameState<PlayingCard>
 			var playersWithHearts = Tricks
 				.SelectMany(t => t.Plays.Where(p => p.Card.Suit == Suits.Hearts).Select(p => p.PlayerName))
 				.Distinct();
-			
+
 			// if exactly one player has hearts, they must have all by definition
 			if (playersWithHearts.Count() == 1)
 			{
@@ -142,9 +140,9 @@ public class HeartsGameState : GameState<PlayingCard>
 	}
 
 	public override Dictionary<string, int> GetScore()
-	{		
+	{
 		var results = Tricks
-			.GroupBy(t => t.Winner)			
+			.GroupBy(t => t.Winner)
 			.ToDictionary(grp => grp.Key, grp => grp.Sum(t => t.Points));
 
 		var zeroPointPlayers = Players.Select(p => p.Name).Except(results.Keys);
@@ -168,5 +166,5 @@ public class HeartsGameState : GameState<PlayingCard>
 		public required List<Play> Plays { get; init; } = [];
 		public required string Winner { get; init; }
 		public required int Points { get; init; }
-	}	
+	}
 }
