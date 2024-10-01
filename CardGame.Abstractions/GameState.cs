@@ -1,10 +1,13 @@
-﻿namespace CardGame.Abstractions;
+﻿using System.Text.Json.Serialization;
+
+namespace CardGame.Abstractions;
 
 public abstract class GameState<TCard>
-{
-	public int Id { get; set; }
+{	
 	public HashSet<Player<TCard>> Players { get; init; } = [];
+	[JsonIgnore]
 	public Dictionary<int, Player<TCard>> PlayersByIndex { get; set; } = [];
+	[JsonIgnore]
 	public Dictionary<string, Player<TCard>> PlayersByName { get; set; } = [];
 	/// <summary>
 	/// allow logged on player to impersonate all players
@@ -15,11 +18,18 @@ public abstract class GameState<TCard>
 	/// </summary>
 	public Player<TCard>? CurrentPlayer { get; set; }
 	public Queue<TCard> DrawPile { get; set; } = [];
+	[JsonIgnore]
 	public Func<Task>? OnStateChanged { get; set; }
+	public abstract bool IsFinished { get; }
 
 	public abstract (bool IsValid, string? Message) ValidatePlay(string playerName, TCard card);
 
 	public abstract void PlayCard(TCard card);
+
+	/// <summary>
+	/// for testing purposes, should generate a valid play so that state can be recorded, validated
+	/// </summary>
+	public abstract void AutoPlay();
 
 	public abstract Dictionary<string, int> GetScore();
 

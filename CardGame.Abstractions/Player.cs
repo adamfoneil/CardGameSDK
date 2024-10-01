@@ -1,5 +1,8 @@
-﻿namespace CardGame.Abstractions;
+﻿using System.Diagnostics;
 
+namespace CardGame.Abstractions;
+
+[DebuggerDisplay("{Name}")]
 public class Player<TCard>
 {
 	public string Name { get; init; } = default!;

@@ -2,12 +2,18 @@
 
 public class HeartsGameState : GameState<PlayingCard>
 {
+	private bool _isRoundFinished = false;
+
 	public Suit? LeadingSuit { get; private set; }
 	public bool IsHeartsBroken { get; private set; }
 	public string? MoonShotPlayer { get; private set; }
 
-	public readonly List<Play> CurrentTrick = [];
-	public readonly List<Trick> Tricks = [];
+	public override bool IsFinished => _isRoundFinished;
+
+	private readonly List<Play> _currentTrick = [];
+	private readonly List<Trick> _tricks = [];
+
+	public List<Trick> Tricks => _tricks;
 
 	private static int PointValue(PlayingCard card) =>
 		card.Suit == Suits.Hearts ? 1 :
@@ -18,12 +24,15 @@ public class HeartsGameState : GameState<PlayingCard>
 	{
 		ArgumentNullException.ThrowIfNull(CurrentPlayer, nameof(CurrentPlayer));
 
-		if (CurrentTrick.Count == 0)
+		var (valid, message) = ValidatePlay(CurrentPlayer.Name, card);
+		if (!valid) throw new Exception(message);
+
+		if (_currentTrick.Count == 0)
 		{
 			LeadingSuit = card.Suit;
 		}
 
-		CurrentTrick.Add(new(CurrentPlayer.Name, card));
+		_currentTrick.Add(new(CurrentPlayer.Name, card));
 		CurrentPlayer.Hand.Remove(card);
 
 		if (!IsHeartsBroken && card.Suit == Suits.Hearts)
@@ -32,18 +41,20 @@ public class HeartsGameState : GameState<PlayingCard>
 			IsHeartsBroken = true;
 		}
 
-		if (CurrentTrick.Count == 4)
+		if (_currentTrick.Count == 4)
 		{
-			var winner = CurrentTrick.MaxBy(p => p.Card.Rank)!.PlayerName;
+			var winner = _currentTrick
+				.Where(c => c.Card.Suit == LeadingSuit)
+				.MaxBy(p => p.Card.Rank)!.PlayerName;
 
-			Tricks.Add(new()
+			_tricks.Add(new()
 			{
-				Plays = CurrentTrick,
+				Plays = _currentTrick,
 				Winner = winner,
-				Points = CurrentTrick.Sum(play => PointValue(play.Card))
+				Points = _currentTrick.Sum(play => PointValue(play.Card))
 			});
 
-			CurrentTrick.Clear();
+			_currentTrick.Clear();
 			LeadingSuit = null;
 			CurrentPlayer = PlayersByName[winner];
 		}
@@ -53,10 +64,10 @@ public class HeartsGameState : GameState<PlayingCard>
 		}
 
 		// on the last trick...
-		if (Tricks.Count == 12)
+		if (_tricks.Count == 12)
 		{
 			// did anyone get all the hearts (shoot the moon)?
-			var playersWithHearts = Tricks
+			var playersWithHearts = _tricks
 				.SelectMany(t => t.Plays.Where(p => p.Card.Suit == Suits.Hearts).Select(p => p.PlayerName))
 				.Distinct();
 
@@ -65,6 +76,8 @@ public class HeartsGameState : GameState<PlayingCard>
 			{
 				MoonShotPlayer = playersWithHearts.First();
 			}
+
+			_isRoundFinished = true;
 		}
 
 		OnStateChanged?.Invoke();
@@ -72,7 +85,7 @@ public class HeartsGameState : GameState<PlayingCard>
 
 	public override (bool IsValid, string? Message) ValidatePlay(string playerName, PlayingCard card)
 	{
-		if (Tricks.Count == 0 && card.Suit == Suits.Hearts) return (false, "Cannot break hearts on the first trick");
+		if (_tricks.Count == 0 && card.Suit == Suits.Hearts) return (false, "Cannot break hearts on the first trick");
 
 		if (!IsHeartsBroken && card.Suit == Suits.Hearts) return (false, "Hearts not broken yet");
 
@@ -89,7 +102,7 @@ public class HeartsGameState : GameState<PlayingCard>
 
 	public override Dictionary<string, int> GetScore()
 	{
-		var results = Tricks
+		var results = _tricks
 			.GroupBy(t => t.Winner)
 			.ToDictionary(grp => grp.Key, grp => grp.Sum(t => t.Points));
 
@@ -107,6 +120,20 @@ public class HeartsGameState : GameState<PlayingCard>
 		}
 
 		return results ?? [];
+	}
+
+	public override void AutoPlay()
+	{
+		if (_isRoundFinished) return;
+
+		if (CurrentPlayer is null) throw new Exception("must have current player");
+
+		var card = ((IsHeartsBroken ?
+			CurrentPlayer.Hand.First(c => c.Suit == Suits.Hearts) :
+			CurrentPlayer.Hand.FirstOrDefault(c => c.Suit == LeadingSuit,
+			CurrentPlayer.Hand.First())));
+
+		PlayCard(card);
 	}
 
 	public class Trick

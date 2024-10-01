@@ -1,6 +1,7 @@
 using CardGame.Abstractions;
 using CardGame.Abstractions.Games.Hearts;
 using System.Diagnostics;
+using System.Text.Json;
 
 namespace Testing;
 
@@ -29,4 +30,16 @@ public class ShuffleAndDeal
 
         Assert.IsTrue(!game.DrawPile.Any());
     }
+
+    [TestMethod]
+    public void HeartsAutoPlay()
+    {
+		var hearts = new HeartsGameFactory();
+		var game = hearts.InitializeGame(false, ["Adam", "Andy", "Dad", "Becky"]);
+
+        while (!game.IsFinished) game.AutoPlay();
+
+        var json = JsonSerializer.Serialize(game, new JsonSerializerOptions() { WriteIndented = true });
+        Debug.Print(json);
+	}
 }
