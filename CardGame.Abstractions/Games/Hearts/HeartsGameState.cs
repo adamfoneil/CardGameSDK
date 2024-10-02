@@ -49,7 +49,7 @@ public class HeartsGameState : GameState<PlayingCard>
 
 			_tricks.Add(new()
 			{
-				Plays = _currentTrick,
+				Plays = [.. _currentTrick],
 				Winner = winner,
 				Points = _currentTrick.Sum(play => PointValue(play.Card))
 			});
