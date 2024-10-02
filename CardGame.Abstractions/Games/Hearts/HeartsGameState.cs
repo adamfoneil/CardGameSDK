@@ -93,7 +93,7 @@ public class HeartsGameState : GameState<PlayingCard>
 		{
 			// did anyone get all the hearts (shoot the moon)?
 			var playersWithHearts = _tricks
-				.SelectMany(t => t.Plays.Where(p => p.Card.Suit == Suits.Hearts).Select(p => p.PlayerName))
+				.SelectMany(t => t.Plays.Where(p => p.Card.Suit.Equals(Suits.Hearts)).Select(p => p.PlayerName))
 				.Distinct();
 
 			// if exactly one player has hearts, they must have all by definition
