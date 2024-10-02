@@ -31,6 +31,9 @@ public class ShuffleAndDeal
         Assert.IsTrue(!game.DrawPile.Any());
     }
 
+    /// <summary>
+    /// simulate play so we can see what state is generated
+    /// </summary>
     [TestMethod]
     public void HeartsAutoPlay()
     {
@@ -39,13 +42,19 @@ public class ShuffleAndDeal
 
         while (!game.IsFinished) game.AutoPlay();
 
-        var json = JsonSerializer.Serialize(game, new JsonSerializerOptions() { WriteIndented = true });
+        var json = JsonSerializer.Serialize(game, new JsonSerializerOptions() { WriteIndented = true });        
         Debug.Print(json);
+
+        // for now, I'm just manually inspecting the json output
 	}
 
     [TestMethod]
     public void SuitEquality()
     {
+        // I had some trouble with suit equality
         Assert.AreEqual(Suits.Clubs, new PlayingCard(2, Suits.Clubs).Suit);
+        
+        // remember to use the Equals method, not ==
+        //Assert.IsTrue(Suits.Clubs == new Suit("Clubs", 1));
     }
 }
