@@ -13,4 +13,7 @@ Hearts components:
 - [HeartsGameFactory](https://github.com/adamfoneil/CardGame/blob/master/CardGame.Abstractions/Games/Hearts/HeartsGameFactory.cs)
 - [HeartsGameState](https://github.com/adamfoneil/CardGame/blob/master/CardGame.Abstractions/Games/Hearts/HeartsGameState.cs)
 
-I'm still a long ways from having something playable in a web UI, but I needed some feedback on whether what I've done so far is valid -- as far as my implementation of Hearts. So, I have a few superficial [tests](https://github.com/adamfoneil/CardGame/blob/master/Testing/ShuffleAndDeal.cs). These don't make many useful assertions, but at this point I'm just seeing if the very basics work.
+I'm still a long ways from having something playable in a web UI, but I needed some feedback on whether what I've done so far is valid -- as far as my implementation of Hearts. So, I have a few superficial [tests](https://github.com/adamfoneil/CardGame/blob/master/Testing/ShuffleAndDeal.cs). These don't make many useful assertions, but at this point I'm just seeing if the very basics work. In order to test a real-ish game, I had to introduce the notion of [AutoPlay](https://github.com/adamfoneil/CardGame/blob/master/CardGame.Abstractions/Games/Hearts/HeartsGameState.cs#L128). Simulated play does not need to be good or strategic, but I needed some way to play a round from end to end to see how the scoring worked, whether hearts would "break" as expected. Since the deals are random however (by design), I get different results every time.
+
+# Stuff I Learned
+- when comparing suits, I need to use the `Equals` method. I was a little confused by this
