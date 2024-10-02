@@ -10,8 +10,8 @@ I broke it down like this:
 - entwined with the GameFactory is the idea of a [GameState](https://github.com/adamfoneil/CardGame/blob/master/CardGame.Abstractions/GameState.cs) object. If I were to pause and resume a game later, how could I ensure that I picked up where I left off and that the play history was preserved? All of that would need to be in the `GameState`. This also in turn defines the actual rules of the game.
 
 Hearts components:
-- [HeartsGameFactory](https://github.com/adamfoneil/CardGame/blob/master/CardGame.Abstractions/Games/Hearts/HeartsGameFactory.cs)
-- [HeartsGameState](https://github.com/adamfoneil/CardGame/blob/master/CardGame.Abstractions/Games/Hearts/HeartsGameState.cs)
+- [HeartsGameFactory](https://github.com/adamfoneil/CardGameSDK/blob/master/Hearts/HeartsGameFactory.cs)
+- [HeartsGameState](https://github.com/adamfoneil/CardGameSDK/blob/master/Hearts/HeartsGameState.cs)
 
 I'm still a long ways from having something playable in a web UI, but I needed some feedback on whether what I've done so far is valid -- as far as my implementation of Hearts. So, I have a few superficial [tests](https://github.com/adamfoneil/CardGame/blob/master/Testing/ShuffleAndDeal.cs). These don't make many useful assertions, but at this point I'm just seeing if the very basics work. In order to test a real-ish game, I had to introduce the notion of [AutoPlay](https://github.com/adamfoneil/CardGame/blob/master/CardGame.Abstractions/Games/Hearts/HeartsGameState.cs#L128). Simulated play does not need to be good or strategic, but I needed some way to play a round from end to end to see how the scoring worked, whether hearts would "break" as expected. Since the deals are random however (by design), I get different results every time. So, there are still some difficulties with this.
 
