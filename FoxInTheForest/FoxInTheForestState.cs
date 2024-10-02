@@ -10,8 +10,11 @@ public class FoxInTheForestState : GameState<PlayingCard>
 
 	public override Dictionary<string, int> Score => throw new NotImplementedException();
 
+	public Suit? LeadingSuit { get; set; }
+
 	private readonly List<Play> _currentTrick = [];
 	private readonly List<Trick> _tricks = [];
+	
 
 	public List<Trick> Tricks => _tricks;
 
@@ -23,6 +26,11 @@ public class FoxInTheForestState : GameState<PlayingCard>
 	protected override void OnPlayCard(PlayingCard card)
 	{
 		_currentTrick.Add(new Play(CurrentPlayer!.Name, card));
+
+		if (_currentTrick.Count == 1)
+		{
+			LeadingSuit = card.Suit;
+		}
 
 		if (_currentTrick.Count == 2)
 		{
@@ -51,7 +59,15 @@ public class FoxInTheForestState : GameState<PlayingCard>
 
 	public override (bool IsValid, string? Message) ValidatePlay(string playerName, PlayingCard card)
 	{
-		throw new NotImplementedException();
+		if (LeadingSuit != null && !card.Suit.Equals(LeadingSuit))
+		{
+			if (PlayersByName[playerName].Hand.Any(card => card.Suit.Equals(LeadingSuit)))
+			{
+				return (false, "Must play leading suit if you can");
+			}
+		}
+
+		return (true, default);
 	}
 
 	public class Trick
