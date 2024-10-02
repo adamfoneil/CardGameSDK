@@ -110,13 +110,13 @@ public class HeartsGameState : GameState<PlayingCard>
 
 	public override (bool IsValid, string? Message) ValidatePlay(string playerName, PlayingCard card)
 	{
-		if (_tricks.Count == 0 && card.Suit == Suits.Hearts) return (false, "Cannot break hearts on the first trick");
+		if (_tricks.Count == 0 && card.Suit.Equals(Suits.Hearts)) return (false, "Cannot break hearts on the first trick");
 
-		if (!IsHeartsBroken && card.Suit == Suits.Hearts) return (false, "Hearts not broken yet");
+		if (!IsHeartsBroken && card.Suit.Equals(Suits.Hearts)) return (false, "Hearts not broken yet");
 
 		if (card.Suit != LeadingSuit)
 		{
-			if (PlayersByName[playerName].Hand.Any(card => card.Suit == LeadingSuit))
+			if (PlayersByName[playerName].Hand.Any(card => card.Suit.Equals(LeadingSuit)))
 			{
 				return (false, "Must play leading suit if you can");
 			}
