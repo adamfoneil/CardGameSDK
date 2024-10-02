@@ -1,4 +1,6 @@
-﻿namespace CardGame.Abstractions.Games.Hearts;
+﻿using CardGame.Abstractions;
+
+namespace Games.Hearts;
 
 public class HeartsGameState : GameState<PlayingCard>
 {
@@ -41,8 +43,8 @@ public class HeartsGameState : GameState<PlayingCard>
 	}
 
 	private static int PointValue(PlayingCard card) =>
-		card.Suit.Equals(Suits.Hearts) ? 1 :
-		card.Suit.Equals(Suits.Spades) && card.Rank == NamedRanks.Queen ? 13 :
+		card.Suit.Equals(ClassicSuits.Hearts) ? 1 :
+		card.Suit.Equals(ClassicSuits.Spades) && card.Rank == ClassicNamedRanks.Queen ? 13 :
 		0;
 
 	public override void PlayCard(PlayingCard card)
@@ -60,7 +62,7 @@ public class HeartsGameState : GameState<PlayingCard>
 		_currentTrick.Add(new(CurrentPlayer.Name, card));
 		CurrentPlayer.Hand.Remove(card);
 
-		if (!IsHeartsBroken && card.Suit.Equals(Suits.Hearts))
+		if (!IsHeartsBroken && card.Suit.Equals(ClassicSuits.Hearts))
 		{
 			// todo: special event architecture?
 			IsHeartsBroken = true;
@@ -94,7 +96,7 @@ public class HeartsGameState : GameState<PlayingCard>
 		{
 			// did anyone get all the hearts (shoot the moon)?
 			var playersWithHearts = _tricks
-				.SelectMany(t => t.Plays.Where(p => p.Card.Suit.Equals(Suits.Hearts)).Select(p => p.PlayerName))
+				.SelectMany(t => t.Plays.Where(p => p.Card.Suit.Equals(ClassicSuits.Hearts)).Select(p => p.PlayerName))
 				.Distinct();
 
 			// if exactly one player has hearts, they must have all by definition
@@ -113,23 +115,23 @@ public class HeartsGameState : GameState<PlayingCard>
 	{
 		if (_tricks.Count == 0)
 		{
-			if (card.Suit.Equals(Suits.Hearts))
+			if (card.Suit.Equals(ClassicSuits.Hearts))
 			{
-				if (!PlayersByName[playerName].Hand.All(c => c.Suit.Equals(Suits.Hearts)))
+				if (!PlayersByName[playerName].Hand.All(c => c.Suit.Equals(ClassicSuits.Hearts)))
 				{
 					return (false, "Cannot break hearts on the first trick");
 				}
 			}
 
-			if (card.Suit.Equals(Suits.Spades) && card.Rank == NamedRanks.Queen)
+			if (card.Suit.Equals(ClassicSuits.Spades) && card.Rank == ClassicNamedRanks.Queen)
 			{
 				return (false, "Cannot play queen of spades on the first trick");
 			}
 		}
 
-		if (!IsHeartsBroken && card.Suit.Equals(Suits.Hearts))
+		if (!IsHeartsBroken && card.Suit.Equals(ClassicSuits.Hearts))
 		{
-			if (!PlayersByName[playerName].Hand.All(c => c.Suit.Equals(Suits.Hearts)))
+			if (!PlayersByName[playerName].Hand.All(c => c.Suit.Equals(ClassicSuits.Hearts)))
 			{
 				return (false, "Hearts not broken yet");
 			}			
@@ -152,9 +154,9 @@ public class HeartsGameState : GameState<PlayingCard>
 
 		if (CurrentPlayer is null) throw new Exception("must have current player");
 
-		var firstHeart = CurrentPlayer.Hand.FirstOrDefault(c => c.Suit.Equals(Suits.Hearts));
+		var firstHeart = CurrentPlayer.Hand.FirstOrDefault(c => c.Suit.Equals(ClassicSuits.Hearts));
 		var firstOfLeadingSuit = CurrentPlayer.Hand.FirstOrDefault(c => c.Suit.Equals(LeadingSuit));
-		var firstNonHeart = CurrentPlayer.Hand.FirstOrDefault(c => !c.Suit.Equals(Suits.Hearts));
+		var firstNonHeart = CurrentPlayer.Hand.FirstOrDefault(c => !c.Suit.Equals(ClassicSuits.Hearts));
 		var firstOfAny = CurrentPlayer.Hand.First();	
 
 		var card = IsHeartsBroken ?

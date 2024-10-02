@@ -1,13 +1,29 @@
 ﻿namespace CardGame.Abstractions;
 
-public abstract class GameFactory<TState, TCard> where TState : GameState<TCard>
+public abstract class GameFactory<TState, TCard> where TState : GameState<TCard>, new()
 {
 	public abstract string Name { get; }
 	public abstract uint MinPlayers { get; }
 	public abstract uint MaxPlayers { get; }
 	public abstract IEnumerable<TCard> Deck { get; }
 
-	public abstract TState InitializeGame(bool devMode, string[] playerNames);
+	protected abstract TState CreateGameState(
+		bool devMode, 
+		HashSet<Player<TCard>> players, 
+		Dictionary<int, Player<TCard>> byIndex, 
+		Dictionary<string, Player<TCard>> byName,
+		Queue<TCard> drawPile);
+
+	protected abstract ILookup<string, TCard> Deal(Queue<TCard> cards, string[] playerNames);
+
+	public TState Start(bool devMode, string[] playerNames)
+	{
+		var cards = Shuffle();
+		var hands = Deal(cards, playerNames);
+		var (players, byIndex, byName) = BuildPlayers(playerNames, hands);
+
+		return CreateGameState(devMode, players, byIndex, byName, cards);
+	}
 
 	/// <summary>
 	/// returns a copy of the Deck in randomized order

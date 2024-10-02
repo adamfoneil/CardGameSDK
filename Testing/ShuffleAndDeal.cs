@@ -1,5 +1,5 @@
 using CardGame.Abstractions;
-using CardGame.Abstractions.Games.Hearts;
+using Games.Hearts;
 using System.Diagnostics;
 using System.Text.Json;
 
@@ -12,7 +12,7 @@ public class ShuffleAndDeal
     public void HeartsDeal()
     {
         var hearts = new HeartsGameFactory();
-        var game = hearts.InitializeGame(false, [ "Adam", "Andy", "Dad", "Becky" ]);
+        var game = hearts.Start(false, [ "Adam", "Andy", "Dad", "Becky" ]);
 
         foreach (var player in game.Players)
         {
@@ -38,7 +38,7 @@ public class ShuffleAndDeal
     public void HeartsAutoPlay()
     {
 		var hearts = new HeartsGameFactory();
-		var game = hearts.InitializeGame(false, ["Adam", "Andy", "Dad", "Becky"]);
+		var game = hearts.Start(false, ["Adam", "Andy", "Dad", "Becky"]);
 
         while (!game.IsFinished) game.AutoPlay();
 
@@ -52,7 +52,7 @@ public class ShuffleAndDeal
     public void SuitEquality()
     {
         // I had some trouble with suit equality
-        Assert.AreEqual(Suits.Clubs, new PlayingCard(2, Suits.Clubs).Suit);
+        Assert.AreEqual(ClassicSuits.Clubs, new PlayingCard(2, ClassicSuits.Clubs).Suit);
         
         // remember to use the Equals method, not ==
         //Assert.IsTrue(Suits.Clubs == new Suit("Clubs", 1));
