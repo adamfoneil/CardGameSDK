@@ -17,7 +17,7 @@ I'm still a long ways from having something playable in a web UI, but I needed s
 
 # Stuff I Learned
 - When comparing suits, I need to use the `Equals` method instead of `==`. I was a little confused by this. Using `==` resulted in false negatives. I think this is a side effect of overriding the `Equals` method. I considered using `records` instead of `classes` for suits. I might have to revisit.
-- Not sure all of my Hearts rules are right. Trying to progammatically articulate rules I know "intuitively" or from habit was pretty of hard -- for example when trying to simulate [automatic play](https://github.com/adamfoneil/CardGameSDK/blob/master/Hearts/HeartsGameState.cs#L149). When reading Hearts rules online, I found many of them confusing, even though I know the game.
+- Not sure all of my Hearts rules are right. Trying to progammatically articulate rules I know "intuitively" or from habit was pretty of hard -- for example when trying to simulate [automatic play](https://github.com/adamfoneil/CardGameSDK/blob/master/Hearts/HeartsGameState.cs#L146). When reading Hearts rules online, I found many of them confusing, even though I know the game.
 
 # What's Next?
 I envision a Blazor app with rudimentary graphics for playing actual games. But who knows when I will get around to this?
