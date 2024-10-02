@@ -30,11 +30,12 @@ public class FoxInTheForestFactory : GameFactory<FoxInTheForestState, PlayingCar
 		Dictionary<string, Player<PlayingCard>> byName,
 		Queue<PlayingCard> drawPile)
 	{
-		var startPlayer = byIndex[Random.Shared.Next(1, byIndex.Count)];
+		var startPlayer = byIndex[Random.Shared.Next(1, byIndex.Count)];		
 
 		return new() 
 		{
 			IsDevMode = devMode,
+			DecreeCard = drawPile.Dequeue(),
 			DrawPile = drawPile,
 			Players = players,
 			PlayersByIndex = byIndex,

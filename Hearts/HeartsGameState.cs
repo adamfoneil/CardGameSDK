@@ -47,13 +47,8 @@ public class HeartsGameState : GameState<PlayingCard>
 		card.Suit.Equals(ClassicSuits.Spades) && card.Rank == ClassicNamedRanks.Queen ? 13 :
 		0;
 
-	public override void PlayCard(PlayingCard card)
+	protected override void OnPlayCard(PlayingCard card)
 	{
-		ArgumentNullException.ThrowIfNull(CurrentPlayer, nameof(CurrentPlayer));
-
-		var (valid, message) = ValidatePlay(CurrentPlayer.Name, card);
-		if (!valid) throw new Exception(message);
-
 		if (_currentTrick.Count == 0)
 		{
 			LeadingSuit = card.Suit;
@@ -163,7 +158,7 @@ public class HeartsGameState : GameState<PlayingCard>
 			firstHeart ?? firstOfLeadingSuit ?? firstOfAny :
 			firstOfLeadingSuit ?? firstNonHeart ?? firstOfAny;		
 
-		PlayCard(card);
+		OnPlayCard(card);
 	}
 
 	public class Trick

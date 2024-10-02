@@ -24,7 +24,17 @@ public abstract class GameState<TCard>
 
 	public abstract (bool IsValid, string? Message) ValidatePlay(string playerName, TCard card);
 
-	public abstract void PlayCard(TCard card);
+	public void PlayCard(TCard card)
+	{
+		ArgumentNullException.ThrowIfNull(CurrentPlayer, nameof(CurrentPlayer));
+
+		var (valid, message) = ValidatePlay(CurrentPlayer.Name, card);
+		if (!valid) throw new Exception(message);
+
+		OnPlayCard(card);
+	}
+
+	protected abstract void OnPlayCard(TCard card);
 
 	/// <summary>
 	/// for testing purposes, should generate a valid play so that state can be recorded, validated

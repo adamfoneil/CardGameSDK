@@ -6,6 +6,8 @@ public class FoxInTheForestState : GameState<PlayingCard>
 {
 	public override bool IsFinished => throw new NotImplementedException();
 
+	public required PlayingCard DecreeCard { get; init; }
+
 	public override Dictionary<string, int> Score => throw new NotImplementedException();
 
 	public override void AutoPlay()
@@ -13,7 +15,7 @@ public class FoxInTheForestState : GameState<PlayingCard>
 		throw new NotImplementedException();
 	}
 
-	public override void PlayCard(PlayingCard card)
+	protected override void OnPlayCard(PlayingCard card)
 	{
 		throw new NotImplementedException();
 	}
