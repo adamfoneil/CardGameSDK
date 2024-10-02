@@ -5,6 +5,8 @@ public abstract class GameFactory<TState, TCard> where TState : GameState<TCard>
 	public abstract string Name { get; }
 	public abstract uint MinPlayers { get; }
 	public abstract uint MaxPlayers { get; }
+	protected abstract uint CardsPerHand { get; }
+
 	public abstract IEnumerable<TCard> Deck { get; }
 
 	protected abstract TState CreateGameState(
@@ -12,9 +14,7 @@ public abstract class GameFactory<TState, TCard> where TState : GameState<TCard>
 		HashSet<Player<TCard>> players, 
 		Dictionary<int, Player<TCard>> byIndex, 
 		Dictionary<string, Player<TCard>> byName,
-		Queue<TCard> drawPile);
-
-	protected abstract ILookup<string, TCard> Deal(Queue<TCard> cards, string[] playerNames);
+		Queue<TCard> drawPile);	
 
 	public TState Start(bool devMode, string[] playerNames)
 	{
@@ -22,7 +22,7 @@ public abstract class GameFactory<TState, TCard> where TState : GameState<TCard>
 		if (playerNames.Length > MaxPlayers) throw new Exception("too many players");
 
 		var cards = Shuffle();
-		var hands = Deal(cards, playerNames);
+		var hands = Deal(CardsPerHand, cards, playerNames);
 		var (players, byIndex, byName) = BuildPlayers(playerNames, hands);
 
 		return CreateGameState(devMode, players, byIndex, byName, cards);
@@ -69,5 +69,20 @@ public abstract class GameFactory<TState, TCard> where TState : GameState<TCard>
 		HashSet<Player<TCard>> hashSet = [.. result];
 
 		return (hashSet, result.ToDictionary(p => p.Index), result.ToDictionary(p => p.Name));
+	}
+
+	private static ILookup<string, TCard> Deal(uint cardsPerHand, Queue<TCard> cards, string[] playerNames)
+	{
+		List<(string PlayerName, TCard Card)> result = [];
+
+		for (int card = 0; card < cardsPerHand; card++)
+		{
+			foreach (var player in playerNames)
+			{
+				result.Add((player, cards.Dequeue()));
+			}
+		}
+
+		return result.ToLookup(card => card.PlayerName, card => card.Card);
 	}
 }

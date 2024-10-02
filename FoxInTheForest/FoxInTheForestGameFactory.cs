@@ -11,6 +11,8 @@ public class FoxInTheForestFactory : GameFactory<FoxInTheForestState, PlayingCar
 
 	public override uint MaxPlayers => 2;
 
+	protected override uint CardsPerHand => 13;
+
 	public override IEnumerable<PlayingCard> Deck => Suits
 		.SelectMany(suit => Enumerable.Range(1, 10).Select(val => new PlayingCard(val, suit)));
 
@@ -22,17 +24,22 @@ public class FoxInTheForestFactory : GameFactory<FoxInTheForestState, PlayingCar
 	];
 
 	protected override FoxInTheForestState CreateGameState(
-		bool devMode, 
-		HashSet<Player<PlayingCard>> players, 
-		Dictionary<int, Player<PlayingCard>> byIndex, 
-		Dictionary<string, Player<PlayingCard>> byName, 
+		bool devMode,
+		HashSet<Player<PlayingCard>> players,
+		Dictionary<int, Player<PlayingCard>> byIndex,
+		Dictionary<string, Player<PlayingCard>> byName,
 		Queue<PlayingCard> drawPile)
 	{
-		throw new NotImplementedException();
-	}
+		var startPlayer = byIndex[Random.Shared.Next(1, byIndex.Count)];
 
-	protected override ILookup<string, PlayingCard> Deal(Queue<PlayingCard> cards, string[] playerNames)
-	{
-		throw new NotImplementedException();
-	}
+		return new() 
+		{
+			IsDevMode = devMode,
+			DrawPile = drawPile,
+			Players = players,
+			PlayersByIndex = byIndex,
+			PlayersByName = byName,
+			CurrentPlayer = startPlayer
+		};
+	}		
 }

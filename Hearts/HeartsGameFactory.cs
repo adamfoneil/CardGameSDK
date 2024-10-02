@@ -8,7 +8,9 @@ public class HeartsGameFactory : GameFactory<HeartsGameState, PlayingCard>
 
     public override uint MaxPlayers => 4;
 
-    public override IEnumerable<PlayingCard> Deck => PlayingCard.ClassicDeck;
+    protected override uint CardsPerHand => 12;
+
+	public override IEnumerable<PlayingCard> Deck => PlayingCard.ClassicDeck;
 
     public override string Name => "Hearts (4p)";
 
@@ -33,22 +35,5 @@ public class HeartsGameFactory : GameFactory<HeartsGameState, PlayingCard>
         result.PlayCard(new(2, ClassicSuits.Clubs));
 
         return result;
-    }
-
-    protected override ILookup<string, PlayingCard> Deal(Queue<PlayingCard> cards, string[] playerNames)
-    {
-        const int CardsPerHand = 12;
-
-        List<(string PlayerName, PlayingCard Card)> result = [];
-
-        for (int card = 0; card < CardsPerHand; card++)
-        {
-            foreach (var player in playerNames)
-            {
-                result.Add((player, cards.Dequeue()));
-            }
-        }
-
-        return result.ToLookup(card => card.PlayerName, card => card.Card);
     }
 }
