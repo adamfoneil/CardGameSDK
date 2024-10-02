@@ -14,7 +14,7 @@ public class FoxInTheForestFactory : GameFactory<FoxInTheForestState, PlayingCar
 	protected override uint CardsPerHand => 13;
 
 	public override IEnumerable<PlayingCard> Deck => Suits
-		.SelectMany(suit => Enumerable.Range(1, 10).Select(val => new PlayingCard(val, suit)));
+		.SelectMany(suit => Enumerable.Range(1, 11).Select(val => new PlayingCard(val, suit)));
 
 	private static readonly string[] Suits =
 	[

@@ -72,5 +72,16 @@ public class ShuffleAndDeal
 		var game = foxInTheForest.Start(false, ["Adam", "Becky"]);
 
 		PrintCards(game);
+
+		Debug.Print("Decree card:");
+		Debug.Print("- " + game.DecreeCard);
+
+		Debug.Print("Draw Pile:");
+		int index = 0;
+		foreach (var card in game.DrawPile)
+		{
+			index++;
+			Debug.Print("- " + card.ToString() + $" ({index})");
+		}
 	}
 }
