@@ -1,6 +1,8 @@
 using CardGame.Abstractions;
+using Games.FoxInTheForest;
 using Games.Hearts;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 
 namespace Testing;
@@ -12,8 +14,18 @@ public class ShuffleAndDeal
 	public void HeartsDeal()
 	{
 		var hearts = new HeartsGameFactory();
-		var game = hearts.Start(false, [ "Adam", "Andy", "Dad", "Becky" ]);
+		var game = hearts.Start(false, ["Adam", "Andy", "Dad", "Becky"]);
+		
+		PrintCards(game);
 
+		Debug.Print($"Current player: {game.CurrentPlayer?.Name ?? "<unknown>"}");
+		Debug.Print($"Leading suit: {game.LeadingSuit.Name}");
+
+		Assert.IsTrue(!game.DrawPile.Any());
+	}
+
+	private static void PrintCards<TCard>(GameState<TCard> game)
+	{
 		foreach (var player in game.Players)
 		{
 			Debug.Print(player.Name);
@@ -24,11 +36,6 @@ public class ShuffleAndDeal
 				Debug.Print("- " + card.ToString() + $" ({index})");
 			}
 		}
-
-		Debug.Print($"Current player: {game.CurrentPlayer?.Name ?? "<unknown>"}");
-		Debug.Print($"Leading suit: {game.LeadingSuit.Name}");
-
-		Assert.IsTrue(!game.DrawPile.Any());
 	}
 
 	/// <summary>
@@ -56,5 +63,14 @@ public class ShuffleAndDeal
 		
 		// remember to use the Equals method, not ==
 		//Assert.IsTrue(Suits.Clubs == new Suit("Clubs", 1));
+	}
+
+	[TestMethod]
+	public void FoxInTheForestDeal()
+	{
+		var foxInTheForest = new FoxInTheForestFactory();
+		var game = foxInTheForest.Start(false, ["Adam", "Becky"]);
+
+		PrintCards(game);
 	}
 }
