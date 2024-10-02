@@ -5,19 +5,19 @@ That's when I thought -- let's build a small SDK for card games that can be test
 I figured I should try to model a game I already know -- to see what features an SDK should support. I chose Hearts.
 
 I broke it down like this:
-- first I have the notion of a [PlayingCard](https://github.com/adamfoneil/CardGame/blob/master/CardGame.Abstractions/PlayingCard.cs) which has suits, ranks, and let's say a [StandardDeck](https://github.com/adamfoneil/CardGame/blob/master/CardGame.Abstractions/PlayingCard.cs#L43). Fox in the Forest uses its own suits and ranks, so I knew this would need to be flexible. But I also wanted to work with something recognizable, hence the `StandardDeck` and familiar suits (clubs, diamonds, hearts, spades).
+- first I have the notion of a [PlayingCard](https://github.com/adamfoneil/CardGame/blob/master/CardGame.Abstractions/PlayingCard.cs) which has suits, ranks, and let's say a [ClassicDec](https://github.com/adamfoneil/CardGameSDK/blob/master/CardGame.Abstractions/PlayingCard.cs#L22). Fox in the Forest uses its own suits and ranks, so I knew this would need to be flexible. But I also wanted to work with something recognizable, hence the `ClassicDeck` and familiar suits (clubs, diamonds, hearts, spades).
 - then I have the notion of a [GameFactory](https://github.com/adamfoneil/CardGame/blob/master/CardGame.Abstractions/GameFactory.cs) -- something responsible for shuffling cards, launching new games, and enforcing some top level rules (like number of players).
 - entwined with the GameFactory is the idea of a [GameState](https://github.com/adamfoneil/CardGame/blob/master/CardGame.Abstractions/GameState.cs) object. If I were to pause and resume a game later, how could I ensure that I picked up where I left off and that the play history was preserved? All of that would need to be in the `GameState`. This also in turn defines the actual rules of the game.
 
 Hearts components:
-- [HeartsGameFactory](https://github.com/adamfoneil/CardGame/blob/master/CardGame.Abstractions/Games/Hearts/HeartsGameFactory.cs)
-- [HeartsGameState](https://github.com/adamfoneil/CardGame/blob/master/CardGame.Abstractions/Games/Hearts/HeartsGameState.cs)
+- [HeartsGameFactory](https://github.com/adamfoneil/CardGameSDK/blob/master/Hearts/HeartsGameFactory.cs)
+- [HeartsGameState](https://github.com/adamfoneil/CardGameSDK/blob/master/Hearts/HeartsGameState.cs)
 
 I'm still a long ways from having something playable in a web UI, but I needed some feedback on whether what I've done so far is valid -- as far as my implementation of Hearts. So, I have a few superficial [tests](https://github.com/adamfoneil/CardGame/blob/master/Testing/ShuffleAndDeal.cs). These don't make many useful assertions, but at this point I'm just seeing if the very basics work. In order to test a real-ish game, I had to introduce the notion of [AutoPlay](https://github.com/adamfoneil/CardGame/blob/master/CardGame.Abstractions/Games/Hearts/HeartsGameState.cs#L128). Simulated play does not need to be good or strategic, but I needed some way to play a round from end to end to see how the scoring worked, whether hearts would "break" as expected. Since the deals are random however (by design), I get different results every time. So, there are still some difficulties with this.
 
 # Stuff I Learned
 - When comparing suits, I need to use the `Equals` method instead of `==`. I was a little confused by this. Using `==` resulted in false negatives. I think this is a side effect of overriding the `Equals` method. I considered using `records` instead of `classes` for suits. I might have to revisit.
-- Not sure all of my Hearts rules are right. Trying to progammatically articulate rules I know "intuitively" or from habit was pretty of hard -- for example when trying to simulate [automatic play](https://github.com/adamfoneil/CardGameSDK/blob/master/CardGame.Abstractions/Games/Hearts/HeartsGameState.cs#L149). When reading Hearts rules online, I found many of them confusing, even though I know the game.
+- Not sure all of my Hearts rules are right. Trying to progammatically articulate rules I know "intuitively" or from habit was pretty of hard -- for example when trying to simulate [automatic play](https://github.com/adamfoneil/CardGameSDK/blob/master/Hearts/HeartsGameState.cs#L146). When reading Hearts rules online, I found many of them confusing, even though I know the game.
 
 # What's Next?
 I envision a Blazor app with rudimentary graphics for playing actual games. But who knows when I will get around to this?
