@@ -42,4 +42,10 @@ public class ShuffleAndDeal
         var json = JsonSerializer.Serialize(game, new JsonSerializerOptions() { WriteIndented = true });
         Debug.Print(json);
 	}
+
+    [TestMethod]
+    public void SuitEquality()
+    {
+        Assert.AreEqual(Suits.Clubs, new PlayingCard(2, Suits.Clubs).Suit);
+    }
 }

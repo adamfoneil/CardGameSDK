@@ -16,8 +16,8 @@ public class HeartsGameState : GameState<PlayingCard>
 	public List<Trick> Tricks => _tricks;
 
 	private static int PointValue(PlayingCard card) =>
-		card.Suit == Suits.Hearts ? 1 :
-		card.Suit == Suits.Spades && card.Rank == NamedRanks.Queen ? 13 :
+		card.Suit.Equals(Suits.Hearts) ? 1 :
+		card.Suit.Equals(Suits.Spades) && card.Rank == NamedRanks.Queen ? 13 :
 		0;
 
 	public override void PlayCard(PlayingCard card)
@@ -44,7 +44,7 @@ public class HeartsGameState : GameState<PlayingCard>
 		if (_currentTrick.Count == 4)
 		{
 			var winner = _currentTrick
-				.Where(c => c.Card.Suit == LeadingSuit)
+				.Where(c => c.Card.Suit.Equals(LeadingSuit))
 				.MaxBy(p => p.Card.Rank)!.PlayerName;
 
 			_tricks.Add(new()
@@ -128,10 +128,11 @@ public class HeartsGameState : GameState<PlayingCard>
 
 		if (CurrentPlayer is null) throw new Exception("must have current player");
 
-		var card = ((IsHeartsBroken ?
+		var card = IsHeartsBroken ?
 			CurrentPlayer.Hand.First(c => c.Suit == Suits.Hearts) :
-			CurrentPlayer.Hand.FirstOrDefault(c => c.Suit == LeadingSuit,
-			CurrentPlayer.Hand.First())));
+			CurrentPlayer.Hand.FirstOrDefault(c => c.Suit.Equals(LeadingSuit), 
+				CurrentPlayer.Hand.FirstOrDefault(c => !c.Suit.Equals(Suits.Hearts), 
+					CurrentPlayer.Hand.First()));
 
 		PlayCard(card);
 	}
