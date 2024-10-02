@@ -15,6 +15,31 @@ public class HeartsGameState : GameState<PlayingCard>
 
 	public List<Trick> Tricks => _tricks;
 
+	public override Dictionary<string, int> Score
+	{
+		get
+		{
+			var results = _tricks
+				.GroupBy(t => t.Winner)
+				.ToDictionary(grp => grp.Key, grp => grp.Sum(t => t.Points));
+
+			var zeroPointPlayers = Players.Select(p => p.Name).Except(results.Keys);
+
+			foreach (var player in zeroPointPlayers) results.Add(player, 0);
+
+			if (MoonShotPlayer != null)
+			{
+				// add 26 to everyone's score
+				foreach (var kp in results) results[kp.Key] += 26;
+				// but set the moon shooter to 0
+				results[MoonShotPlayer] = 0;
+
+			}
+
+			return results ?? [];
+		}
+	}
+
 	private static int PointValue(PlayingCard card) =>
 		card.Suit.Equals(Suits.Hearts) ? 1 :
 		card.Suit.Equals(Suits.Spades) && card.Rank == NamedRanks.Queen ? 13 :
@@ -98,28 +123,6 @@ public class HeartsGameState : GameState<PlayingCard>
 		}
 
 		return (true, default);
-	}
-
-	public override Dictionary<string, int> GetScore()
-	{
-		var results = _tricks
-			.GroupBy(t => t.Winner)
-			.ToDictionary(grp => grp.Key, grp => grp.Sum(t => t.Points));
-
-		var zeroPointPlayers = Players.Select(p => p.Name).Except(results.Keys);
-
-		foreach (var player in zeroPointPlayers) results.Add(player, 0);
-
-		if (MoonShotPlayer != null)
-		{
-			// add 26 to everyone's score
-			foreach (var kp in results) results[kp.Key] += 26;
-			// but set the moon shooter to 0
-			results[MoonShotPlayer] = 0;
-
-		}
-
-		return results ?? [];
 	}
 
 	public override void AutoPlay()

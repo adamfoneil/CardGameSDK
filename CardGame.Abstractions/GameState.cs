@@ -31,7 +31,7 @@ public abstract class GameState<TCard>
 	/// </summary>
 	public abstract void AutoPlay();
 
-	public abstract Dictionary<string, int> GetScore();
+	public abstract Dictionary<string, int> Score { get; }
 
 	protected Player<TCard> NextPlayer()
 	{
