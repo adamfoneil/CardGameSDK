@@ -60,7 +60,7 @@ public class HeartsGameState : GameState<PlayingCard>
 		_currentTrick.Add(new(CurrentPlayer.Name, card));
 		CurrentPlayer.Hand.Remove(card);
 
-		if (!IsHeartsBroken && card.Suit == Suits.Hearts)
+		if (!IsHeartsBroken && card.Suit.Equals(Suits.Hearts))
 		{
 			// todo: special event architecture?
 			IsHeartsBroken = true;
@@ -76,7 +76,8 @@ public class HeartsGameState : GameState<PlayingCard>
 			{
 				Plays = [.. _currentTrick],
 				Winner = winner,
-				Points = _currentTrick.Sum(play => PointValue(play.Card))
+				Points = _currentTrick.Sum(play => PointValue(play.Card)),
+				HeartsBroken = IsHeartsBroken
 			});
 
 			_currentTrick.Clear();
@@ -110,11 +111,31 @@ public class HeartsGameState : GameState<PlayingCard>
 
 	public override (bool IsValid, string? Message) ValidatePlay(string playerName, PlayingCard card)
 	{
-		if (_tricks.Count == 0 && card.Suit.Equals(Suits.Hearts)) return (false, "Cannot break hearts on the first trick");
+		if (_tricks.Count == 0)
+		{
+			if (card.Suit.Equals(Suits.Hearts))
+			{
+				if (!PlayersByName[playerName].Hand.All(c => c.Suit.Equals(Suits.Hearts)))
+				{
+					return (false, "Cannot break hearts on the first trick");
+				}
+			}
 
-		if (!IsHeartsBroken && card.Suit.Equals(Suits.Hearts)) return (false, "Hearts not broken yet");
+			if (card.Suit.Equals(Suits.Spades) && card.Rank == NamedRanks.Queen)
+			{
+				return (false, "Cannot play queen of spades on the first trick");
+			}
+		}
 
-		if (card.Suit != LeadingSuit)
+		if (!IsHeartsBroken && card.Suit.Equals(Suits.Hearts))
+		{
+			if (!PlayersByName[playerName].Hand.All(c => c.Suit.Equals(Suits.Hearts)))
+			{
+				return (false, "Hearts not broken yet");
+			}			
+		}
+
+		if (!card.Suit.Equals(LeadingSuit))
 		{
 			if (PlayersByName[playerName].Hand.Any(card => card.Suit.Equals(LeadingSuit)))
 			{
@@ -131,11 +152,14 @@ public class HeartsGameState : GameState<PlayingCard>
 
 		if (CurrentPlayer is null) throw new Exception("must have current player");
 
+		var firstHeart = CurrentPlayer.Hand.FirstOrDefault(c => c.Suit.Equals(Suits.Hearts));
+		var firstOfLeadingSuit = CurrentPlayer.Hand.FirstOrDefault(c => c.Suit.Equals(LeadingSuit));
+		var firstNonHeart = CurrentPlayer.Hand.FirstOrDefault(c => !c.Suit.Equals(Suits.Hearts));
+		var firstOfAny = CurrentPlayer.Hand.First();	
+
 		var card = IsHeartsBroken ?
-			CurrentPlayer.Hand.First(c => c.Suit.Equals(Suits.Hearts)) :
-			CurrentPlayer.Hand.FirstOrDefault(c => c.Suit.Equals(LeadingSuit), 
-				CurrentPlayer.Hand.FirstOrDefault(c => !c.Suit.Equals(Suits.Hearts), 
-					CurrentPlayer.Hand.First()));
+			firstHeart ?? firstOfLeadingSuit ?? firstOfAny :
+			firstOfLeadingSuit ?? firstNonHeart ?? firstOfAny;		
 
 		PlayCard(card);
 	}
@@ -145,5 +169,6 @@ public class HeartsGameState : GameState<PlayingCard>
 		public required List<Play> Plays { get; init; } = [];
 		public required string Winner { get; init; }
 		public required int Points { get; init; }
+		public bool HeartsBroken { get; init; }
 	}
 }
