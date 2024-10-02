@@ -54,7 +54,7 @@ public class HeartsGameState : GameState<PlayingCard>
 			LeadingSuit = card.Suit;
 		}
 
-		_currentTrick.Add(new(CurrentPlayer.Name, card));
+		_currentTrick.Add(new(CurrentPlayer!.Name, card));
 		CurrentPlayer.Hand.Remove(card);
 
 		if (!IsHeartsBroken && card.Suit.Equals(ClassicSuits.Hearts))
