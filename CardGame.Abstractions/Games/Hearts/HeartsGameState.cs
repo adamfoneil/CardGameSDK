@@ -129,7 +129,7 @@ public class HeartsGameState : GameState<PlayingCard>
 		if (CurrentPlayer is null) throw new Exception("must have current player");
 
 		var card = IsHeartsBroken ?
-			CurrentPlayer.Hand.First(c => c.Suit == Suits.Hearts) :
+			CurrentPlayer.Hand.First(c => c.Suit.Equals(Suits.Hearts)) :
 			CurrentPlayer.Hand.FirstOrDefault(c => c.Suit.Equals(LeadingSuit), 
 				CurrentPlayer.Hand.FirstOrDefault(c => !c.Suit.Equals(Suits.Hearts), 
 					CurrentPlayer.Hand.First()));
