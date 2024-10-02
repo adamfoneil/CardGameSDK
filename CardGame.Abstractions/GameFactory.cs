@@ -18,6 +18,9 @@ public abstract class GameFactory<TState, TCard> where TState : GameState<TCard>
 
 	public TState Start(bool devMode, string[] playerNames)
 	{
+		if (playerNames.Length < MinPlayers) throw new Exception("not enough players");
+		if (playerNames.Length > MaxPlayers) throw new Exception("too many players");
+
 		var cards = Shuffle();
 		var hands = Deal(cards, playerNames);
 		var (players, byIndex, byName) = BuildPlayers(playerNames, hands);
@@ -28,7 +31,7 @@ public abstract class GameFactory<TState, TCard> where TState : GameState<TCard>
 	/// <summary>
 	/// returns a copy of the Deck in randomized order
 	/// </summary>
-	protected Queue<TCard> Shuffle()
+	private Queue<TCard> Shuffle()
 	{
 		var shuffled = Deck
 			.Select(card => new { Card = card, RandomValue = Random.Shared.Next(1000) })
@@ -43,7 +46,7 @@ public abstract class GameFactory<TState, TCard> where TState : GameState<TCard>
 		return result;
 	}
 
-	protected static (
+	private static (
 		HashSet<Player<TCard>> HashSet,
 		Dictionary<int, Player<TCard>> ByIndex,
 		Dictionary<string, Player<TCard>> ByName

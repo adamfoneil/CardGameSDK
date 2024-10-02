@@ -18,9 +18,7 @@ public class HeartsGameFactory : GameFactory<HeartsGameState, PlayingCard>
         Dictionary<int, Player<PlayingCard>> byIndex, 
         Dictionary<string, Player<PlayingCard>> byName,
         Queue<PlayingCard> drawPile)
-    {
-        if (players.Count != 4) throw new Exception("Must have 4 players");
-
+    {       
 		var startPlayer = players.Single(p => p.Hand.Contains(new PlayingCard(2, ClassicSuits.Clubs)));
 
 		HeartsGameState result = new()

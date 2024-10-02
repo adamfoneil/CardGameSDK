@@ -21,7 +21,12 @@ public class FoxInTheForestFactory : GameFactory<FoxInTheForestState, PlayingCar
 		"Bells"
 	];
 
-	protected override FoxInTheForestState CreateGameState(bool devMode, HashSet<Player<PlayingCard>> players, Dictionary<int, Player<PlayingCard>> byIndex, Dictionary<string, Player<PlayingCard>> byName, Queue<PlayingCard> drawPile)
+	protected override FoxInTheForestState CreateGameState(
+		bool devMode, 
+		HashSet<Player<PlayingCard>> players, 
+		Dictionary<int, Player<PlayingCard>> byIndex, 
+		Dictionary<string, Player<PlayingCard>> byName, 
+		Queue<PlayingCard> drawPile)
 	{
 		throw new NotImplementedException();
 	}
