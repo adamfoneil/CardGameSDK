@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hearts", "Hearts\Hearts.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoxInTheForest", "FoxInTheForest\FoxInTheForest.csproj", "{4774F918-2B82-48C3-9C12-B88BB53058DC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazor", "Blazor\Blazor.csproj", "{7FB41F99-F712-43CB-95C3-017244674A4D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppService", "AppService\AppService.csproj", "{571B0E90-0973-4960-B045-851CC4204494}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +37,14 @@ Global
 		{4774F918-2B82-48C3-9C12-B88BB53058DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4774F918-2B82-48C3-9C12-B88BB53058DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4774F918-2B82-48C3-9C12-B88BB53058DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7FB41F99-F712-43CB-95C3-017244674A4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7FB41F99-F712-43CB-95C3-017244674A4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7FB41F99-F712-43CB-95C3-017244674A4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7FB41F99-F712-43CB-95C3-017244674A4D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{571B0E90-0973-4960-B045-851CC4204494}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{571B0E90-0973-4960-B045-851CC4204494}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{571B0E90-0973-4960-B045-851CC4204494}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{571B0E90-0973-4960-B045-851CC4204494}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
