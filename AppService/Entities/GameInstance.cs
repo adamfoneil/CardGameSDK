@@ -1,4 +1,6 @@
 ﻿using AppService.Entities.Conventions;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AppService.Entities;
 
@@ -9,5 +11,12 @@ public class GameInstance : BaseTable
 	public DateTime? FinishedAtUtc { get; set; }
 	public bool IsFinished => FinishedAtUtc.HasValue;
 
-	public ICollection<Player> Players { get; set; } = [];
+	public ICollection<GameInstancePlayer> Players { get; set; } = [];
+}
+
+public class GameInstanceConfiguration : IEntityTypeConfiguration<GameInstance>
+{
+	public void Configure(EntityTypeBuilder<GameInstance> builder)
+	{
+	}
 }

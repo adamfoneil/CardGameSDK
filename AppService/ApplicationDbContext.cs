@@ -14,6 +14,14 @@ public enum SupportedGames
 
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
 {
+	public DbSet<GameInstance> GameInstances { get; set; }
+	public DbSet<GameInstancePlayer> Players { get; set; }
+
+	protected override void OnModelCreating(ModelBuilder builder)
+	{
+		base.OnModelCreating(builder);
+		builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
+	}
 }
 
 public class AppDbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>
