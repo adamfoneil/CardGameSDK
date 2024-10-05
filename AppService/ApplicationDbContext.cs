@@ -15,7 +15,8 @@ public enum SupportedGames
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
 {
 	public DbSet<GameInstance> GameInstances { get; set; }
-	public DbSet<GameInstancePlayer> Players { get; set; }
+	public DbSet<GameInstancePlayer> ActivePlayers { get; set; }
+	public DbSet<ReadyPlayer> ReadyPlayers { get; set; }
 
 	protected override void OnModelCreating(ModelBuilder builder)
 	{
@@ -28,7 +29,7 @@ public class AppDbContextFactory : IDesignTimeDbContextFactory<ApplicationDbCont
 {
 	private static IConfiguration Config => new ConfigurationBuilder()
 		.AddJsonFile("appsettings.json", optional: false)
-		.AddJsonFile("appsettings.Development.json")
+		.AddJsonFile("appsettings.Development.json", optional: false)
 		.Build();
 
 	public ApplicationDbContext CreateDbContext(string[] args)

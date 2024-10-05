@@ -1,3 +1,8 @@
+:root {
+    --nav-active-bg: #502572 !important;
+    --nav-active-text: #fff !important;
+}
+
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
@@ -48,4 +53,17 @@ h1:focus {
 
 .darker-border-checkbox.form-check-input {
     border-color: #929292;
+}
+
+.nav-item a:visited, .nav-item a:link {
+    color: white;
+}
+
+.nav-item a.active {    
+    color: white;
+}
+
+.nav-item .nav-link:hover {    
+    background-color: #808080a7;
+    color: white;
 }

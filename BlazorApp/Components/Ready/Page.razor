@@ -1,14 +1,25 @@
-﻿@page "/Ready/{game}"
+﻿@page "/Ready"
 @attribute [Authorize]
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 
 <h3>Ready</h3>
 <p>Use this to indicate your readiness to play a game.</p>
 
+<RadzenDropDown @bind-Value="Game" Data="Dropdown.ForEnum<SupportedGames>()" ValueProperty="Value" TextProperty="Text" Change="ListPlayers" />
 
 
-@code {	
-
+@code {
 	[Parameter]
-	public SupportedGames Game { get; set; }
+	public SupportedGames? Game { get; set; }
+
+	private async Task ListPlayers()
+	{
+		using var db = DbFactory.CreateDbContext();
+
+		var players = await db.ReadyPlayers
+			.Include(rp => rp.User)
+			.Where(p => p.Game == Game)
+			.OrderBy(p => p.User!.UserName)
+			.ToListAsync();
+	}
 }
