@@ -1,9 +1,14 @@
-﻿@page "/Ready"
+﻿@page "/Ready/{game}"
 @attribute [Authorize]
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 
 <h3>Ready</h3>
+<p>Use this to indicate your readiness to play a game.</p>
 
-@code {
 
+
+@code {	
+
+	[Parameter]
+	public SupportedGames Game { get; set; }
 }
