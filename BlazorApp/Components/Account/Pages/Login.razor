@@ -13,15 +13,13 @@
 
 <PageTitle>Log in</PageTitle>
 
-<h1>Log in</h1>
-<div class="row">
+<h1 class="text-center">Log in</h1>
+<div class="d-flex justify-content-center">
     <div class="col-md-4">
         <section>
             <StatusMessage Message="@errorMessage" />
             <EditForm Model="Input" method="post" OnValidSubmit="LoginUser" FormName="login">
-                <DataAnnotationsValidator />
-                <h2>Use a local account to log in.</h2>
-                <hr />
+                <DataAnnotationsValidator />                               
                 <ValidationSummary class="text-danger" role="alert" />
                 <div class="form-floating mb-3">
                     <InputText @bind-Value="Input.UserNameOrEmail" class="form-control" autocomplete="username" aria-required="true" placeholder="user name or email" />
