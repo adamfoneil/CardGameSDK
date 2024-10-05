@@ -10,6 +10,7 @@ public class ApplicationUser : IdentityUser
 	public int UserId { get; set; }
 
 	public ICollection<GameInstancePlayer> GameInstances { get; set; } = [];
+	public ICollection<ReadyPlayer> ReadyPlayers { get; set; } = [];
 }
 
 public class ApplicationUserConfiguration : IEntityTypeConfiguration<ApplicationUser>
