@@ -1,0 +1,17 @@
+﻿@inject CurrentUser CurrentUser
+
+<CascadingValue Value="_currentUser">
+	@ChildContent
+</CascadingValue>
+
+@code {
+	private ApplicationUser? _currentUser;
+
+	[Parameter]
+	public RenderFragment? ChildContent { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		_currentUser = await CurrentUser.GetCurrentUserAsync();
+	}
+}

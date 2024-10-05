@@ -1,5 +1,6 @@
 using AppService;
 using AppService.Entities;
+using BlazorApp;
 using BlazorApp.Components;
 using BlazorApp.Components.Account;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -18,6 +19,7 @@ builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 builder.Services.AddRadzenComponents();
+builder.Services.AddScoped<CurrentUser>();
 
 builder.Services.AddAuthentication(options =>
 	{

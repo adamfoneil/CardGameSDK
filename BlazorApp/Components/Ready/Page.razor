@@ -7,8 +7,37 @@
 
 <RadzenDropDown @bind-Value="Game" Data="Dropdown.ForEnum<SupportedGames>()" ValueProperty="Value" TextProperty="Text" Change="ListPlayers" />
 
+<div class="mt-3">
+@if (_players.Any())
+{
+	<ul>
+		@foreach (var p in _players)
+		{
+			<li>@p.User!.UserName</li>
+		}
+	</ul>
+}
+else
+{
+	if (Game != null)
+	{
+		<p>No one is ready to play this game.</p>
+	}
+	else
+	{
+		<p>Please select a game.</p>	
+	}
+}
+</div>
+
+<RadzenButton Text="I'm Ready" Click="AddMyself" Disabled="Game is null" />
 
 @code {
+	private ReadyPlayer[] _players = [];	
+
+	[CascadingParameter]
+	private ApplicationUser? CurrentUser { get; set; }
+
 	[Parameter]
 	public SupportedGames? Game { get; set; }
 
@@ -16,10 +45,32 @@
 	{
 		using var db = DbFactory.CreateDbContext();
 
-		var players = await db.ReadyPlayers
+		_players = await db.ReadyPlayers
 			.Include(rp => rp.User)
 			.Where(p => p.Game == Game)
 			.OrderBy(p => p.User!.UserName)
-			.ToListAsync();
+			.ToArrayAsync();
+	}
+
+	private async Task AddMyself()
+	{
+		try
+		{
+			using var db = DbFactory.CreateDbContext();
+
+			var player = new ReadyPlayer
+				{
+					Game = Game!.Value,
+					UserId = CurrentUser!.UserId
+				};
+
+			db.ReadyPlayers.Add(player);
+			await db.SaveChangesAsync();
+			await ListPlayers();
+		}
+		catch (Exception exc)
+		{
+			await Dialogs.Alert(exc.Message, "Error");
+		}
 	}
 }
