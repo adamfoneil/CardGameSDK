@@ -7,10 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="..\Blazor\appsettings.Development.json" Link="appsettings.Development.json">
+    <Content Include="..\BlazorApp\appsettings.Development.json" Link="appsettings.Development.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\Blazor\appsettings.json" Link="appsettings.json">
+    <Content Include="..\BlazorApp\appsettings.json" Link="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

@@ -21,4 +21,8 @@
     <ProjectReference Include="..\Hearts\Hearts.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Components\Play\" />
+  </ItemGroup>
+
 </Project>

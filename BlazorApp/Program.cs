@@ -1,7 +1,7 @@
 using AppService;
 using AppService.Entities;
-using Blazor.Components;
-using Blazor.Components.Account;
+using BlazorApp.Components;
+using BlazorApp.Components.Account;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

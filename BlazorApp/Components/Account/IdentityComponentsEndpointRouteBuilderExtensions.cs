@@ -1,6 +1,6 @@
 using AppService.Entities;
-using Blazor.Components.Account.Pages;
-using Blazor.Components.Account.Pages.Manage;
+using BlazorApp.Components.Account.Pages;
+using BlazorApp.Components.Account.Pages.Manage;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
