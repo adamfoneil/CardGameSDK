@@ -23,4 +23,8 @@
     <ProjectReference Include="..\Hearts\Hearts.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\img\Suits\" />
+  </ItemGroup>
+
 </Project>

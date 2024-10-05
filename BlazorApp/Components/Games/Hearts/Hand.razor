@@ -1,5 +1,9 @@
-﻿
-<h3>Hand</h3>
+﻿<div class="d-flex align-items-center">
+	@foreach (var card in Cards)
+	{
+		<Card PlayingCard="card" />
+	}
+</div>
 
 @code {
 	[Parameter]

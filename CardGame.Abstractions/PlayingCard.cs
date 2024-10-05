@@ -14,7 +14,8 @@ public class PlayingCard(int rank, Suit suit)
 	public int Rank { get; init; } = rank;
 	public string? Name { get; init; }
 
-	public override string ToString() => $"{Name ?? Rank.ToString()} {Suit.Name}";
+	public string DisplayRank => Name ?? Rank.ToString();
+	public override string ToString() => $"{DisplayRank} {Suit.Name}";
 
 	public override bool Equals(object? obj) => obj is PlayingCard c && Suit.Equals(c.Suit) && Rank == c.Rank;
 	public override int GetHashCode() => HashCode.Combine(Suit, Rank);
