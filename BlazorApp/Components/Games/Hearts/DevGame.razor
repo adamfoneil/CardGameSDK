@@ -9,15 +9,31 @@
 
 @if (_gameState != null)
 {
-	foreach (var player in _gameState.Players)
-	{
-		<hr />
-		<h4 style="@CurrentPlayerStyle(player.Name)" class="p-2 rounded-2">@player.Name</h4>
-		<div class="d-flex justify-content-between">
-			<Hand Cards="player.Hand" GameState="_gameState" CardPlayed="OnCardPlayed"/>
-			<Card PlayingCard="_gameState.GetCurrentCard(player.Name)" />
-		</div>		
-	}
+	<div class="grid">
+		<div class="pe-3">
+			@foreach (var player in _gameState.Players)
+			{
+				<hr />
+				<h4 style="@CurrentPlayerStyle(player.Name)" class="p-2 rounded-2">@player.Name</h4>
+				<div class="d-flex justify-content-between">
+					<Hand Cards="player.Hand" GameState="_gameState" CardPlayed="OnCardPlayed" />
+					<Card PlayingCard="_gameState.GetCurrentCard(player.Name)" />
+				</div>
+			}
+		</div>
+		<div>
+			<div>hearts broken: @_gameState.IsHeartsBroken</div>
+			<ul>
+				@foreach (var trick in _gameState.Tricks)
+				{
+					<li>
+						<div>@trick.Winner - @trick.WinningCard.ToString()</div>
+					</li>
+				}
+			</ul>			
+		</div>
+	</div>
+	
 }
 
 @code {
