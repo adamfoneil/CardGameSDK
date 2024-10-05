@@ -130,10 +130,13 @@ public class HeartsGameState : GameState<PlayingCard>
 
 		if (!IsHeartsBroken && card.Suit.Equals(ClassicSuits.Hearts))
 		{
-			if (!PlayersByName[playerName].Hand.All(c => c.Suit.Equals(ClassicSuits.Hearts)))
+			// if you're void in leading suit, you can play hearts
+			if (!PlayersByName[playerName].Hand.Any(c => c.Suit.Equals(LeadingSuit)))
 			{
-				return (false, "Hearts not broken yet");
-			}			
+				return (true, default);
+			}
+
+			return (false, "Hearts not broken yet");
 		}
 
 		if (!card.Suit.Equals(LeadingSuit))
@@ -171,5 +174,8 @@ public class HeartsGameState : GameState<PlayingCard>
 		public required string Winner { get; init; }
 		public required int Points { get; init; }
 		public bool HeartsBroken { get; init; }
+
+		public Dictionary<string, PlayingCard> PlaysByName => Plays.ToDictionary(p => p.PlayerName, p => p.Card);
+		public PlayingCard WinningCard => PlaysByName.TryGetValue(Winner, out var card) ? card : throw new Exception("no winning card");
 	}
 }
