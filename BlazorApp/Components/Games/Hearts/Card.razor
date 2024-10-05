@@ -1,14 +1,19 @@
-﻿<div class="py-4 px-2 border rounded-1 d-flex align-items-center me-2">
+﻿@if (PlayingCard is null) return;
+
+<div class="py-4 px-2 border rounded-1 d-flex align-items-center me-2" @onclick="async (args) => await OnClick.InvokeAsync(PlayingCard)">
 	<h2 class="my-0 me-1" style="color:@Color">@DisplayRank</h2>
 	<div><img src="@SuitImage" style="width:40px" /></div>
 </div>
 
 @code {
 	[Parameter, EditorRequired]
-	public PlayingCard PlayingCard { get; set; } = default!;
+	public PlayingCard? PlayingCard { get; set; }
 
-	private string DisplayRank => PlayingCard.DisplayRank.ToString().Substring(0, 1);
-	private string Display => DisplayRank + PlayingCard.Suit.Name.Substring(0, 1);
+	[Parameter]
+	public EventCallback<PlayingCard> OnClick { get; set; }
+
+	private string DisplayRank => PlayingCard?.DisplayRank.ToString().Substring(0, 1) ?? string.Empty;
+	private string Display => DisplayRank + PlayingCard?.Suit.Name.Substring(0, 1);
 
 	private string SuitImage => $"img/Suits/" + (
 		PlayingCard.Suit.Equals(ClassicSuits.Spades) ? "spades.svg" :

@@ -17,6 +17,10 @@ public class HeartsGameState : GameState<PlayingCard>
 
 	public List<Trick> Tricks => _tricks;
 
+	public Dictionary<string, PlayingCard> CurrentPlaysByPlayer => _currentTrick.ToDictionary(p => p.PlayerName, p => p.Card);
+
+	public PlayingCard? GetCurrentCard(string playerName) => CurrentPlaysByPlayer.TryGetValue(playerName, out var card) ? card : null;
+
 	public override Dictionary<string, int> Score
 	{
 		get

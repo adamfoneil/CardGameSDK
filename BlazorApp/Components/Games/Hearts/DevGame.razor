@@ -12,8 +12,11 @@
 	foreach (var player in _gameState.Players)
 	{
 		<hr />
-		<h4>@player.Name</h4>
-		<Hand Cards="player.Hand" />
+		<h4 style="@CurrentPlayerStyle(player.Name)" class="p-2 rounded-2">@player.Name</h4>
+		<div class="d-flex justify-content-between">
+			<Hand Cards="player.Hand" GameState="_gameState" CardPlayed="OnCardPlayed"/>
+			<Card PlayingCard="_gameState.GetCurrentCard(player.Name)" />
+		</div>		
 	}
 }
 
@@ -25,5 +28,15 @@
 	private void NewGame()
 	{
 		_gameState = HeartsGame.Start(true, _playerNames);		
+	}
+
+	private string CurrentPlayerStyle(string playerName) => 
+		_gameState?.CurrentPlayer?.Name.Equals(playerName, StringComparison.OrdinalIgnoreCase) ?? false ? 
+			"background-color: lightgreen" : 
+			"auto";
+
+	private void OnCardPlayed(PlayingCard card)
+	{
+		StateHasChanged();
 	}
 }

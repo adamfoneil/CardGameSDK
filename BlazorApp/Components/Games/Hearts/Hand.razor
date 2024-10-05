@@ -1,11 +1,35 @@
-﻿<div class="d-flex align-items-center">
-	@foreach (var card in Cards)
+﻿@using global::Games.Hearts
+
+<div class="d-flex align-items-center">
+	@foreach (var suit in Cards.GroupBy(c => c.Suit))
 	{
-		<Card PlayingCard="card" />
+		foreach (var card in suit.OrderBy(c => c.Rank))
+		{
+			<Card PlayingCard="card" OnClick="OnCardPlayed" />
+		}		
 	}
 </div>
 
 @code {
 	[Parameter]
 	public IEnumerable<PlayingCard> Cards { get; set; } = [];
+
+	[Parameter, EditorRequired]
+	public HeartsGameState GameState { get; set; } = default!;
+
+	[Parameter, EditorRequired]
+	public EventCallback<PlayingCard> CardPlayed { get; set; }
+
+	private async Task OnCardPlayed(PlayingCard card)
+	{
+		try
+		{
+			GameState.PlayCard(card);
+			await CardPlayed.InvokeAsync(card);
+		}
+		catch (Exception exc)
+		{
+			await Dialogs.Alert(exc.Message);
+		}
+	}
 }
