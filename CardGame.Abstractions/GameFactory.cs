@@ -10,11 +10,11 @@ public abstract class GameFactory<TState, TCard> where TState : GameState<TCard>
 	public abstract IEnumerable<TCard> Deck { get; }
 
 	protected abstract TState CreateGameState(
-		bool devMode, 
-		HashSet<Player<TCard>> players, 
-		Dictionary<int, Player<TCard>> byIndex, 
+		bool devMode,
+		HashSet<Player<TCard>> players,
+		Dictionary<int, Player<TCard>> byIndex,
 		Dictionary<string, Player<TCard>> byName,
-		Queue<TCard> drawPile);	
+		Queue<TCard> drawPile);
 
 	public TState Start(bool devMode, string[] playerNames)
 	{

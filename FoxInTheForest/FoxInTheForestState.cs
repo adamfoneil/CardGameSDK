@@ -14,7 +14,7 @@ public class FoxInTheForestState : GameState<PlayingCard>
 
 	private readonly List<Play> _currentTrick = [];
 	private readonly List<Trick> _tricks = [];
-	
+
 
 	public List<Trick> Tricks => _tricks;
 
@@ -73,6 +73,6 @@ public class FoxInTheForestState : GameState<PlayingCard>
 	public class Trick
 	{
 		public required List<Play> Plays { get; init; } = [];
-		public required string Winner { get; init; }				
+		public required string Winner { get; init; }
 	}
 }

@@ -2,7 +2,6 @@ using CardGame.Abstractions;
 using Games.FoxInTheForest;
 using Games.Hearts;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
 using System.Text.Json;
 
 namespace Testing;
@@ -15,7 +14,7 @@ public class ShuffleAndDeal
 	{
 		var hearts = new HeartsGameFactory();
 		var game = hearts.Start(false, ["Adam", "Andy", "Dad", "Becky"]);
-		
+
 		PrintCards(game);
 
 		Debug.Print($"Current player: {game.CurrentPlayer?.Name ?? "<unknown>"}");
@@ -49,7 +48,7 @@ public class ShuffleAndDeal
 
 		while (!game.IsFinished) game.AutoPlay();
 
-		var json = JsonSerializer.Serialize(game, new JsonSerializerOptions() { WriteIndented = true });        
+		var json = JsonSerializer.Serialize(game, new JsonSerializerOptions() { WriteIndented = true });
 		Debug.Print(json);
 
 		// for now, I'm just manually inspecting the json output
@@ -60,7 +59,7 @@ public class ShuffleAndDeal
 	{
 		// I had some trouble with suit equality
 		Assert.AreEqual(ClassicSuits.Clubs, new PlayingCard(2, ClassicSuits.Clubs).Suit);
-		
+
 		// remember to use the Equals method, not ==
 		//Assert.IsTrue(Suits.Clubs == new Suit("Clubs", 1));
 	}

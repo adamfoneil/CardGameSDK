@@ -15,7 +15,7 @@ public class ApplicationUser : IdentityUser
 public class ApplicationUserConfiguration : IEntityTypeConfiguration<ApplicationUser>
 {
 	public void Configure(EntityTypeBuilder<ApplicationUser> builder)
-	{		
+	{
 		builder.Property(p => p.UserId).ValueGeneratedOnAdd();
 		builder.HasAlternateKey(p => p.UserId);
 	}

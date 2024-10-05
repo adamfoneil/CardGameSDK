@@ -3,7 +3,7 @@
 namespace CardGame.Abstractions;
 
 public abstract class GameState<TCard>
-{	
+{
 	public HashSet<Player<TCard>> Players { get; init; } = [];
 	[JsonIgnore]
 	public Dictionary<int, Player<TCard>> PlayersByIndex { get; set; } = [];

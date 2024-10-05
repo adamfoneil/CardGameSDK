@@ -16,7 +16,7 @@ public class GameInstancePlayer : BaseTable
 public class PlayerConfiguration : IEntityTypeConfiguration<GameInstancePlayer>
 {
 	public void Configure(EntityTypeBuilder<GameInstancePlayer> builder)
-	{		
+	{
 		builder.HasAlternateKey(nameof(GameInstancePlayer.GameInstanceId), nameof(GameInstancePlayer.UserId));
 
 		builder
