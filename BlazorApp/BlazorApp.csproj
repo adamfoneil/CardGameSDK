@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Hashids.net" Version="1.7.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.8" />
@@ -20,10 +21,6 @@
     <ProjectReference Include="..\CardGame.Abstractions\CardGame.Abstractions.csproj" />
     <ProjectReference Include="..\FoxInTheForest\FoxInTheForest.csproj" />
     <ProjectReference Include="..\Hearts\Hearts.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Components\Play\" />
   </ItemGroup>
 
 </Project>

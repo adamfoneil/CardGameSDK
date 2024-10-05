@@ -3,9 +3,12 @@ using AppService.Entities;
 using BlazorApp;
 using BlazorApp.Components;
 using BlazorApp.Components.Account;
+using Games.Hearts;
+using HashidsNet;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Radzen;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,20 +23,21 @@ builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 builder.Services.AddRadzenComponents();
 builder.Services.AddScoped<CurrentUser>();
-
-builder.Services.AddAuthentication(options =>
-	{
-		options.DefaultScheme = IdentityConstants.ApplicationScheme;
-		options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-	})
-	.AddIdentityCookies();
+builder.Services.Configure<HashIdOptions>(builder.Configuration.GetSection("HashIds"));
+builder.Services.AddSingleton<IHashids>(sp =>
+{
+	var options = sp.GetRequiredService<IOptions<HashIdOptions>>().Value;
+    return new Hashids(options.Salt, minHashLength: options.MinLength);
+});
+builder.Services.AddSingleton<HeartsGameFactory>();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContextFactory<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
 	.AddEntityFrameworkStores<ApplicationDbContext>()
+	.AddRoleManager<RoleManager<IdentityRole>>()
 	.AddSignInManager()
 	.AddDefaultTokenProviders();
 

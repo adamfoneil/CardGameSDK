@@ -1,0 +1,18 @@
+﻿@page "/Hearts/{key}"
+@attribute [Authorize]
+@inject IHashids Hashids
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+
+<h3>Page</h3>
+
+@code {
+	[Parameter]
+	public string Key { get; set; } = default!;
+
+	private int _gameId;
+
+	protected override void OnInitialized()
+	{
+		_gameId = Hashids.DecodeSingle(Key);
+	}
+}

@@ -14,6 +14,12 @@
     <nav class="flex-column">
         <IconNavLink Href="/" Icon="home" Text="Home" />       
 
+        <AuthorizeView Roles="Developers">
+            <Authorized>
+                <IconNavLink Href="/Hearts/DevGame" Text="Hearts - DevMode" Icon="construction" />
+            </Authorized>
+        </AuthorizeView>
+
         <AuthorizeView>
             <Authorized>
                 <IconNavLink Href="/Ready" Text="Ready" Icon="not_started" />

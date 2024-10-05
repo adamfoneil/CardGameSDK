@@ -1,0 +1,29 @@
+﻿@attribute [Authorize(Roles = "Developers")]
+@page "/Hearts/DevGame"
+@using global::Games.Hearts
+@inject HeartsGameFactory HeartsGame
+
+<h3>Hearts - DevMode</h3>
+
+<RadzenButton Text="New Game" Click="NewGame" />
+
+@if (_gameState != null)
+{
+	foreach (var player in _gameState.Players)
+	{
+		<hr />
+		<h4>@player.Name</h4>
+		<Hand Cards="player.Hand" />
+	}
+}
+
+@code {
+	private static string[] _playerNames = ["Alice", "Bob", "Charlie", "David"];
+
+	private HeartsGameState? _gameState;
+
+	private void NewGame()
+	{
+		_gameState = HeartsGame.Start(true, _playerNames);		
+	}
+}
