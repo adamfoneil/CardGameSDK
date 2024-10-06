@@ -1,6 +1,11 @@
 ﻿@page "/Ready"
+@using System.Text.Json
+@using global::Games.Hearts
+@using global::Games.FoxInTheForest
 @attribute [Authorize]
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject IServiceProvider Services
+@inject NavigationManager Nav
 
 <h3>Ready</h3>
 <p>Use this to indicate your readiness to play a game.</p>
@@ -16,6 +21,15 @@
 			<li>@p.User!.UserName</li>
 		}
 	</ul>
+
+	<RadzenButton Text="Start" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Click="StartGame" Disabled="!_allowStart" />
+
+	<AuthorizeView Roles="Developers">
+		<Authorized>
+			<RadzenCheckBox @bind-Value="_devMode" Text="Dev mode" Name="chkDevMode" />
+			<RadzenLabel Text="Dev mode" Component="chkDevMode" />
+		</Authorized>
+	</AuthorizeView>
 }
 else
 {
@@ -34,6 +48,8 @@ else
 
 @code {
 	private ReadyPlayer[] _players = [];	
+	private bool _allowStart = false;
+	private bool _devMode = false;
 
 	[CascadingParameter]
 	private ApplicationUser? CurrentUser { get; set; }
@@ -50,6 +66,9 @@ else
 			.Where(p => p.Game == Game)
 			.OrderBy(p => p.User!.UserName)
 			.ToArrayAsync();
+
+		var factory = GetGameDispatcher();
+		_allowStart = _players.Length >= factory.MinPlayers && _players.Length <= factory.MaxPlayers;
 	}
 
 	private async Task AddMyself()
@@ -59,10 +78,10 @@ else
 			using var db = DbFactory.CreateDbContext();
 
 			var player = new ReadyPlayer
-				{
-					Game = Game!.Value,
-					UserId = CurrentUser!.UserId
-				};
+			{
+				Game = Game!.Value,
+				UserId = CurrentUser!.UserId
+			};
 
 			db.ReadyPlayers.Add(player);
 			await db.SaveChangesAsync();
@@ -73,4 +92,31 @@ else
 			await Dialogs.Alert(exc.Message, "Error");
 		}
 	}
+
+	private async Task StartGame()
+	{
+		var gameFactory = GetGameDispatcher();
+
+		var state = gameFactory.CreateStateObject(_devMode, _players.Select(p => p.User!.UserName!).ToArray());
+		var json = JsonSerializer.Serialize(state);
+
+		var gameInstance = new GameInstance()
+		{
+			Game = Game!.Value,
+			State = json
+		};
+
+		using var db = DbFactory.CreateDbContext();
+		db.GameInstances.Add(gameInstance);
+		await db.SaveChangesAsync();
+	}
+
+	private IGameDispatcher GetGameDispatcher() =>
+		Game switch
+		{
+			SupportedGames.FoxInTheForest => Services.GetRequiredService<FoxInTheForestGameFactory>(),
+			SupportedGames.Hearts => Services.GetRequiredService<HeartsGameFactory>(),
+			_ => throw new Exception("unknown game")
+		};
+	
 }

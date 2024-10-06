@@ -3,6 +3,7 @@ using AppService.Entities;
 using BlazorApp;
 using BlazorApp.Components;
 using BlazorApp.Components.Account;
+using Games.FoxInTheForest;
 using Games.Hearts;
 using HashidsNet;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -30,6 +31,7 @@ builder.Services.AddSingleton<IHashids>(sp =>
     return new Hashids(options.Salt, minHashLength: options.MinLength);
 });
 builder.Services.AddSingleton<HeartsGameFactory>();
+builder.Services.AddSingleton<FoxInTheForestGameFactory>();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContextFactory<ApplicationDbContext>(options => options.UseSqlServer(connectionString));

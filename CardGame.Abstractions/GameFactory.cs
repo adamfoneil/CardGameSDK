@@ -1,6 +1,6 @@
 ﻿namespace CardGame.Abstractions;
 
-public abstract class GameFactory<TState, TCard> where TState : GameState<TCard>
+public abstract class GameFactory<TState, TCard> : IGameDispatcher where TState : notnull
 {
 	public abstract string Name { get; }
 	public abstract uint MinPlayers { get; }
@@ -85,4 +85,9 @@ public abstract class GameFactory<TState, TCard> where TState : GameState<TCard>
 
 		return result.ToLookup(card => card.PlayerName, card => card.Card);
 	}
+
+	/// <summary>
+	/// this is used with dispatch/launcher pages that are not type-specific
+	/// </summary>
+	public object CreateStateObject(bool devMode, string[] playerNames) => Start(devMode, playerNames);
 }

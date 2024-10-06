@@ -1,9 +1,8 @@
 ﻿using CardGame.Abstractions;
-using FoxInTheForest;
 
 namespace Games.FoxInTheForest;
 
-public class FoxInTheForestFactory : GameFactory<FoxInTheForestState, PlayingCard>
+public class FoxInTheForestGameFactory : GameFactory<FoxInTheForestState, PlayingCard>
 {
 	public override string Name => "Fox in the Forest";
 

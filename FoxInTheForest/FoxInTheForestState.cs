@@ -1,6 +1,6 @@
 ﻿using CardGame.Abstractions;
 
-namespace FoxInTheForest;
+namespace Games.FoxInTheForest;
 
 public class FoxInTheForestState : GameState<PlayingCard>
 {
