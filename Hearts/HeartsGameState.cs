@@ -2,6 +2,14 @@
 
 namespace Games.Hearts;
 
+public enum PlayerOrientation
+{
+	Self = 0,
+	Left = 1,
+	Right = 2,
+	Across = 3	
+}
+
 public class HeartsGameState : GameState<PlayingCard>
 {
 	private bool _isRoundFinished = false;
@@ -11,15 +19,40 @@ public class HeartsGameState : GameState<PlayingCard>
 	public string? MoonShotPlayer { get; private set; }
 
 	public override bool IsFinished => _isRoundFinished;
-
-	private readonly List<Play> _currentTrick = [];
+	
+	public List<Play> CurrentTrick { get; set; } = [];
 	private readonly List<Trick> _tricks = [];
 
 	public List<Trick> Tricks => _tricks;
 
-	public Dictionary<string, PlayingCard> CurrentPlaysByPlayer => _currentTrick.ToDictionary(p => p.PlayerName, p => p.Card);
+	public Dictionary<string, PlayingCard> CurrentPlaysByPlayer => CurrentTrick.ToDictionary(p => p.PlayerName, p => p.Card);
 
 	public PlayingCard? GetCurrentCard(string playerName) => CurrentPlaysByPlayer.TryGetValue(playerName, out var card) ? card : null;
+
+	public Playslot GetRelativePlayslot(string playerName, PlayerOrientation orientation)
+	{
+		var playerNames = Players.Select(p => p.Name).ToArray();
+		var selfIndex = Array.IndexOf(playerNames, playerName);
+		var targetIndex = orientation switch
+		{
+			PlayerOrientation.Self => selfIndex,
+			PlayerOrientation.Left => selfIndex - 1,
+			PlayerOrientation.Right => selfIndex + 1,
+			PlayerOrientation.Across => selfIndex + 2,
+			_ => throw new ArgumentOutOfRangeException(nameof(orientation))
+		};
+
+		// wraparound
+		if (targetIndex < 0) targetIndex += Players.Count;
+		if (targetIndex >= Players.Count) targetIndex -= Players.Count;
+
+		var playsByName = CurrentTrick.ToDictionary(t => t.PlayerName);
+		var playerAtIndex = playerNames[targetIndex];
+
+		return playsByName.TryGetValue(playerAtIndex, out var play) ? 
+			new Playslot() { Card = play.Card, PlayerName = playerAtIndex } : 
+			new Playslot() { PlayerName = playerAtIndex };
+	}
 
 	public override Dictionary<string, int> Score
 	{
@@ -53,12 +86,12 @@ public class HeartsGameState : GameState<PlayingCard>
 
 	protected override void OnPlayCard(PlayingCard card)
 	{
-		if (_currentTrick.Count == 0)
+		if (CurrentTrick.Count == 0)
 		{
 			LeadingSuit = card.Suit;
 		}
 
-		_currentTrick.Add(new(CurrentPlayer!.Name, card));
+		CurrentTrick.Add(new(CurrentPlayer!.Name, card));
 		CurrentPlayer.Hand.Remove(card);
 
 		if (!IsHeartsBroken && card.Suit.Equals(ClassicSuits.Hearts))
@@ -67,21 +100,21 @@ public class HeartsGameState : GameState<PlayingCard>
 			IsHeartsBroken = true;
 		}
 
-		if (_currentTrick.Count == 4)
+		if (CurrentTrick.Count == 4)
 		{
-			var winner = _currentTrick
+			var winner = CurrentTrick
 				.Where(c => c.Card.Suit.Equals(LeadingSuit))
 				.MaxBy(p => p.Card.Rank)!.PlayerName;
 
 			_tricks.Add(new()
 			{
-				Plays = [.. _currentTrick],
+				Plays = [.. CurrentTrick],
 				Winner = winner,
-				Points = _currentTrick.Sum(play => PointValue(play.Card)),
+				Points = CurrentTrick.Sum(play => PointValue(play.Card)),
 				HeartsBroken = IsHeartsBroken
 			});
 
-			_currentTrick.Clear();
+			CurrentTrick.Clear();
 			LeadingSuit = null;
 			CurrentPlayer = PlayersByName[winner];
 		}
@@ -177,5 +210,11 @@ public class HeartsGameState : GameState<PlayingCard>
 
 		public Dictionary<string, PlayingCard> PlaysByName => Plays.ToDictionary(p => p.PlayerName, p => p.Card);
 		public PlayingCard WinningCard => PlaysByName.TryGetValue(Winner, out var card) ? card : throw new Exception("no winning card");
+	}
+
+	public class Playslot
+	{
+		public string PlayerName { get; init; } = default!;
+		public PlayingCard? Card { get; set; }
 	}
 }

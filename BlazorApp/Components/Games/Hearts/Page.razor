@@ -1,28 +1,65 @@
 ﻿@page "/Hearts/{key}"
+@using System.Text.Json
+@using global::Games.Hearts
 @attribute [Authorize]
 @inject IHashids Hashids
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 
 @if (_game is null) return;
+@if (CurrentUser is null) return;
+@if (_state is null) return;
 
 <h3>Hearts</h3>
 
 <div class="d-flex align-items-center">
 	<div class="text-muted">game # @_gameId</div>
-	<RadzenBadge Text="Dev Mode" Visible="_game.IsDevMode" class="ms-2" />
+	<RadzenBadge Text="Test Mode" Visible="_game.IsTestMode" class="ms-2" />
+</div>
+
+<div class="d-flex justify-content-center">
+	<div class="table-top">
+		<div><!--placeholder upper left--></div>
+		<div><CardPlay Playslot="_state.GetRelativePlayslot(CurrentUser.UserName!, PlayerOrientation.Across)" CurrentPlayer="@_state.CurrentPlayer!.Name" /></div>
+		<div><!--placeholder upper right--></div>
+
+		<div><CardPlay Playslot="_state.GetRelativePlayslot(CurrentUser.UserName!, PlayerOrientation.Left)" CurrentPlayer="@_state.CurrentPlayer!.Name" /></div>
+		<div><!--center--></div>
+		<div><CardPlay Playslot="_state.GetRelativePlayslot(CurrentUser.UserName!, PlayerOrientation.Right)" CurrentPlayer="@_state.CurrentPlayer!.Name" /></div>
+
+		<div><!--placeholder lower left--></div>
+		<div><CardPlay Playslot="_state.GetRelativePlayslot(CurrentUser.UserName!, PlayerOrientation.Self)" CurrentPlayer="@_state.CurrentPlayer!.Name" /></div>
+		<div><!--placeholder lower right--></div>
+	</div>
+</div>
+
+@if (CurrentUser is null) return;
+
+<div class="d-flex justify-content-center mt-4">
+	<Hand Cards="_state.PlayersByName[CurrentUser.UserName!].Hand!" GameState="_state" CardPlayed="OnCardPlayed" />
 </div>
 
 @code {
 	[Parameter]
 	public string Key { get; set; } = default!;
 
+	[CascadingParameter]
+	public ApplicationUser? CurrentUser { get; set; }
+
 	private int _gameId;
 	private GameInstance? _game;
+	private HeartsGameState? _state;
 
 	protected override async Task OnInitializedAsync()
 	{
 		_gameId = Hashids.DecodeSingle(Key);
 		using var db = DbFactory.CreateDbContext();
-		_game = await db.GameInstances.FindAsync(_gameId);
+		_game = await db.GameInstances.FindAsync(_gameId) ?? throw new Exception("game not found");
+		_state = JsonSerializer.Deserialize<HeartsGameState>(_game.State);
+	}
+
+	private void OnCardPlayed()
+	{
+		// todo: raise state changed event for other players
+		StateHasChanged();
 	}
 }

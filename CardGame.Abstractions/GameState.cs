@@ -6,13 +6,13 @@ public abstract class GameState<TCard>
 {
 	public HashSet<Player<TCard>> Players { get; init; } = [];
 	[JsonIgnore]
-	public Dictionary<int, Player<TCard>> PlayersByIndex { get; set; } = [];
+	public Dictionary<int, Player<TCard>> PlayersByIndex => Players.ToDictionary(player => player.Index);
 	[JsonIgnore]
-	public Dictionary<string, Player<TCard>> PlayersByName { get; set; } = [];
+	public Dictionary<string, Player<TCard>> PlayersByName => Players.ToDictionary(player => player.Name);
 	/// <summary>
 	/// allow logged on player to impersonate all players
 	/// </summary>
-	public bool IsDevMode { get; init; }
+	public bool IsTestMode { get; init; }
 	/// <summary>
 	/// whose turn is it?
 	/// </summary>

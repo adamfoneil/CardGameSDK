@@ -1,6 +1,7 @@
 using CardGame.Abstractions;
 using Games.FoxInTheForest;
 using Games.Hearts;
+using HashidsNet;
 using System.Diagnostics;
 using System.Text.Json;
 
@@ -12,7 +13,8 @@ public class ShuffleAndDeal
 	[TestMethod]
 	public void HeartsDeal()
 	{
-		var hearts = new HeartsGameFactory();
+		var hashIds = new Hashids();
+		var hearts = new HeartsGameFactory(hashIds);
 		var game = hearts.Start(false, ["Adam", "Andy", "Dad", "Becky"]);
 
 		PrintCards(game);
@@ -43,7 +45,7 @@ public class ShuffleAndDeal
 	[TestMethod]
 	public void HeartsAutoPlay()
 	{
-		var hearts = new HeartsGameFactory();
+		var hearts = new HeartsGameFactory(new Hashids());
 		var game = hearts.Start(false, ["Adam", "Andy", "Dad", "Becky"]);
 
 		while (!game.IsFinished) game.AutoPlay();
@@ -67,7 +69,7 @@ public class ShuffleAndDeal
 	[TestMethod]
 	public void FoxInTheForestDeal()
 	{
-		var foxInTheForest = new FoxInTheForestFactory();
+		var foxInTheForest = new FoxInTheForestGameFactory(new Hashids());
 		var game = foxInTheForest.Start(false, ["Adam", "Becky"]);
 
 		PrintCards(game);

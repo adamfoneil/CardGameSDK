@@ -12,10 +12,8 @@ public abstract class GameFactory<TState, TCard> : IGameDispatcher where TState 
 	public abstract string[] DevModePlayerNames { get; }
 
 	protected abstract TState CreateGameState(
-		bool devMode,
+		bool testMode,
 		HashSet<Player<TCard>> players,
-		Dictionary<int, Player<TCard>> byIndex,
-		Dictionary<string, Player<TCard>> byName,
 		Queue<TCard> drawPile);
 
 	public TState Start(bool devMode, string[] playerNames)
@@ -27,7 +25,7 @@ public abstract class GameFactory<TState, TCard> : IGameDispatcher where TState 
 		var hands = Deal(CardsPerHand, cards, playerNames);
 		var (players, byIndex, byName) = BuildPlayers(playerNames, hands);
 
-		return CreateGameState(devMode, players, byIndex, byName, cards);
+		return CreateGameState(devMode, players, cards);
 	}
 
 	/// <summary>

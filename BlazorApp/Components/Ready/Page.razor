@@ -29,8 +29,8 @@
 
 	<AuthorizeView Roles="Developers">
 		<Authorized>
-			<RadzenCheckBox @bind-Value="_devMode" Text="Dev mode" Name="chkDevMode" />
-			<RadzenLabel Text="Dev mode" Component="chkDevMode" />
+			<RadzenCheckBox @bind-Value="_testMode" Text="Test mode" Name="chkTestMode" />
+			<RadzenLabel Text="Test mode" Component="chkTestMode" />
 		</Authorized>
 	</AuthorizeView>
 }
@@ -52,8 +52,8 @@ else
 @code {
 	private ReadyPlayer[] _players = [];	
 	private bool _enoughPlayers = false;	
-	private bool _devMode = false;
-	private bool AllowStart => _enoughPlayers || _devMode;
+	private bool _testMode = false;
+	private bool AllowStart => _enoughPlayers || _testMode;
 	private bool AllowReady => !_players.Any(p => p.UserId == CurrentUser!.UserId);
 
 	[CascadingParameter]
@@ -104,19 +104,19 @@ else
 
 		var playerNames = _players.Select(p => p.User!.UserName!).ToList();
 
-		if (_devMode)
+		if (_testMode)
 		{
 			int playersNeeded = (int)gameFactory.MinPlayers - playerNames.Count;
 			playerNames.AddRange(gameFactory.DevModePlayerNames.Take(playersNeeded));
 		}
 
-		var state = gameFactory.CreateStateObject(_devMode, playerNames.ToArray());
+		var state = gameFactory.CreateStateObject(_testMode, playerNames.ToArray());
 		var json = JsonSerializer.Serialize(state);		
 
 		var gameInstance = new GameInstance()
 		{
 			Game = Game!.Value,
-			IsDevMode = _devMode,
+			IsTestMode = _testMode,
 			Url = "placeholder",
 			State = json,
 			Players = _players.Select(p => new GameInstancePlayer() { UserId = p.UserId }).ToList()

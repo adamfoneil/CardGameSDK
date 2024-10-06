@@ -20,20 +20,16 @@ public class HeartsGameFactory(IHashids hashids) : GameFactory<HeartsGameState, 
 	public override string[] DevModePlayerNames => ["player2", "player3", "player4"];
 
 	protected override HeartsGameState CreateGameState(
-		bool devMode, 
-		HashSet<Player<PlayingCard>> players, 
-		Dictionary<int, Player<PlayingCard>> byIndex, 
-		Dictionary<string, Player<PlayingCard>> byName,
+		bool testMode,
+		HashSet<Player<PlayingCard>> players,
 		Queue<PlayingCard> drawPile)
 	{       
 		var startPlayer = players.Single(p => p.Hand.Contains(new PlayingCard(2, ClassicSuits.Clubs)));
 
 		HeartsGameState result = new()
 		{
-			IsDevMode = devMode,
+			IsTestMode = testMode,
 			Players = players,
-			PlayersByIndex = byIndex,
-			PlayersByName = byName,            
 			CurrentPlayer = startPlayer
 		};
 

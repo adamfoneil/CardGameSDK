@@ -16,13 +16,13 @@
 	private string Display => DisplayRank + PlayingCard?.Suit.Name.Substring(0, 1);
 
 	private string SuitImage => $"img/Suits/" + (
-		PlayingCard.Suit.Equals(ClassicSuits.Spades) ? "spades.svg" :
+		PlayingCard!.Suit.Equals(ClassicSuits.Spades) ? "spades.svg" :
 		PlayingCard.Suit.Equals(ClassicSuits.Hearts) ? "hearts.svg" :
 		PlayingCard.Suit.Equals(ClassicSuits.Diamonds) ? "diamonds.svg" :
 		"clubs.svg");
 
 	private string Color =>		
-		PlayingCard.Suit.Equals(ClassicSuits.Hearts) ? "red" :
+		PlayingCard!.Suit.Equals(ClassicSuits.Hearts) ? "red" :
 		PlayingCard.Suit.Equals(ClassicSuits.Diamonds) ? "red" :
 		"auto";
 }

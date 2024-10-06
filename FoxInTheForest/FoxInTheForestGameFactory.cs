@@ -28,22 +28,18 @@ public class FoxInTheForestGameFactory(IHashids hashids) : GameFactory<FoxInTheF
 	];	
 
 	protected override FoxInTheForestState CreateGameState(
-		bool devMode,
+		bool testMode,
 		HashSet<Player<PlayingCard>> players,
-		Dictionary<int, Player<PlayingCard>> byIndex,
-		Dictionary<string, Player<PlayingCard>> byName,
 		Queue<PlayingCard> drawPile)
 	{
-		var startPlayer = byIndex[Random.Shared.Next(1, byIndex.Count)];
+		var startPlayer = players.ToArray()[Random.Shared.Next(1, players.Count)];
 
 		return new()
 		{
-			IsDevMode = devMode,
+			IsTestMode = testMode,
 			DecreeCard = drawPile.Dequeue(),
 			DrawPile = drawPile,
 			Players = players,
-			PlayersByIndex = byIndex,
-			PlayersByName = byName,
 			CurrentPlayer = startPlayer
 		};
 	}
