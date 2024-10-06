@@ -1,7 +1,7 @@
 ﻿@using global::Games.Hearts
 @if (Playslot is null) return;
 
-<div class="d-flex flex-column justify-content-center p-3" style="border-style:solid;border-color:@Color;border-width:3px">
+<div class="d-flex flex-column justify-content-center p-3" style="border-style:solid;border-color:@(Color);border-width:3px">
 	<div class="text-center">@Playslot.PlayerName</div>
 	<Card PlayingCard="Playslot.Card" />
 </div>

@@ -7,7 +7,7 @@ namespace AppService.Entities;
 public class GameInstancePlayer : BaseTable
 {
 	public int GameInstanceId { get; set; }
-	public int UserId { get; set; } = default!;
+	public int UserId { get; set; } = default!;	
 
 	public GameInstance? Game { get; set; }
 	public ApplicationUser? User { get; set; }

@@ -5,7 +5,7 @@
 	{
 		foreach (var card in suit.OrderBy(c => c.Rank))
 		{
-			<Card PlayingCard="card" OnClick="OnCardPlayed" />
+			<Card PlayingCard="card" OnClick="OnCardPlayed" Playable="Playable" />
 		}		
 	}
 </div>
@@ -19,6 +19,9 @@
 
 	[Parameter, EditorRequired]
 	public EventCallback<PlayingCard> CardPlayed { get; set; }
+
+	[Parameter]
+	public bool Playable { get; set; }
 
 	private async Task OnCardPlayed(PlayingCard card)
 	{

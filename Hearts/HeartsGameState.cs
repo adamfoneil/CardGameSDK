@@ -1,4 +1,5 @@
 ﻿using CardGame.Abstractions;
+using System.Text.Json.Serialization;
 
 namespace Games.Hearts;
 
@@ -14,16 +15,14 @@ public class HeartsGameState : GameState<PlayingCard>
 {
 	private bool _isRoundFinished = false;
 
-	public Suit? LeadingSuit { get; private set; }
-	public bool IsHeartsBroken { get; private set; }
-	public string? MoonShotPlayer { get; private set; }
+	public Suit? LeadingSuit { get; set; }
+	public bool IsHeartsBroken { get; set; }
+	public string? MoonShotPlayer { get; set; }
 
 	public override bool IsFinished => _isRoundFinished;
 	
 	public List<Play> CurrentTrick { get; set; } = [];
-	private readonly List<Trick> _tricks = [];
-
-	public List<Trick> Tricks => _tricks;
+	public List<Trick> Tricks { get; set; } = [];
 
 	public Dictionary<string, PlayingCard> CurrentPlaysByPlayer => CurrentTrick.ToDictionary(p => p.PlayerName, p => p.Card);
 
@@ -58,7 +57,7 @@ public class HeartsGameState : GameState<PlayingCard>
 	{
 		get
 		{
-			var results = _tricks
+			var results = Tricks
 				.GroupBy(t => t.Winner)
 				.ToDictionary(grp => grp.Key, grp => grp.Sum(t => t.Points));
 
@@ -106,7 +105,7 @@ public class HeartsGameState : GameState<PlayingCard>
 				.Where(c => c.Card.Suit.Equals(LeadingSuit))
 				.MaxBy(p => p.Card.Rank)!.PlayerName;
 
-			_tricks.Add(new()
+			Tricks.Add(new()
 			{
 				Plays = [.. CurrentTrick],
 				Winner = winner,
@@ -124,10 +123,10 @@ public class HeartsGameState : GameState<PlayingCard>
 		}
 
 		// on the last trick...
-		if (_tricks.Count == 12)
+		if (Tricks.Count == 12)
 		{
 			// did anyone get all the hearts (shoot the moon)?
-			var playersWithHearts = _tricks
+			var playersWithHearts = Tricks
 				.SelectMany(t => t.Plays.Where(p => p.Card.Suit.Equals(ClassicSuits.Hearts)).Select(p => p.PlayerName))
 				.Distinct();
 
@@ -145,7 +144,7 @@ public class HeartsGameState : GameState<PlayingCard>
 
 	public override (bool IsValid, string? Message) ValidatePlay(string playerName, PlayingCard card)
 	{
-		if (_tricks.Count == 0)
+		if (Tricks.Count == 0)
 		{
 			if (card.Suit.Equals(ClassicSuits.Hearts))
 			{
@@ -163,6 +162,11 @@ public class HeartsGameState : GameState<PlayingCard>
 
 		if (!IsHeartsBroken && card.Suit.Equals(ClassicSuits.Hearts))
 		{
+			if (LeadingSuit is null)
+			{
+				return (false, "Cannot lead with hearts until broken");
+			}
+
 			// if you're void in leading suit, you can play hearts
 			if (!PlayersByName[playerName].Hand.Any(c => c.Suit.Equals(LeadingSuit)))
 			{
@@ -208,7 +212,9 @@ public class HeartsGameState : GameState<PlayingCard>
 		public required int Points { get; init; }
 		public bool HeartsBroken { get; init; }
 
+		[JsonIgnore]
 		public Dictionary<string, PlayingCard> PlaysByName => Plays.ToDictionary(p => p.PlayerName, p => p.Card);
+		[JsonIgnore]
 		public PlayingCard WinningCard => PlaysByName.TryGetValue(Winner, out var card) ? card : throw new Exception("no winning card");
 	}
 
