@@ -3,16 +3,26 @@
 @inject IHashids Hashids
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 
-<h3>Page</h3>
+@if (_game is null) return;
+
+<h3>Hearts</h3>
+
+<div class="d-flex align-items-center">
+	<div class="text-muted">game # @_gameId</div>
+	<RadzenBadge Text="Dev Mode" Visible="_game.IsDevMode" class="ms-2" />
+</div>
 
 @code {
 	[Parameter]
 	public string Key { get; set; } = default!;
 
 	private int _gameId;
+	private GameInstance? _game;
 
-	protected override void OnInitialized()
+	protected override async Task OnInitializedAsync()
 	{
 		_gameId = Hashids.DecodeSingle(Key);
+		using var db = DbFactory.CreateDbContext();
+		_game = await db.GameInstances.FindAsync(_gameId);
 	}
 }

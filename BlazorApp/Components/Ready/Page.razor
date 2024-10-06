@@ -18,11 +18,14 @@
 	<ul>
 		@foreach (var p in _players)
 		{
-			<li>@p.User!.UserName</li>
+			<li>
+				@p.User!.UserName
+				<RadzenButton Visible="p.UserId == CurrentUser!.UserId" Icon="delete" ButtonStyle="ButtonStyle.Danger" class="ms-2" Click="RemoveMe" />
+			</li>
 		}
 	</ul>
 
-	<RadzenButton Text="Start" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Outlined" Click="StartGame" Disabled="!_allowStart" />
+	<RadzenButton Text="Start" ButtonStyle="ButtonStyle.Primary" Click="StartGame" Disabled="!AllowStart" class="me-3" />
 
 	<AuthorizeView Roles="Developers">
 		<Authorized>
@@ -44,12 +47,14 @@ else
 }
 </div>
 
-<RadzenButton Text="I'm Ready" Click="AddMyself" Disabled="Game is null" />
+<RadzenButton Text="I'm Ready" Click="AddMyself" ButtonStyle="ButtonStyle.Secondary" Variant="Variant.Outlined" Disabled="Game is null || !AllowReady" class="mt-3" />
 
 @code {
 	private ReadyPlayer[] _players = [];	
-	private bool _allowStart = false;
+	private bool _enoughPlayers = false;	
 	private bool _devMode = false;
+	private bool AllowStart => _enoughPlayers || _devMode;
+	private bool AllowReady => !_players.Any(p => p.UserId == CurrentUser!.UserId);
 
 	[CascadingParameter]
 	private ApplicationUser? CurrentUser { get; set; }
@@ -68,7 +73,7 @@ else
 			.ToArrayAsync();
 
 		var factory = GetGameDispatcher();
-		_allowStart = _players.Length >= factory.MinPlayers && _players.Length <= factory.MaxPlayers;
+		_enoughPlayers = _players.Length >= factory.MinPlayers && _players.Length <= factory.MaxPlayers;
 	}
 
 	private async Task AddMyself()
@@ -97,18 +102,41 @@ else
 	{
 		var gameFactory = GetGameDispatcher();
 
-		var state = gameFactory.CreateStateObject(_devMode, _players.Select(p => p.User!.UserName!).ToArray());
-		var json = JsonSerializer.Serialize(state);
+		var playerNames = _players.Select(p => p.User!.UserName!).ToList();
+
+		if (_devMode)
+		{
+			int playersNeeded = (int)gameFactory.MinPlayers - playerNames.Count;
+			playerNames.AddRange(gameFactory.DevModePlayerNames.Take(playersNeeded));
+		}
+
+		var state = gameFactory.CreateStateObject(_devMode, playerNames.ToArray());
+		var json = JsonSerializer.Serialize(state);		
 
 		var gameInstance = new GameInstance()
 		{
 			Game = Game!.Value,
-			State = json
+			IsDevMode = _devMode,
+			Url = "placeholder",
+			State = json,
+			Players = _players.Select(p => new GameInstancePlayer() { UserId = p.UserId }).ToList()
 		};
 
 		using var db = DbFactory.CreateDbContext();
 		db.GameInstances.Add(gameInstance);
 		await db.SaveChangesAsync();
+
+		var url = gameFactory.GetUrl(gameInstance.Id);
+		
+		await db.GameInstances
+			.Where(row => row.Id == gameInstance.Id)
+			.ExecuteUpdateAsync(u => u.SetProperty(row => row.Url, url));
+
+		await db.ReadyPlayers
+			.Where(p => p.Game == Game)
+			.ExecuteDeleteAsync();
+
+		Nav.NavigateTo(url, forceLoad: true);
 	}
 
 	private IGameDispatcher GetGameDispatcher() =>
@@ -118,5 +146,15 @@ else
 			SupportedGames.Hearts => Services.GetRequiredService<HeartsGameFactory>(),
 			_ => throw new Exception("unknown game")
 		};
-	
+
+	private async Task RemoveMe()
+	{
+		using var db = DbFactory.CreateDbContext();
+
+		var player = await db.ReadyPlayers
+			.Where(p => p.Game == Game && p.UserId == CurrentUser!.UserId)
+			.ExecuteDeleteAsync();
+
+		await ListPlayers();
+	}
 }

@@ -1,9 +1,12 @@
 ﻿using CardGame.Abstractions;
+using HashidsNet;
 
 namespace Games.Hearts;
 
-public class HeartsGameFactory : GameFactory<HeartsGameState, PlayingCard>
+public class HeartsGameFactory(IHashids hashids) : GameFactory<HeartsGameState, PlayingCard>
 {
+	private readonly IHashids _hashids = hashids;
+
 	public override uint MinPlayers => 4;
 
 	public override uint MaxPlayers => 4;
@@ -13,6 +16,8 @@ public class HeartsGameFactory : GameFactory<HeartsGameState, PlayingCard>
 	public override IEnumerable<PlayingCard> Deck => PlayingCard.ClassicDeck;
 
 	public override string Name => "Hearts (4p)";
+
+	public override string[] DevModePlayerNames => ["player2", "player3", "player4"];
 
 	protected override HeartsGameState CreateGameState(
 		bool devMode, 
@@ -36,4 +41,6 @@ public class HeartsGameFactory : GameFactory<HeartsGameState, PlayingCard>
 
 		return result;
 	}
+
+	public override string GetUrl(int gameInstanceId) => $"/Hearts/{_hashids.Encode(gameInstanceId)}";
 }

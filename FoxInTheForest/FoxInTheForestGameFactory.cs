@@ -1,9 +1,12 @@
 ﻿using CardGame.Abstractions;
+using HashidsNet;
 
 namespace Games.FoxInTheForest;
 
-public class FoxInTheForestGameFactory : GameFactory<FoxInTheForestState, PlayingCard>
+public class FoxInTheForestGameFactory(IHashids hashids) : GameFactory<FoxInTheForestState, PlayingCard>
 {
+	private readonly IHashids _hashids = hashids;
+
 	public override string Name => "Fox in the Forest";
 
 	public override uint MinPlayers => 2;
@@ -15,12 +18,14 @@ public class FoxInTheForestGameFactory : GameFactory<FoxInTheForestState, Playin
 	public override IEnumerable<PlayingCard> Deck => Suits
 		.SelectMany(suit => Enumerable.Range(1, 11).Select(val => new PlayingCard(val, suit)));
 
+	public override string[] DevModePlayerNames => throw new NotImplementedException();
+
 	private static readonly string[] Suits =
 	[
 		"Moons",
 		"Keys",
 		"Bells"
-	];
+	];	
 
 	protected override FoxInTheForestState CreateGameState(
 		bool devMode,
@@ -41,5 +46,10 @@ public class FoxInTheForestGameFactory : GameFactory<FoxInTheForestState, Playin
 			PlayersByName = byName,
 			CurrentPlayer = startPlayer
 		};
+	}
+
+	public override string GetUrl(int gameInstanceId)
+	{
+		throw new NotImplementedException();
 	}
 }

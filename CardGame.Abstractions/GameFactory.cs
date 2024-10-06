@@ -9,6 +9,8 @@ public abstract class GameFactory<TState, TCard> : IGameDispatcher where TState 
 
 	public abstract IEnumerable<TCard> Deck { get; }
 
+	public abstract string[] DevModePlayerNames { get; }
+
 	protected abstract TState CreateGameState(
 		bool devMode,
 		HashSet<Player<TCard>> players,
@@ -90,4 +92,9 @@ public abstract class GameFactory<TState, TCard> : IGameDispatcher where TState 
 	/// this is used with dispatch/launcher pages that are not type-specific
 	/// </summary>
 	public object CreateStateObject(bool devMode, string[] playerNames) => Start(devMode, playerNames);
+
+	/// <summary>
+	/// link to page for playing a particular instance of the game
+	/// </summary>
+	public abstract string GetUrl(int gameInstanceId);	
 }

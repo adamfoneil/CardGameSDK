@@ -10,6 +10,8 @@ public interface IGameDispatcher
 	uint MaxPlayers { get; }
 	uint MinPlayers { get; }
 	string Name { get; }
+	string GetUrl(int gameInstanceId);
+	string[] DevModePlayerNames { get; }
 
 	object CreateStateObject(bool devMode, string[] playerNames);
 }

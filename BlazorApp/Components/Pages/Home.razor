@@ -1,7 +1,43 @@
 ﻿@page "/"
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject IHashids Hashids
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Cardplace</PageTitle>
 
-<h1>Hello, world!</h1>
+<AuthorizeView>
+	<Authorized>
+		<h1>My Games</h1>
+		<ul>
+			@foreach (var game in _activeGames)
+			{
+				<li>
+					<a href="@game.Url">@game.Game # @game.Id - @PlayerList(game)</a>
+					<RadzenBadge Text="Dev Mode" Visible="game.IsDevMode" class="ms-2" />
+				</li>
+			}
+		</ul>
+	</Authorized>
+</AuthorizeView>
 
-Welcome to your new app.
+@code {
+	private List<GameInstance> _activeGames = [];
+
+	[CascadingParameter]
+	private ApplicationUser? CurrentUser { get; set; }
+
+	protected override async Task OnParametersSetAsync()
+	{
+		if (CurrentUser is null) return;
+
+		using var db = DbFactory.CreateDbContext();
+
+		_activeGames = await db.GameInstances
+			.Include(g => g.Players)
+			.ThenInclude(p => p.User)
+			.Where(g => g.Players.Any(p => p.UserId == CurrentUser!.UserId) && g.FinishedAtUtc == null)
+			.AsSplitQuery()
+			.ToListAsync();
+	}
+
+	private string PlayerList(GameInstance gameInstance) => string.Join(", ", gameInstance.Players.Select(p => p.User!.UserName));
+}
