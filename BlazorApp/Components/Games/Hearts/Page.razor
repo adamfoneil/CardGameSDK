@@ -81,8 +81,8 @@
 			.Where(g => g.Id == _gameId)
 			.ExecuteUpdateAsync(u => u.SetProperty(p => p.State, json));
 
-		// todo: raise state changed event for other players
 		StateHasChanged();
+		State.NotifyStateChanged();
 	}
 
 	private async Task LoadGameAsync()
