@@ -23,6 +23,7 @@ builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 builder.Services.AddRadzenComponents();
+builder.Services.AddScoped<StateContainer>();
 builder.Services.AddScoped<CurrentUser>();
 builder.Services.Configure<HashIdOptions>(builder.Configuration.GetSection("HashIds"));
 builder.Services.AddSingleton<IHashids>(sp =>

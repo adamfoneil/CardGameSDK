@@ -4,6 +4,7 @@
 @attribute [Authorize]
 @inject IHashids Hashids
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject StateContainer State
 
 @if (_game is null) return;
 @if (CurrentUser is null) return;
@@ -58,10 +59,16 @@
 
 	protected override async Task OnInitializedAsync()
 	{
+		State.OnChangeAsync += OnStateChange;
+
 		_gameId = Hashids.DecodeSingle(Key);
-		using var db = DbFactory.CreateDbContext();
-		_game = await db.GameInstances.FindAsync(_gameId) ?? throw new Exception("game not found");
-		_state = JsonSerializer.Deserialize<HeartsGameState>(_game.State);
+		await LoadGameAsync();
+	}
+
+	private async Task OnStateChange()
+	{
+		await LoadGameAsync();
+		StateHasChanged();	
 	}
 
 	private async Task OnCardPlayed()
@@ -76,5 +83,12 @@
 
 		// todo: raise state changed event for other players
 		StateHasChanged();
+	}
+
+	private async Task LoadGameAsync()
+	{
+		using var db = DbFactory.CreateDbContext();
+		_game = await db.GameInstances.FindAsync(_gameId) ?? throw new Exception("game not found");
+		_state = JsonSerializer.Deserialize<HeartsGameState>(_game.State);
 	}
 }
