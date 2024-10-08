@@ -2,7 +2,7 @@ name: Build and deploy .NET application to container app cardplace
 on:
   push:
     branches:
-    - main
+    - master
 env:
   CONTAINER_APP_CONTAINER_NAME: cardplace
   CONTAINER_APP_NAME: cardplace
