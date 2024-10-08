@@ -182,7 +182,7 @@ public class HeartsGameState : GameState<PlayingCard>
 		{
 			if (PlayersByName[playerName].Hand.Any(card => card.Suit.Equals(LeadingSuit)))
 			{
-				return (false, "Must play leading suit if you can");
+				return (false, $"Must play leading suit {LeadingSuit!.Name} if you can");
 			}
 		}
 

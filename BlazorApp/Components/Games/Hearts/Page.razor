@@ -57,7 +57,6 @@
 	</div>
 </details>	
 
-
 @code {
 	[Parameter]
 	public string Key { get; set; } = default!;
@@ -80,10 +79,11 @@
 		await LoadGameAsync();
 	}
 
-	private async Task OnStateChange()
+	private async Task OnStateChange(string userName)
 	{
-		await LoadGameAsync();
-		StateHasChanged();	
+		StateHasChanged();
+		if (userName == _effectivePlayer) return;
+		await LoadGameAsync();		
 	}
 
 	private async Task OnCardPlayed()
@@ -97,7 +97,7 @@
 			.ExecuteUpdateAsync(u => u.SetProperty(p => p.State, json));
 
 		StateHasChanged();
-		State.NotifyStateChanged();
+		State.NotifyStateChanged(_effectivePlayer);
 	}
 
 	private async Task LoadGameAsync()

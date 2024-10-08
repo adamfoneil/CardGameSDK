@@ -2,7 +2,7 @@
 
 public class StateContainer
 {
-    public event Func<Task>? OnChangeAsync;
+    public event Func<string, Task>? OnChangeAsync;
 
-    public void NotifyStateChanged() => OnChangeAsync?.Invoke();
+    public void NotifyStateChanged(string userName) => OnChangeAsync?.Invoke(userName);
 }

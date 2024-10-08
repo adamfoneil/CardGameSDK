@@ -27,7 +27,7 @@
 				@foreach (var trick in _gameState.Tricks)
 				{
 					<li>
-						<div>@trick.Winner - @trick.WinningCard.ToString()</div>
+						<div>@trick.Winner - @trick.WinningCard.ToString() - @trick.Points</div>
 					</li>
 				}
 			</ul>			
