@@ -53,6 +53,8 @@ public class HeartsGameState : GameState<PlayingCard>
 			new Playslot() { PlayerName = playerAtIndex };
 	}
 
+	public Trick[] MyTricks(string playerName) => Tricks.Where(t => t.Winner.Equals(playerName)).ToArray();
+
 	public override Dictionary<string, int> Score
 	{
 		get

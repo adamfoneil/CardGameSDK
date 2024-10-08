@@ -5,6 +5,7 @@
 @inject IHashids Hashids
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject StateContainer State
+@implements IDisposable
 
 @if (_game is null) return;
 @if (CurrentUser is null) return;
@@ -42,6 +43,20 @@
 		CardPlayed="OnCardPlayed"
 		Playable="_state.CurrentPlayer.Name.Equals(_effectivePlayer)"/>
 </div>
+
+<details>
+	<summary>My Tricks</summary>
+	<div class="d-flex justify-content-center">
+		@foreach (var trick in _state.MyTricks(_effectivePlayer))
+		{
+			<div>
+				@trick.Points pts
+				<Card PlayingCard="trick.WinningCard" />
+			</div>
+		}
+	</div>
+</details>	
+
 
 @code {
 	[Parameter]
@@ -90,5 +105,10 @@
 		using var db = DbFactory.CreateDbContext();
 		_game = await db.GameInstances.FindAsync(_gameId) ?? throw new Exception("game not found");
 		_state = JsonSerializer.Deserialize<HeartsGameState>(_game.State);
+	}
+
+	public void Dispose()
+	{
+		State.OnChangeAsync -= OnStateChange;
 	}
 }
