@@ -16,7 +16,7 @@
 				<hr />
 				<h4 style="@CurrentPlayerStyle(player.Name)" class="p-2 rounded-2">@player.Name</h4>
 				<div class="d-flex justify-content-between">
-					<Hand Cards="player.Hand" GameState="_gameState" CardPlayed="OnCardPlayed" />
+					<Hand Cards="player.Hand" GameState="_gameState" CardPlayed="OnCardPlayed" Playable="_gameState.CurrentPlayer.Name.Equals(player.Name)" />
 					<Card PlayingCard="_gameState.GetCurrentCard(player.Name)" />
 				</div>
 			}
