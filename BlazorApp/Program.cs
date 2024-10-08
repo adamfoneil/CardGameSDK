@@ -3,6 +3,7 @@ using AppService.Entities;
 using BlazorApp;
 using BlazorApp.Components;
 using BlazorApp.Components.Account;
+using BlazorApp.Extensions;
 using Games.FoxInTheForest;
 using Games.Hearts;
 using HashidsNet;
@@ -45,6 +46,8 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => options.S
 	.AddDefaultTokenProviders();
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+
+builder.Services.MigrateDatabase<ApplicationDbContext>();
 
 var app = builder.Build();
 
