@@ -18,8 +18,6 @@ public abstract class GameState<TCard>
 	/// </summary>
 	public Player<TCard>? CurrentPlayer { get; set; }
 	public Queue<TCard> DrawPile { get; set; } = [];
-	[JsonIgnore]
-	public Func<Task>? OnStateChanged { get; set; }
 	public abstract bool IsFinished { get; }
 
 	public abstract (bool IsValid, string? Message) ValidatePlay(string playerName, TCard card);

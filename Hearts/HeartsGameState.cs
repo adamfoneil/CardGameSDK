@@ -140,8 +140,6 @@ public class HeartsGameState : GameState<PlayingCard>
 
 			_isRoundFinished = true;
 		}
-
-		OnStateChanged?.Invoke();
 	}
 
 	public override (bool IsValid, string? Message) ValidatePlay(string playerName, PlayingCard card)
