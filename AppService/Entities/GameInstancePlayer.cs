@@ -8,6 +8,7 @@ public class GameInstancePlayer : BaseTable
 {
 	public int GameInstanceId { get; set; }
 	public int UserId { get; set; } = default!;	
+	public bool IsResigned { get; set; }
 
 	public GameInstance? Game { get; set; }
 	public ApplicationUser? User { get; set; }

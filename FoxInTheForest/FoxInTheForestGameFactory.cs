@@ -18,7 +18,7 @@ public class FoxInTheForestGameFactory(IHashids hashids) : GameFactory<FoxInTheF
 	public override IEnumerable<PlayingCard> Deck => Suits
 		.SelectMany(suit => Enumerable.Range(1, 11).Select(val => new PlayingCard(val, suit)));
 
-	public override string[] DevModePlayerNames => throw new NotImplementedException();
+	public override string[] TestModePlayerNames => throw new NotImplementedException();
 
 	private static readonly string[] Suits =
 	[

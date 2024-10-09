@@ -107,7 +107,7 @@ else
 		if (_testMode)
 		{
 			int playersNeeded = (int)gameFactory.MinPlayers - playerNames.Count;
-			playerNames.AddRange(gameFactory.DevModePlayerNames.Take(playersNeeded));
+			playerNames.AddRange(gameFactory.TestModePlayerNames.Take(playersNeeded));
 		}
 
 		var state = gameFactory.CreateStateObject(_testMode, playerNames.ToArray());

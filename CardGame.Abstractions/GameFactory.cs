@@ -9,7 +9,7 @@ public abstract class GameFactory<TState, TCard> : IGameDispatcher where TState 
 
 	public abstract IEnumerable<TCard> Deck { get; }
 
-	public abstract string[] DevModePlayerNames { get; }
+	public abstract string[] TestModePlayerNames { get; }
 
 	protected abstract TState CreateGameState(
 		bool testMode,

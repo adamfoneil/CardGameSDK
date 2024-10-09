@@ -17,7 +17,7 @@ public class HeartsGameFactory(IHashids hashids) : GameFactory<HeartsGameState, 
 
 	public override string Name => "Hearts (4p)";
 
-	public override string[] DevModePlayerNames => ["player2", "player3", "player4"];
+	public override string[] TestModePlayerNames => ["player2", "player3", "player4"];
 
 	protected override HeartsGameState CreateGameState(
 		bool testMode,

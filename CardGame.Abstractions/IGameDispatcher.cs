@@ -11,7 +11,7 @@ public interface IGameDispatcher
 	uint MinPlayers { get; }
 	string Name { get; }
 	string GetUrl(int gameInstanceId);
-	string[] DevModePlayerNames { get; }
+	string[] TestModePlayerNames { get; }
 
 	object CreateStateObject(bool devMode, string[] playerNames);
 }

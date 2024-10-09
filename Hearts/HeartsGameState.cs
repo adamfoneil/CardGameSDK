@@ -11,10 +11,18 @@ public enum PlayerOrientation
 	Across = 3	
 }
 
+public enum PlayPhase
+{	
+	Pass,
+	Play
+}
+
 public class HeartsGameState : GameState<PlayingCard>
 {
 	private bool _isRoundFinished = false;
 
+	public PlayPhase Phase { get; set; } = PlayPhase.Pass;
+	public PlayerOrientation PassDirection { get; set; } = PlayerOrientation.Left;
 	public Suit? LeadingSuit { get; set; }
 	public bool IsHeartsBroken { get; set; }
 	public string? MoonShotPlayer { get; set; }
@@ -23,6 +31,7 @@ public class HeartsGameState : GameState<PlayingCard>
 	
 	public List<Play> CurrentTrick { get; set; } = [];
 	public List<Trick> Tricks { get; set; } = [];
+	public List<Play> Passes { get; set; } = [];
 
 	public Dictionary<string, PlayingCard> CurrentPlaysByPlayer => CurrentTrick.ToDictionary(p => p.PlayerName, p => p.Card);
 
@@ -87,6 +96,11 @@ public class HeartsGameState : GameState<PlayingCard>
 
 	protected override void OnPlayCard(PlayingCard card)
 	{
+		if (Phase == PlayPhase.Pass)
+		{
+			//Passes.Add(new())
+		}
+
 		if (CurrentTrick.Count == 0)
 		{
 			LeadingSuit = card.Suit;
@@ -96,8 +110,7 @@ public class HeartsGameState : GameState<PlayingCard>
 		CurrentPlayer.Hand.Remove(card);
 
 		if (!IsHeartsBroken && card.Suit.Equals(ClassicSuits.Hearts))
-		{
-			// todo: special event architecture?
+		{			
 			IsHeartsBroken = true;
 		}
 

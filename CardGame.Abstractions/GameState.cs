@@ -53,5 +53,5 @@ public abstract class GameState<TCard>
 		return PlayersByIndex[index];
 	}
 
-	public record Play(string PlayerName, TCard Card);
+	public record Play(string PlayerName, TCard Card);	
 }
