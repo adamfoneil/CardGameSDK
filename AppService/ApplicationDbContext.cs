@@ -17,6 +17,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 	public DbSet<GameInstance> GameInstances { get; set; }
 	public DbSet<GameInstancePlayer> ActivePlayers { get; set; }
 	public DbSet<ReadyPlayer> ReadyPlayers { get; set; }
+	public DbSet<Round> Rounds { get; set; }
 
 	protected override void OnModelCreating(ModelBuilder builder)
 	{
