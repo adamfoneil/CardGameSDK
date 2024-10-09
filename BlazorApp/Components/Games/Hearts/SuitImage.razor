@@ -1,0 +1,20 @@
+﻿<img src="@ImageHref" style="width:40px;opacity:@Opacity.ToString()" />
+
+@code {
+	[Parameter]
+	public Suit? Suit { get; set; }
+	
+	[Parameter]
+	public decimal Opacity { get; set; } = 1m;
+
+	public string Color => (Suit is not null) ? (
+		Suit!.Equals(ClassicSuits.Hearts) ? "red" :
+		Suit.Equals(ClassicSuits.Diamonds) ? "red" :
+		"auto") : string.Empty;
+
+	private string ImageHref => (Suit is not null) ? ($"img/Suits/" + (
+		Suit.Equals(ClassicSuits.Spades) ? "spades.svg" :
+		Suit.Equals(ClassicSuits.Hearts) ? "hearts.svg" :
+		Suit.Equals(ClassicSuits.Diamonds) ? "diamonds.svg" :
+		"clubs.svg")) : string.Empty;
+}
