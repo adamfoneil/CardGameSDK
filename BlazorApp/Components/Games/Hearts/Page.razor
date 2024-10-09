@@ -41,7 +41,8 @@
 		Cards="_state.PlayersByName[_effectivePlayer].Hand!" 
 		GameState="_state" 
 		CardPlayed="OnCardPlayed"
-		Playable="_state.CurrentPlayer.Name.Equals(_effectivePlayer)"/>
+		Playable="_state.IsPlayable(_effectivePlayer)"
+		PlayerName="@_effectivePlayer"/>
 </div>
 
 <details>
@@ -97,7 +98,11 @@
 			.ExecuteUpdateAsync(u => u.SetProperty(p => p.State, json));
 
 		StateHasChanged();
-		State.NotifyStateChanged(_effectivePlayer);
+
+		if (_state!.Phase == PlayPhase.Play)
+		{
+			State.NotifyStateChanged(_effectivePlayer);
+		}		
 	}
 
 	private async Task LoadGameAsync()

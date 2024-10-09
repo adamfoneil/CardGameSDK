@@ -23,11 +23,26 @@
 	[Parameter]
 	public bool Playable { get; set; }
 
+	[Parameter, EditorRequired]
+	public string PlayerName { get; set; } = default!;
+
 	private async Task OnCardPlayed(PlayingCard card)
 	{
 		try
 		{
-			GameState.PlayCard(card);
+			switch (GameState.Phase)
+			{
+				case PlayPhase.Pass:
+					GameState.PassCard(PlayerName, card);
+					break;
+
+				case PlayPhase.Play:
+					GameState.PlayCard(card);					
+					break;
+				default:
+					throw new InvalidOperationException("Invalid game phase");
+			}
+
 			await CardPlayed.InvokeAsync(card);
 		}
 		catch (Exception exc)

@@ -23,17 +23,12 @@ public class HeartsGameFactory(IHashids hashids) : GameFactory<HeartsGameState, 
 		bool testMode,
 		HashSet<Player<PlayingCard>> players,
 		Queue<PlayingCard> drawPile)
-	{       
-		var startPlayer = players.Single(p => p.Hand.Contains(new PlayingCard(2, ClassicSuits.Clubs)));
-
+	{       	
 		HeartsGameState result = new()
 		{
 			IsTestMode = testMode,
 			Players = players,
-			CurrentPlayer = startPlayer
-		};
-
-		result.PlayCard(new(2, ClassicSuits.Clubs));
+		};		
 
 		return result;
 	}

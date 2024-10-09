@@ -94,13 +94,33 @@ public class HeartsGameState : GameState<PlayingCard>
 		card.Suit.Equals(ClassicSuits.Spades) && card.Rank == ClassicNamedRanks.Queen ? 13 :
 		0;
 
-	protected override void OnPlayCard(PlayingCard card)
+	public bool IsPlayable(string playerName)
 	{
 		if (Phase == PlayPhase.Pass)
 		{
-			//Passes.Add(new())
+			return Passes.Count(p => p.PlayerName.Equals(playerName)) <= 3;
 		}
 
+		return CurrentPlayer?.Name.Equals(playerName) ?? false;
+	}
+
+	public void PassCard(string playerName, PlayingCard card)
+	{
+		Passes.Add(new(playerName, card));
+
+		if (Passes.GroupBy(p => p.PlayerName).All(g => g.Count() == 3))
+		{
+			Phase = PlayPhase.Play;
+
+			// todo: distribute passed cards (remove from my hand, add to target hand)
+
+			CurrentPlayer = Players.Single(p => p.Hand.Contains(new PlayingCard(2, ClassicSuits.Clubs)));			
+			PlayCard(new(2, ClassicSuits.Clubs));
+		}
+	}
+
+	protected override void OnPlayCard(PlayingCard card)
+	{
 		if (CurrentTrick.Count == 0)
 		{
 			LeadingSuit = card.Suit;
