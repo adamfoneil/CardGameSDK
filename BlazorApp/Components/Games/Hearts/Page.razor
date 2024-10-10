@@ -5,6 +5,7 @@
 @inject IHashids Hashids
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject StateContainer State
+@inject HeartsGameFactory GameFactory
 @implements IDisposable
 
 @if (_game is null) return;
@@ -109,11 +110,34 @@
 	{
 		using var db = DbFactory.CreateDbContext();
 		_game = await db.GameInstances.FindAsync(_gameId) ?? throw new Exception("game not found");
-		_state = JsonSerializer.Deserialize<HeartsGameState>(_game.State);
+		_state = JsonSerializer.Deserialize<HeartsGameState>(_game.State) ?? throw new Exception("couldn't deserialize");
+		_state.OnFinishedAsync += OnRoundFinished;
+	}
+
+	private async Task OnRoundFinished()
+	{
+		using var db = DbFactory.CreateDbContext();
+		
+		// todo: check score and see if game is over
+
+		var nextRound = GameFactory.Start(_game!.IsTestMode, _game!.Players.Select(p => p.User!.UserName!).ToArray());
+
+		nextRound.PassDirection = _state!.PassDirection switch
+		{
+			PlayerOrientation.Left => PlayerOrientation.Right,
+			PlayerOrientation.Right => PlayerOrientation.Across,
+			PlayerOrientation.Across => PlayerOrientation.Self,
+			_ => throw new Exception("unknown pass direction")
+		};
+
+		var json = JsonSerializer.Serialize(nextRound);
+
+		await db.CompleteRoundAsync(_gameId, json);
 	}
 
 	public void Dispose()
 	{
+		_state!.OnFinishedAsync -= OnRoundFinished;
 		State.OnChangeAsync -= OnStateChange;
 	}
 }

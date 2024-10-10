@@ -3,7 +3,7 @@
 namespace CardGame.Abstractions;
 
 public abstract class GameState<TCard>
-{
+{	
 	public HashSet<Player<TCard>> Players { get; init; } = [];
 	[JsonIgnore]
 	public Dictionary<int, Player<TCard>> PlayersByIndex => Players.ToDictionary(player => player.Index);
@@ -19,6 +19,13 @@ public abstract class GameState<TCard>
 	public Player<TCard>? CurrentPlayer { get; set; }
 	public Queue<TCard> DrawPile { get; set; } = [];
 	public abstract bool IsFinished { get; }
+
+	public event Func<Task>? OnFinishedAsync;
+
+	protected async Task CallOnFinishedAsync()
+	{
+		if (OnFinishedAsync != null) await OnFinishedAsync.Invoke();
+	}
 
 	public abstract (bool IsValid, string? Message) ValidatePlay(string playerName, TCard card);
 

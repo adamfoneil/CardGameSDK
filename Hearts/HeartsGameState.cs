@@ -209,6 +209,8 @@ public class HeartsGameState : GameState<PlayingCard>
 			}
 
 			_isRoundFinished = true;
+			
+			Task.Run(CallOnFinishedAsync);
 		}
 	}
 

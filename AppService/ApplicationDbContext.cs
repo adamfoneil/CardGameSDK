@@ -24,6 +24,11 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 		base.OnModelCreating(builder);
 		builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
 	}
+
+	public async Task CompleteRoundAsync(int gameInstanceId, string state)
+	{
+		throw new NotImplementedException();
+	}
 }
 
 public class AppDbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>

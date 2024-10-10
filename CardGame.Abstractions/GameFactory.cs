@@ -16,7 +16,7 @@ public abstract class GameFactory<TState, TCard> : IGameDispatcher where TState 
 		HashSet<Player<TCard>> players,
 		Queue<TCard> drawPile);
 
-	public TState Start(bool devMode, string[] playerNames)
+	public TState Start(bool testMode, string[] playerNames)
 	{
 		if (playerNames.Length < MinPlayers) throw new Exception("not enough players");
 		if (playerNames.Length > MaxPlayers) throw new Exception("too many players");
@@ -25,7 +25,7 @@ public abstract class GameFactory<TState, TCard> : IGameDispatcher where TState 
 		var hands = Deal(CardsPerHand, cards, playerNames);
 		var players = BuildPlayers(playerNames, hands);
 
-		return CreateGameState(devMode, players, cards);
+		return CreateGameState(testMode, players, cards);
 	}
 
 	/// <summary>
