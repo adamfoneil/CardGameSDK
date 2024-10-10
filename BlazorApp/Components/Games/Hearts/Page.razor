@@ -19,31 +19,35 @@
 	<RadzenBadge Text="Test Mode" Visible="_game.IsTestMode" class="ms-2" />
 </div>
 
-<div class="d-flex justify-content-center">
-	<div class="table-top">
-		<div><!--placeholder upper left--></div>
-		<div><CardPlay Playslot="_state.GetRelativePlayslot(_effectivePlayer, PlayerOrientation.Across)" CurrentPlayer="@_state.CurrentPlayer!.Name" /></div>
-		<div><!--placeholder upper right--></div>
+@if (_state.Phase == PlayPhase.Play)
+{
+	<div class="d-flex justify-content-center">	
+		<div class="table-top">
+			<div><!--placeholder upper left--></div>
+			<div><CardPlay Playslot="_state.GetRelativePlayslot(_effectivePlayer, PlayerOrientation.Across)" CurrentPlayer="@_state.CurrentPlayer!.Name" /></div>
+			<div><!--placeholder upper right--></div>
 
-		<div><CardPlay Playslot="_state.GetRelativePlayslot(_effectivePlayer, PlayerOrientation.Left)" CurrentPlayer="@_state.CurrentPlayer!.Name" /></div>
-		<div class="d-flex align-items-center justify-content-center"><SuitImage Suit="_state.LeadingSuit" Opacity="0.5m" /></div>
-		<div><CardPlay Playslot="_state.GetRelativePlayslot(_effectivePlayer, PlayerOrientation.Right)" CurrentPlayer="@_state.CurrentPlayer!.Name" /></div>
+			<div><CardPlay Playslot="_state.GetRelativePlayslot(_effectivePlayer, PlayerOrientation.Left)" CurrentPlayer="@_state.CurrentPlayer!.Name" /></div>
+			<div class="d-flex align-items-center justify-content-center"><SuitImage Suit="_state.LeadingSuit" Opacity="0.5m" /></div>
+			<div><CardPlay Playslot="_state.GetRelativePlayslot(_effectivePlayer, PlayerOrientation.Right)" CurrentPlayer="@_state.CurrentPlayer!.Name" /></div>
 
-		<div><!--placeholder lower left--></div>
-		<div><CardPlay Playslot="_state.GetRelativePlayslot(_effectivePlayer, PlayerOrientation.Self)" CurrentPlayer="@_state.CurrentPlayer!.Name" /></div>
-		<div><!--placeholder lower right--></div>
+			<div><!--placeholder lower left--></div>
+			<div><CardPlay Playslot="_state.GetRelativePlayslot(_effectivePlayer, PlayerOrientation.Self)" CurrentPlayer="@_state.CurrentPlayer!.Name" /></div>
+			<div><!--placeholder lower right--></div>
+		</div>
 	</div>
-</div>
+}
 
 @if (CurrentUser is null) return;
 
-<div class="d-flex justify-content-center mt-4">
-	<Hand 
-		Cards="_state.PlayersByName[_effectivePlayer].Hand!" 
-		GameState="_state" 
-		CardPlayed="OnCardPlayed"
-		Playable="_state.IsPlayable(_effectivePlayer)"
-		PlayerName="@_effectivePlayer"/>
+<RadzenText Text="Select 3 cards to pass" Visible="_state.Phase == PlayPhase.Pass" />
+
+<div class="d-flex justify-content-center mt-4">	
+	<Hand Cards="_state.PlayersByName[_effectivePlayer].Hand!"
+			GameState="_state"
+			CardPlayed="OnCardPlayed"
+			Playable="_state.IsPlayable(_effectivePlayer)"
+			PlayerName="@_effectivePlayer" />
 </div>
 
 <details>
@@ -69,9 +73,12 @@
 	private int _gameId;
 	private GameInstance? _game;
 	private HeartsGameState? _state;
-	private string _effectivePlayer => _state.IsTestMode ?
-		_state.CurrentPlayer.Name :
-		CurrentUser.UserName;	
+	private string? _effectivePlayer => 
+		_state.Phase == PlayPhase.Pass ?
+			CurrentUser?.UserName :
+			_state.IsTestMode ?
+				_state?.CurrentPlayer?.Name :				 
+				CurrentUser?.UserName;
 
 	protected override async Task OnInitializedAsync()
 	{

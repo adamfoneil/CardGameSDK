@@ -25,9 +25,20 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 		builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
 	}
 
-	public async Task CompleteRoundAsync(int gameInstanceId, string state)
+	public async Task CompleteRoundAsync(int gameInstanceId, string newRoundState)
 	{
-		throw new NotImplementedException();
+		var gameInstance = await GameInstances.FindAsync(gameInstanceId) ?? throw new Exception("game not found");
+		gameInstance.Round++;
+
+		Rounds.Add(new()
+		{
+			GameInstanceId = gameInstanceId,
+			State = gameInstance.State,
+			Number = gameInstance.Round
+		});
+		
+		gameInstance.State = newRoundState;
+		await SaveChangesAsync();
 	}
 }
 
