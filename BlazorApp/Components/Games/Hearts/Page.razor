@@ -43,11 +43,12 @@
 <RadzenText Text="Select 3 cards to pass" Visible="_state.Phase == PlayPhase.Pass" />
 
 <div class="d-flex justify-content-center mt-4">	
-	<Hand Cards="_state.PlayersByName[_effectivePlayer].Hand!"
-			GameState="_state"
-			CardPlayed="OnCardPlayed"
-			Playable="_state.IsPlayable(_effectivePlayer)"
-			PlayerName="@_effectivePlayer" />
+	<Hand 
+		Cards="_state.PlayersByName[_effectivePlayer].Hand!"
+		GameState="_state"
+		CardPlayed="OnCardPlayed"
+		Playable="_state.IsPlayable(_effectivePlayer)"
+		PlayerName="@_effectivePlayer" />
 </div>
 
 <details>
@@ -63,6 +64,16 @@
 	</div>
 </details>	
 
+@if (_state.Phase == PlayPhase.Pass)
+{	
+	<AuthorizeView Roles="Developers">
+		<Authorized>
+			<hr class="mt-4" />
+			<RadzenDropDown @bind-Value="_viewPlayer" Data="@_state.Players.Select(p => p.Name)" Placeholder="View Player" AllowClear="true" />
+		</Authorized>
+	</AuthorizeView>
+}
+
 @code {
 	[Parameter]
 	public string Key { get; set; } = default!;
@@ -73,12 +84,13 @@
 	private int _gameId;
 	private GameInstance? _game;
 	private HeartsGameState? _state;
-	private string? _effectivePlayer => 
+	private string? _viewPlayer;
+	private string _effectivePlayer => 
 		_state.Phase == PlayPhase.Pass ?
-			CurrentUser?.UserName :
+			_viewPlayer ?? CurrentUser?.UserName :
 			_state.IsTestMode ?
-				_state?.CurrentPlayer?.Name :				 
-				CurrentUser?.UserName;
+				_state!.CurrentPlayer?.Name :				 
+				CurrentUser!.UserName;
 
 	protected override async Task OnInitializedAsync()
 	{
