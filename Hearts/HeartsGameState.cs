@@ -116,10 +116,34 @@ public class HeartsGameState : GameState<PlayingCard>
 		{
 			Phase = PlayPhase.Play;
 
-			// todo: distribute passed cards (remove from my hand, add to target hand)
+			DistributePassedCards();
 
 			CurrentPlayer = Players.Single(p => p.Hand.Contains(new PlayingCard(2, ClassicSuits.Clubs)));			
 			PlayCard(new(2, ClassicSuits.Clubs));
+		}
+	}
+
+	/// <summary>
+	/// GPT-generated method
+	/// </summary>	
+	private void DistributePassedCards()
+	{
+		var playerNames = Players.Select(p => p.Name).ToArray();
+		foreach (var player in Players)
+		{
+			var selfIndex = Array.IndexOf(playerNames, player.Name);
+			var targetIndex = PassDirection switch
+			{
+				PlayerOrientation.Left => (selfIndex - 1 + Players.Count) % Players.Count,
+				PlayerOrientation.Right => (selfIndex + 1) % Players.Count,
+				PlayerOrientation.Across => (selfIndex + 2) % Players.Count,
+				_ => throw new ArgumentOutOfRangeException(nameof(PassDirection))
+			};
+
+			var targetPlayer = PlayersByName[playerNames[targetIndex]];
+			var passedCards = Passes.Where(p => p.PlayerName == player.Name).Select(p => p.Card).ToList();
+
+			foreach (var card in passedCards) targetPlayer.Hand.Add(card);
 		}
 	}
 
