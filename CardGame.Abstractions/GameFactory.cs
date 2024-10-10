@@ -23,7 +23,7 @@ public abstract class GameFactory<TState, TCard> : IGameDispatcher where TState 
 
 		var cards = Shuffle();
 		var hands = Deal(CardsPerHand, cards, playerNames);
-		var (players, byIndex, byName) = BuildPlayers(playerNames, hands);
+		var players = BuildPlayers(playerNames, hands);
 
 		return CreateGameState(devMode, players, cards);
 	}
@@ -46,11 +46,7 @@ public abstract class GameFactory<TState, TCard> : IGameDispatcher where TState 
 		return result;
 	}
 
-	private static (
-		HashSet<Player<TCard>> HashSet,
-		Dictionary<int, Player<TCard>> ByIndex,
-		Dictionary<string, Player<TCard>> ByName
-	) BuildPlayers(string[] playerNames, ILookup<string, TCard> hands)
+	private static HashSet<Player<TCard>> BuildPlayers(string[] playerNames, ILookup<string, TCard> hands)
 	{
 		List<Player<TCard>> result = [];
 
@@ -68,7 +64,7 @@ public abstract class GameFactory<TState, TCard> : IGameDispatcher where TState 
 
 		HashSet<Player<TCard>> hashSet = [.. result];
 
-		return (hashSet, result.ToDictionary(p => p.Index), result.ToDictionary(p => p.Name));
+		return hashSet;
 	}
 
 	private static ILookup<string, TCard> Deal(uint cardsPerHand, Queue<TCard> cards, string[] playerNames)
