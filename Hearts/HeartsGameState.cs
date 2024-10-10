@@ -65,6 +65,8 @@ public class HeartsGameState : GameState<PlayingCard>
 
 	public Trick[] MyTricks(string playerName) => Tricks.Where(t => t.Winner.Equals(playerName)).ToArray();
 
+	public PlayingCard[] MyPasses(string playerName) => Passes.Where(p => p.PlayerName.Equals(playerName)).Select(p => p.Card).ToArray();
+
 	public override Dictionary<string, int> Score
 	{
 		get
@@ -108,8 +110,9 @@ public class HeartsGameState : GameState<PlayingCard>
 	public void PassCard(string playerName, PlayingCard card)
 	{
 		Passes.Add(new(playerName, card));
+		PlayersByName[playerName].Hand.Remove(card);
 
-		if (Passes.GroupBy(p => p.PlayerName).All(g => g.Count() == PassCardsCount))
+		if (AllCardsPassed())
 		{
 			Phase = PlayPhase.Play;
 
@@ -118,6 +121,15 @@ public class HeartsGameState : GameState<PlayingCard>
 			CurrentPlayer = Players.Single(p => p.Hand.Contains(new PlayingCard(2, ClassicSuits.Clubs)));			
 			PlayCard(new(2, ClassicSuits.Clubs));
 		}
+	}
+
+	private bool AllCardsPassed()
+	{
+		var passingPlayers = Passes.GroupBy(p => p.PlayerName).Select(g => g.Key).ToHashSet();
+		var outstanding = Players.Select(p => p.Name).Except(passingPlayers);
+		if (outstanding.Any()) return false;
+
+		return Passes.GroupBy(p => p.PlayerName).All(g => g.Count() == PassCardsCount);
 	}
 
 	protected override void OnPlayCard(PlayingCard card)
