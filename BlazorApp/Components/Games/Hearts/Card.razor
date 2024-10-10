@@ -1,7 +1,7 @@
 ﻿@if (PlayingCard is null) return;
 
 <div class="py-4 px-2 border rounded-1 d-flex align-items-center me-2" @onclick="(args) => DoOnClick(args)" style="@(PlayableStyle)">
-	<h2 class="my-0 me-1" style="color:@suitImage?.Color">@DisplayRank</h2>
+	<h2 class="my-0 me-1" style="color:@Color">@DisplayRank</h2>
 	<div><SuitImage Suit="PlayingCard?.Suit" @ref="suitImage" /></div>
 </div>
 
@@ -21,11 +21,14 @@
 	private string Display => DisplayRank + PlayingCard?.Suit.Name.Substring(0, 1);
 	private string PlayableStyle => Playable ? "cursor:pointer" : "cursor:not-allowed";	
 
+	private string Color => (PlayingCard is not null) ? (
+		PlayingCard.Suit!.Equals(ClassicSuits.Hearts) ? "red" :
+		PlayingCard.Suit.Equals(ClassicSuits.Diamonds) ? "red" :
+		"auto") : string.Empty;
 
 	private async Task DoOnClick(MouseEventArgs args)
 	{
 		if (!Playable) return;
 		await OnClick.InvokeAsync(PlayingCard);
-	}
-	
+	}	
 }

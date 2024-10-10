@@ -7,11 +7,6 @@
 	[Parameter]
 	public decimal Opacity { get; set; } = 1m;
 
-	public string Color => (Suit is not null) ? (
-		Suit!.Equals(ClassicSuits.Hearts) ? "red" :
-		Suit.Equals(ClassicSuits.Diamonds) ? "red" :
-		"auto") : string.Empty;
-
 	private string ImageHref => (Suit is not null) ? ($"img/Suits/" + (
 		Suit.Equals(ClassicSuits.Spades) ? "spades.svg" :
 		Suit.Equals(ClassicSuits.Hearts) ? "hearts.svg" :

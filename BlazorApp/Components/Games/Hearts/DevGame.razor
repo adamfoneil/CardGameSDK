@@ -9,6 +9,7 @@
 
 @if (_gameState != null)
 {
+	<p>phase: @_gameState.Phase</p>
 	<div class="grid">
 		<div class="pe-3">
 			@foreach (var player in _gameState.Players)
@@ -16,8 +17,17 @@
 				<hr />
 				<h4 style="@CurrentPlayerStyle(player.Name)" class="p-2 rounded-2">@player.Name</h4>
 				<div class="d-flex justify-content-between">
-					<Hand Cards="player.Hand" GameState="_gameState" CardPlayed="OnCardPlayed" Playable="_gameState.CurrentPlayer.Name.Equals(player.Name)" />
-					<Card PlayingCard="_gameState.GetCurrentCard(player.Name)" />
+					<Hand Cards="player.Hand" GameState="_gameState" CardPlayed="OnCardPlayed" Playable="_gameState.IsPlayable(player.Name)" PlayerName="@player.Name" />
+					<div>
+					@if (_gameState.Phase == PlayPhase.Pass)
+					{
+						<Hand Cards="_gameState.MyPasses(player.Name)" GameState="_gameState" CardPlayed="OnCardPlayed" Playable="false" PlayerName="@player.Name" />
+					}
+					else
+					{
+						<Card PlayingCard="_gameState.GetCurrentCard(player.Name)" />
+					}					
+					</div>
 				</div>
 			}
 		</div>
