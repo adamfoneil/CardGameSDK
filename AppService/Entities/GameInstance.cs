@@ -8,6 +8,7 @@ public class GameInstance : BaseTable
 {
 	public SupportedGames Game { get; set; }
 	public bool IsTestMode { get; set; }
+	public int Round { get; set; }
 	public string Url { get; set; } = default!;
 	public string State { get; set; } = default!;
 	public DateTime? FinishedAtUtc { get; set; }
