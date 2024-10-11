@@ -40,7 +40,20 @@
 
 @if (CurrentUser is null) return;
 
-<RadzenText Text="Select 3 cards to pass" Visible="_state.Phase == PlayPhase.Pass" />
+@if (_state.Phase == PlayPhase.Pass)
+{
+	<div class="d-flex align-items-center">
+		<div>Select 3 cards to pass</div>
+		<div class="ms-2">@CardPassStatus()</div>
+	</div>
+
+	<AuthorizeView Roles="Developers">
+		<Authorized>
+			<hr class="mt-4" />
+			<RadzenDropDown @bind-Value="_viewPlayer" Data="@_state.Players.Select(p => p.Name)" Placeholder="View Player" AllowClear="true" />
+		</Authorized>
+	</AuthorizeView>
+}
 
 <div class="d-flex justify-content-center mt-4">	
 	<Hand 
@@ -63,16 +76,6 @@
 		}
 	</div>
 </details>	
-
-@if (_state.Phase == PlayPhase.Pass)
-{	
-	<AuthorizeView Roles="Developers">
-		<Authorized>
-			<hr class="mt-4" />
-			<RadzenDropDown @bind-Value="_viewPlayer" Data="@_state.Players.Select(p => p.Name)" Placeholder="View Player" AllowClear="true" />
-		</Authorized>
-	</AuthorizeView>
-}
 
 @code {
 	[Parameter]
@@ -136,7 +139,7 @@
 	private async Task OnRoundFinished()
 	{
 		using var db = DbFactory.CreateDbContext();
-		
+
 		// todo: check score and see if game is over
 
 		var nextRound = GameFactory.Start(_game!.IsTestMode, _game!.Players.Select(p => p.User!.UserName!).ToArray());
@@ -152,6 +155,12 @@
 		var json = JsonSerializer.Serialize(nextRound);
 
 		await db.CompleteRoundAsync(_gameId, json);
+	}
+
+	private string CardPassStatus()
+	{
+		var passCount = _state!.Passes.Count(p => p.PlayerName.Equals(_effectivePlayer));
+		return $"{passCount} / {HeartsGameState.PassCardsCount} passed";
 	}
 
 	public void Dispose()
