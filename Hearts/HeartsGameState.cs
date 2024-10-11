@@ -20,7 +20,7 @@ public enum PlayPhase
 public class HeartsGameState : GameState<PlayingCard>
 {
 	private bool _isRoundFinished = false;
-	private const int PassCardsCount = 3;
+	public const int PassCardsCount = 3;
 
 	public PlayPhase Phase { get; set; } = PlayPhase.Pass;
 	public PlayerOrientation PassDirection { get; set; } = PlayerOrientation.Left;
@@ -95,13 +95,13 @@ public class HeartsGameState : GameState<PlayingCard>
 	private static int PointValue(PlayingCard card) =>
 		card.Suit.Equals(ClassicSuits.Hearts) ? 1 :
 		card.Suit.Equals(ClassicSuits.Spades) && card.Rank == ClassicNamedRanks.Queen ? 13 :
-		0;
+		0;	
 
 	public bool IsPlayable(string playerName)
 	{
 		if (Phase == PlayPhase.Pass)
 		{
-			return Passes.Count(p => p.PlayerName.Equals(playerName)) <= PassCardsCount;
+			return Passes.Count(p => p.PlayerName.Equals(playerName)) < PassCardsCount;
 		}
 
 		return CurrentPlayer?.Name.Equals(playerName) ?? false;
