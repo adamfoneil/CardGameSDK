@@ -66,11 +66,11 @@ else
 
 	protected override void OnInitialized()
 	{
-		State.OnPlayersUpdatedAsync += OnPlayersUpdated;
+		State.OnPlayersUpdated += OnPlayersUpdated;
 		State.OnGameStarted += OnGameStarted;
 	}
 
-	private async Task OnPlayersUpdated(SupportedGames game)
+	private async void OnPlayersUpdated(SupportedGames game)
 	{
 		if (game != Game) return;
 		await ListPlayers();
@@ -186,7 +186,7 @@ else
 	
 	public void Dispose()
 	{
-		State.OnPlayersUpdatedAsync -= OnPlayersUpdated;
+		State.OnPlayersUpdated -= OnPlayersUpdated;
 		State.OnGameStarted -= OnGameStarted;
 	}
 }
