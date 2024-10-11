@@ -6,6 +6,8 @@
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject IServiceProvider Services
 @inject NavigationManager Nav
+@inject StateContainer State
+@implements IDisposable
 
 <h3>Ready</h3>
 <p>Use this to indicate your readiness to play a game.</p>
@@ -62,6 +64,18 @@ else
 	[Parameter]
 	public SupportedGames? Game { get; set; }
 
+	protected override void OnInitialized()
+	{
+		State.OnPlayersUpdatedAsync += OnPlayersUpdated;
+		State.OnGameStarted += OnGameStarted;
+	}
+
+	private async Task OnPlayersUpdated()
+	{
+		await ListPlayers();
+		StateHasChanged();
+	}
+
 	private async Task ListPlayers()
 	{
 		using var db = DbFactory.CreateDbContext();
@@ -91,6 +105,8 @@ else
 			db.ReadyPlayers.Add(player);
 			await db.SaveChangesAsync();
 			await ListPlayers();
+
+			State.NotifyPlayerReady();
 		}
 		catch (Exception exc)
 		{
@@ -127,7 +143,7 @@ else
 		await db.SaveChangesAsync();
 
 		var url = gameFactory.GetUrl(gameInstance.Id);
-		
+
 		await db.GameInstances
 			.Where(row => row.Id == gameInstance.Id)
 			.ExecuteUpdateAsync(u => u.SetProperty(row => row.Url, url));
@@ -136,6 +152,7 @@ else
 			.Where(p => p.Game == Game)
 			.ExecuteDeleteAsync();
 
+		State.NotifyGameStarted(url);
 		Nav.NavigateTo(url, forceLoad: true);
 	}
 
@@ -156,5 +173,15 @@ else
 			.ExecuteDeleteAsync();
 
 		await ListPlayers();
+
+		State.NotifyPlayerReady();
+	}
+
+	private void OnGameStarted(string url) => Nav.NavigateTo(url, forceLoad: true);	
+
+	public void Dispose()
+	{
+		State.OnPlayersUpdatedAsync -= OnPlayersUpdated;
+		State.OnGameStarted -= OnGameStarted;
 	}
 }

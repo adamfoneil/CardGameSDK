@@ -3,6 +3,7 @@ using AppService.Entities;
 using BlazorApp;
 using BlazorApp.Components;
 using BlazorApp.Components.Account;
+using BlazorApp.Components.Games.Hearts;
 using BlazorApp.Extensions;
 using Games.FoxInTheForest;
 using Games.Hearts;
@@ -24,7 +25,8 @@ builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 builder.Services.AddRadzenComponents();
-builder.Services.AddScoped<StateContainer>();
+builder.Services.AddScoped<BlazorApp.Components.Games.Hearts.StateContainer>();
+builder.Services.AddScoped<BlazorApp.Components.Ready.StateContainer>();
 builder.Services.AddScoped<CurrentUser>();
 builder.Services.Configure<HashIdOptions>(builder.Configuration.GetSection("HashIds"));
 builder.Services.AddSingleton<IHashids>(sp =>

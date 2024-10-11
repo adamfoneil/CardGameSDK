@@ -1,4 +1,4 @@
-﻿namespace BlazorApp;
+﻿namespace BlazorApp.Components.Games.Hearts;
 
 public class StateContainer
 {
