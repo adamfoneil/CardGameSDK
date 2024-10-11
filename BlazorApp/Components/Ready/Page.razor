@@ -107,7 +107,7 @@ else
 			await db.SaveChangesAsync();
 			await ListPlayers();
 
-			State.NotifyPlayerReady(Game.Value);
+			State.NotifyPlayersUpdated(Game.Value);
 		}
 		catch (Exception exc)
 		{
@@ -175,7 +175,7 @@ else
 
 		await ListPlayers();
 
-		State.NotifyPlayerReady(Game.Value);
+		State.NotifyPlayersUpdated(Game.Value);
 	}
 
 	private void OnGameStarted(SupportedGames game, string url)
