@@ -74,7 +74,7 @@ else
 	{
 		if (game != Game) return;
 		await ListPlayers();
-		await InvokeAsync(StateHasChanged); // problem here -- expecting this to cause a re-render
+		StateHasChanged();
 	}
 
 	private async Task ListPlayers()
