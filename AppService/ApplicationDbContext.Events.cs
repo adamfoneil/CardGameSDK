@@ -5,7 +5,7 @@ using System.Text.Json;
 namespace AppService;
 
 public partial class ApplicationDbContext
-{
+{	
 	public async Task GameStateChangedAsync(int gameInstanceId, string fromUser, string? topic = null, string? payload = null)
 	{
 		var players = await ActivePlayers
@@ -26,6 +26,9 @@ public partial class ApplicationDbContext
 		Events.AddRange(messages);
 		await SaveChangesAsync();
 	}
+
+	public async Task GameStartedAsync(SupportedGames game, string fromUser, string url) =>
+		await ReadyStateChangedAsync(game, fromUser, EventMessage.GameStarted, url);
 
 	public async Task ReadyStateChangedAsync(SupportedGames game, string fromUser, string? topic = null, string? payload = null)
 	{

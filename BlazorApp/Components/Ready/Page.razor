@@ -66,18 +66,29 @@ else
 
 	protected override void OnInitialized()
 	{
-		Events.ReadyStateChanged += OnPlayersUpdated;
-
-		//State.OnGameStarted += OnGameStarted;
+		Events.ReadyStateChanged += OnReadyStateChanged;
 	}
 
-	private async void OnPlayersUpdated(SupportedGames game, string toUser, string? topic = null, string? payload = null)
+	private async void OnReadyStateChanged(SupportedGames game, string toUser, string? topic = null, string? payload = null)
 	{
 		if (game != Game) return;
 		if (CurrentUser!.UserName != toUser) return;
 
-		await ListPlayers();
-		await InvokeAsync(StateHasChanged);
+		if (string.IsNullOrEmpty(topic))
+		{
+			await ListPlayers();
+			await InvokeAsync(StateHasChanged);
+			return;
+		}
+
+		if (topic.Equals(EventMessage.GameStarted))
+		{
+			using var db = DbFactory.CreateDbContext();
+			await db.ReadyPlayers.Where(p => p.Game == Game).ExecuteDeleteAsync();
+
+			var url = payload!;
+			Nav.NavigateTo(url, forceLoad: true);
+		}
 	}
 
 	private async Task ListPlayers()
@@ -152,11 +163,8 @@ else
 			.Where(row => row.Id == gameInstance.Id)
 			.ExecuteUpdateAsync(u => u.SetProperty(row => row.Url, url));
 
-		await db.ReadyPlayers
-			.Where(p => p.Game == Game)
-			.ExecuteDeleteAsync();
+		await db.ReadyStateChangedAsync(Game!.Value, CurrentUser!.UserName!, EventMessage.GameStarted, url);
 
-		//State.NotifyGameStarted(Game.Value, url);
 		Nav.NavigateTo(url, forceLoad: true);
 	}
 
@@ -189,7 +197,6 @@ else
 	
 	public void Dispose()
 	{
-		Events.ReadyStateChanged -= OnPlayersUpdated;
-		//State.OnGameStarted -= OnGameStarted;
+		Events.ReadyStateChanged -= OnReadyStateChanged;
 	}
 }
