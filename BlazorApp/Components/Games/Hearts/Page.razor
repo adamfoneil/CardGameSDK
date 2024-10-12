@@ -129,7 +129,7 @@
 
 		StateHasChanged();
 
-		await db.GameStateChangedAsync(_gameId, _effectivePlayer);
+		await Events.GameStateChangedAsync(_gameId, _effectivePlayer);
 	}
 
 	private async Task LoadGameAsync()

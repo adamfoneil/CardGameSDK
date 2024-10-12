@@ -121,7 +121,7 @@ else
 			await db.SaveChangesAsync();
 			await ListPlayers();
 
-			await db.ReadyStateChangedAsync(Game.Value, CurrentUser!.UserName!);
+			await Events.ReadyStateChangedAsync(Game.Value, CurrentUser!.UserName!);
 		}
 		catch (Exception exc)
 		{
@@ -163,7 +163,7 @@ else
 			.Where(row => row.Id == gameInstance.Id)
 			.ExecuteUpdateAsync(u => u.SetProperty(row => row.Url, url));
 
-		await db.ReadyStateChangedAsync(Game!.Value, CurrentUser!.UserName!, EventMessage.GameStarted, url);
+		await Events.ReadyStateChangedAsync(Game!.Value, CurrentUser!.UserName!, EventMessage.GameStarted, url);
 
 		Nav.NavigateTo(url, forceLoad: true);
 	}
@@ -186,7 +186,7 @@ else
 
 		await ListPlayers();
 
-		await db.ReadyStateChangedAsync(Game!.Value, CurrentUser!.UserName!);
+		await Events.ReadyStateChangedAsync(Game!.Value, CurrentUser!.UserName!);
 	}
 
 	private void OnGameStarted(SupportedGames game, string url)
