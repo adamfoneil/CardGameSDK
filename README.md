@@ -19,7 +19,5 @@ I'm still a long ways from having something playable in a web UI, but I needed s
 - When comparing suits, I need to use the `Equals` method instead of `==`. I was a little confused by this. Using `==` resulted in false negatives. I think this is a side effect of overriding the `Equals` method. I considered using `records` instead of `classes` for suits. I might have to revisit.
 - Not sure all of my Hearts rules are right. Trying to progammatically articulate rules I know "intuitively" or from habit was pretty of hard -- for example when trying to simulate [automatic play](https://github.com/adamfoneil/CardGameSDK/blob/master/Hearts/HeartsGameState.cs#L146). When reading Hearts rules online, I found many of them confusing, even though I know the game.
 
-# What's Next?
-I envision a Blazor app with rudimentary graphics for playing actual games. But who knows when I will get around to this?
-
-I have a longer term vision of creating new card games -- having been both intrigued and confused by the possiblities such as Fox in the Forest. But creating games that are actually fun is easier said than done, and I have no illusions about that.
+# News
+There's a Server [BlazorApp](https://github.com/adamfoneil/CardGameSDK/tree/master/BlazorApp) in progress running at [cardplace.azurewebsites.net](https://cardplace.azurewebsites.net/). Note it's on a low service tier, so it might be slow to start. You can actually register and experiment with the [Hearts](https://github.com/adamfoneil/CardGameSDK/tree/master/Hearts) game by going to the [Ready page](https://cardplace.azurewebsites.net/Ready). You'll need 4 players online simultaneously.
