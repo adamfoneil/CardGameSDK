@@ -75,7 +75,12 @@
 			</div>
 		}
 	</div>
-</details>	
+</details>
+
+<AuthorizeView Roles="Developers">
+	<Authorized>
+	</Authorized>
+</AuthorizeView>
 
 @code {
 	[Parameter]
@@ -92,7 +97,7 @@
 		_state.Phase == PlayPhase.Pass ?
 			_viewPlayer ?? CurrentUser?.UserName :
 			_state.IsTestMode ?
-				_state!.CurrentPlayer?.Name :				 
+				_state!.CurrentPlayer?.Name : // todo: if placeholder, use current user	 
 				CurrentUser!.UserName;
 
 	protected override async Task OnInitializedAsync()
@@ -107,8 +112,8 @@
 	{
 		if (gameInstanceId != _gameId) return;
 		if (toUser != _effectivePlayer) return;
-		await LoadGameAsync();		
-		StateHasChanged();
+		await LoadGameAsync();
+		await InvokeAsync(StateHasChanged);
 	}
 
 	private async Task OnCardPlayed()
@@ -123,10 +128,7 @@
 
 		StateHasChanged();
 
-		if (_state!.Phase == PlayPhase.Play)
-		{
-			await db.GameStateChangedAsync(_gameId, _effectivePlayer);			
-		}		
+		await db.GameStateChangedAsync(_gameId, _effectivePlayer);
 	}
 
 	private async Task LoadGameAsync()
@@ -161,7 +163,8 @@
 	private string CardPassStatus()
 	{
 		var passCount = _state!.Passes.Count(p => p.PlayerName.Equals(_effectivePlayer));
-		return $"{passCount} / {HeartsGameState.PassCardsCount} passed";
+		var totalPassCount = _state!.Passes.Count;
+		return $"{_effectivePlayer}: {passCount} / {HeartsGameState.PassCardsCount} passed / all players: {totalPassCount} / {HeartsGameState.PassCardsCount * _state.Players.Count}";
 	}
 
 	public void Dispose()
