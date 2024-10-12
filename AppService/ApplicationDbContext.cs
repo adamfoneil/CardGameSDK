@@ -12,34 +12,19 @@ public enum SupportedGames
 	FoxInTheForest = 2
 }
 
-public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
+public partial class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
 {
 	public DbSet<GameInstance> GameInstances { get; set; }
 	public DbSet<GameInstancePlayer> ActivePlayers { get; set; }
 	public DbSet<ReadyPlayer> ReadyPlayers { get; set; }
 	public DbSet<Round> Rounds { get; set; }
+	public DbSet<EventMessage> Events { get; set; }
 
 	protected override void OnModelCreating(ModelBuilder builder)
 	{
 		base.OnModelCreating(builder);
 		builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
-	}
-
-	public async Task CompleteRoundAsync(int gameInstanceId, string newRoundState)
-	{
-		var gameInstance = await GameInstances.FindAsync(gameInstanceId) ?? throw new Exception("game not found");
-		gameInstance.Round++;
-
-		Rounds.Add(new()
-		{
-			GameInstanceId = gameInstanceId,
-			State = gameInstance.State,
-			Number = gameInstance.Round
-		});
-		
-		gameInstance.State = newRoundState;
-		await SaveChangesAsync();
-	}
+	}	
 }
 
 public class AppDbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>

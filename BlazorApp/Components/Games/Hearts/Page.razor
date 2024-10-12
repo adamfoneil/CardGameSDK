@@ -4,8 +4,8 @@
 @attribute [Authorize]
 @inject IHashids Hashids
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
-@inject StateContainer State
 @inject HeartsGameFactory GameFactory
+@inject EventBackgroundService Events
 @implements IDisposable
 
 @if (_game is null) return;
@@ -97,17 +97,18 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		State.OnChangeAsync += OnStateChange;
+		Events.GameStateChanged += OnStateChange;
 
 		_gameId = Hashids.DecodeSingle(Key);
 		await LoadGameAsync();
 	}
 
-	private async Task OnStateChange(string userName)
+	private async Task OnStateChange(int gameInstanceId, string toUser, string? topic = null, string? payload = null)
 	{
-		StateHasChanged();
-		if (userName == _effectivePlayer) return;
+		if (gameInstanceId != _gameId) return;
+		if (toUser != _effectivePlayer) return;
 		await LoadGameAsync();		
+		StateHasChanged();
 	}
 
 	private async Task OnCardPlayed()
@@ -124,7 +125,7 @@
 
 		if (_state!.Phase == PlayPhase.Play)
 		{
-			State.NotifyStateChanged(_effectivePlayer);
+			await db.GameStateChangedAsync(_gameId, _effectivePlayer);			
 		}		
 	}
 
@@ -165,7 +166,8 @@
 
 	public void Dispose()
 	{
-		_state!.OnFinishedAsync -= OnRoundFinished;
-		State.OnChangeAsync -= OnStateChange;
+		Events.GameStateChanged -= OnStateChange;
+		//_state!.OnFinishedAsync -= OnRoundFinished;
+		//State.OnChangeAsync -= OnStateChange;
 	}
 }

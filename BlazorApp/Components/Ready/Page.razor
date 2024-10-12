@@ -6,7 +6,7 @@
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject IServiceProvider Services
 @inject NavigationManager Nav
-@inject StateContainer State
+@inject EventBackgroundService Events
 @implements IDisposable
 
 <h3>Ready</h3>
@@ -66,13 +66,16 @@ else
 
 	protected override void OnInitialized()
 	{
-		State.OnPlayersUpdated += OnPlayersUpdated;
-		State.OnGameStarted += OnGameStarted;
+		Events.ReadyStateChanged += OnPlayersUpdated;
+
+		//State.OnGameStarted += OnGameStarted;
 	}
 
-	private async void OnPlayersUpdated(SupportedGames game)
+	private async Task OnPlayersUpdated(SupportedGames game, string toUser, string? topic = null, string? payload = null)
 	{
 		if (game != Game) return;
+		if (CurrentUser!.UserName != toUser) return;
+
 		await ListPlayers();
 		StateHasChanged();
 	}
@@ -107,7 +110,7 @@ else
 			await db.SaveChangesAsync();
 			await ListPlayers();
 
-			State.NotifyPlayersUpdated(Game.Value);
+			await db.ReadyStateChangedAsync(Game.Value, CurrentUser!.UserName!);
 		}
 		catch (Exception exc)
 		{
@@ -153,7 +156,7 @@ else
 			.Where(p => p.Game == Game)
 			.ExecuteDeleteAsync();
 
-		State.NotifyGameStarted(Game.Value, url);
+		//State.NotifyGameStarted(Game.Value, url);
 		Nav.NavigateTo(url, forceLoad: true);
 	}
 
@@ -175,7 +178,7 @@ else
 
 		await ListPlayers();
 
-		State.NotifyPlayersUpdated(Game.Value);
+		await db.ReadyStateChangedAsync(Game!.Value, CurrentUser!.UserName!);
 	}
 
 	private void OnGameStarted(SupportedGames game, string url)
@@ -186,7 +189,7 @@ else
 	
 	public void Dispose()
 	{
-		State.OnPlayersUpdated -= OnPlayersUpdated;
-		State.OnGameStarted -= OnGameStarted;
+		Events.ReadyStateChanged -= OnPlayersUpdated;
+		//State.OnGameStarted -= OnGameStarted;
 	}
 }
