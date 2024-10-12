@@ -277,6 +277,14 @@ public class HeartsGameState : GameState<PlayingCard>
 		OnPlayCard(card);
 	}
 
+	public string EffectivePlayer(string loggedInUser, string? devViewPlayer) =>
+		Phase == PlayPhase.Pass ?
+			devViewPlayer ?? loggedInUser :
+			IsTestMode ?
+				CurrentPlayer!.IsTest ? loggedInUser : 
+					CurrentPlayer!.Name :
+				loggedInUser;
+
 	public class Trick
 	{
 		public required List<Play> Plays { get; init; } = [];

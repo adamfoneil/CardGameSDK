@@ -16,16 +16,22 @@ public abstract class GameFactory<TState, TCard> : IGameDispatcher where TState 
 		HashSet<Player<TCard>> players,
 		Queue<TCard> drawPile);
 
-	public TState Start(bool testMode, string[] playerNames)
+	/// <summary>
+	/// this is for test code, not intended for real games
+	/// </summary>	
+	public TState Start(bool testMode, string[] playerNames) =>
+		Start(testMode, playerNames.Select(name => (name, false)).ToArray());
+
+	public TState Start(bool testMode, (string Name, bool IsTest)[] players)
 	{
-		if (playerNames.Length < MinPlayers) throw new Exception("not enough players");
-		if (playerNames.Length > MaxPlayers) throw new Exception("too many players");
+		if (players.Length < MinPlayers) throw new Exception("not enough players");
+		if (players.Length > MaxPlayers) throw new Exception("too many players");
 
 		var cards = Shuffle();
-		var hands = Deal(CardsPerHand, cards, playerNames);
-		var players = BuildPlayers(playerNames, hands);
+		var hands = Deal(CardsPerHand, cards, players.Select(p => p.Name).ToArray());
+		var playerEntities = BuildPlayers(players, hands);
 
-		return CreateGameState(testMode, players, cards);
+		return CreateGameState(testMode, playerEntities, cards);
 	}
 
 	/// <summary>
@@ -46,7 +52,7 @@ public abstract class GameFactory<TState, TCard> : IGameDispatcher where TState 
 		return result;
 	}
 
-	private static HashSet<Player<TCard>> BuildPlayers(string[] playerNames, ILookup<string, TCard> hands)
+	private static HashSet<Player<TCard>> BuildPlayers((string Name, bool IsTest)[] playerNames, ILookup<string, TCard> hands)
 	{
 		List<Player<TCard>> result = [];
 
@@ -56,9 +62,10 @@ public abstract class GameFactory<TState, TCard> : IGameDispatcher where TState 
 			index++;
 			result.Add(new Player<TCard>()
 			{
-				Name = player,
+				Name = player.Name,
 				Index = index,
-				Hand = hands[player].ToHashSet()
+				Hand = hands[player.Name].ToHashSet(),
+				IsTest = player.IsTest
 			});
 		}
 
@@ -85,7 +92,7 @@ public abstract class GameFactory<TState, TCard> : IGameDispatcher where TState 
 	/// <summary>
 	/// this is used with dispatch/launcher pages that are not type-specific
 	/// </summary>
-	public object CreateStateObject(bool devMode, string[] playerNames) => Start(devMode, playerNames);
+	public object CreateStateObject(bool devMode, (string Name, bool IsTest)[] players) => Start(devMode, players);
 
 	/// <summary>
 	/// link to page for playing a particular instance of the game

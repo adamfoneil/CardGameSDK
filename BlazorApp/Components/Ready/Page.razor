@@ -133,16 +133,16 @@ else
 	{
 		var gameFactory = GetGameDispatcher();
 
-		var playerNames = _players.Select(p => p.User!.UserName!).ToList();
+		var players = _players.Select(p => (p.User!.UserName!, false)).ToList();
 
 		if (_testMode)
 		{
-			int playersNeeded = (int)gameFactory.MinPlayers - playerNames.Count;
-			playerNames.AddRange(gameFactory.TestModePlayerNames.Skip(playerNames.Count - 1).Take(playersNeeded));
+			int playersNeeded = (int)gameFactory.MinPlayers - players.Count;
+			players.AddRange(gameFactory.TestModePlayerNames.Skip(players.Count - 1).Take(playersNeeded).Select(val => (val, true)));
 		}
 
-		var state = gameFactory.CreateStateObject(_testMode, playerNames.ToArray());
-		var json = JsonSerializer.Serialize(state);		
+		var state = gameFactory.CreateStateObject(_testMode, players.ToArray());
+		var json = JsonSerializer.Serialize(state);
 
 		var gameInstance = new GameInstance()
 		{

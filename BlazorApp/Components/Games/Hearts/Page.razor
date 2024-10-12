@@ -79,6 +79,7 @@
 
 <AuthorizeView Roles="Developers">
 	<Authorized>
+		@*todo: game state json view*@
 	</Authorized>
 </AuthorizeView>
 
@@ -170,7 +171,5 @@
 	public void Dispose()
 	{
 		Events.GameStateChanged -= OnStateChange;
-		//_state!.OnFinishedAsync -= OnRoundFinished;
-		//State.OnChangeAsync -= OnStateChange;
 	}
 }

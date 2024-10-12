@@ -13,5 +13,5 @@ public interface IGameDispatcher
 	string GetUrl(int gameInstanceId);
 	string[] TestModePlayerNames { get; }
 
-	object CreateStateObject(bool devMode, string[] playerNames);
+	object CreateStateObject(bool devMode, (string Name, bool IsTest)[] players);
 }
