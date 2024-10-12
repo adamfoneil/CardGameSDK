@@ -23,8 +23,7 @@ internal class EventRelay(ILogger<EventRelay> logger)
 		_logger.LogDebug("Ready state changed: {game}, {toUser}, {topic}, {payload}", game, toUser, topic, payload);
 		ReadyStateChanged?.Invoke(game, toUser, topic, payload);
 	}
-		
-
+	
 	public void CallGameStateChanged(int gameInstanceId, string toUser, string? topic = null, string? payload = null)
 	{
 		_logger.LogDebug("Game state changed: {gameInstanceId}, {toUser}, {topic}, {payload}", gameInstanceId, toUser, topic, payload);
