@@ -1,4 +1,5 @@
 ﻿@using global::Games.Hearts
+@inject ILogger<Hand> Logger
 
 <div class="d-flex align-items-center">
 	@foreach (var suit in Cards.GroupBy(c => c.Suit))
@@ -34,10 +35,12 @@
 			{
 				case PlayPhase.Pass:
 					GameState.PassCard(PlayerName, card);
+					Logger.LogInformation("Player {Player} passed {Card}", PlayerName, card);
 					break;
 
 				case PlayPhase.Play:
-					GameState.PlayCard(card);					
+					GameState.PlayCard(card);
+					Logger.LogInformation("Player {Player} played {Card}", PlayerName, card);
 					break;
 				default:
 					throw new InvalidOperationException("Invalid game phase");

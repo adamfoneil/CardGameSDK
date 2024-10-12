@@ -16,6 +16,9 @@ internal class EventRelay(
 
 	public async Task GameStateChangedAsync(int gameInstanceId, string fromUser, string? topic = null, string? payload = null)
 	{
+		_logger.LogDebug("{fromUser}: GameStateChanged event: {gameInstanceId}, topic = {topic}, payload = {payload}",
+			fromUser, gameInstanceId, topic, payload);
+
 		using var db = _dbFactory.CreateDbContext();
 
 		var players = await db.ActivePlayers
@@ -42,8 +45,8 @@ internal class EventRelay(
 
 	public async Task ReadyStateChangedAsync(SupportedGames game, string fromUser, string? topic = null, string? payload = null)
 	{
-		_logger.LogDebug("ReadyStateChanged invoked: {game} {fromUser}, topic = {topic}, payload = {payload}",
-			game, fromUser, topic, payload);
+		_logger.LogDebug("{fromUser}: ReadyStateChanged event: {game}, topic = {topic}, payload = {payload}",
+			fromUser, game, topic, payload);
 
 		using var db = _dbFactory.CreateDbContext();
 

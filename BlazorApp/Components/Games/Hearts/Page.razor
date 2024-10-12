@@ -6,6 +6,7 @@
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject HeartsGameFactory GameFactory
 @inject EventRelay Events
+@inject ILogger<Page> Logger
 @implements IDisposable
 
 @if (_game is null) return;

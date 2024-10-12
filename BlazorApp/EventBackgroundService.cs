@@ -10,13 +10,11 @@ namespace BlazorApp;
 
 internal class EventBackgroundService(
 	EventRelay eventRelay,
-	ILogger<EventBackgroundService> logger,
-	IDbContextFactory<ApplicationDbContext> dbFactory,
+	ILogger<EventBackgroundService> logger,	
 	IOptions<ConnectionStrings> connectionStrings) : BackgroundService
 {
 	private readonly EventRelay _eventRelay = eventRelay;
-	private readonly ILogger<EventBackgroundService> _logger = logger;
-	private readonly IDbContextFactory<ApplicationDbContext> _dbFactory = dbFactory;
+	private readonly ILogger<EventBackgroundService> _logger = logger;	
 	private readonly ConnectionStrings _connectionStrings = connectionStrings.Value;	
 
 	protected override async Task ExecuteAsync(CancellationToken stoppingToken)

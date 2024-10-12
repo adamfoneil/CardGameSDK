@@ -3,7 +3,6 @@ using AppService.Entities;
 using BlazorApp;
 using BlazorApp.Components;
 using BlazorApp.Components.Account;
-using BlazorApp.Components.Games.Hearts;
 using BlazorApp.Extensions;
 using Games.FoxInTheForest;
 using Games.Hearts;

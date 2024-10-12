@@ -1,9 +1,12 @@
-﻿using System.Text.Json.Serialization;
+﻿using Microsoft.Extensions.Logging;
+using System.Text.Json.Serialization;
 
 namespace CardGame.Abstractions;
 
 public abstract class GameState<TCard>
-{	
+{
+	public Logger? Logger { get; set; }
+
 	public HashSet<Player<TCard>> Players { get; init; } = [];
 	[JsonIgnore]
 	public Dictionary<int, Player<TCard>> PlayersByIndex => Players.ToDictionary(player => player.Index);
