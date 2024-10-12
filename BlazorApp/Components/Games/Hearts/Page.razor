@@ -5,7 +5,7 @@
 @inject IHashids Hashids
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject HeartsGameFactory GameFactory
-@inject EventBackgroundService Events
+@inject EventRelay Events
 @implements IDisposable
 
 @if (_game is null) return;
@@ -103,7 +103,7 @@
 		await LoadGameAsync();
 	}
 
-	private async Task OnStateChange(int gameInstanceId, string toUser, string? topic = null, string? payload = null)
+	private async void OnStateChange(int gameInstanceId, string toUser, string? topic = null, string? payload = null)
 	{
 		if (gameInstanceId != _gameId) return;
 		if (toUser != _effectivePlayer) return;

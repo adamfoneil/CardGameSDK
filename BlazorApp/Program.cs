@@ -36,7 +36,7 @@ builder.Services.AddSingleton<IHashids>(sp =>
 builder.Services.AddSingleton<HeartsGameFactory>();
 builder.Services.AddSingleton<FoxInTheForestGameFactory>();
 builder.Services.AddHostedService<EventBackgroundService>();
-builder.Services.AddSingleton<EventBackgroundService>();
+builder.Services.AddSingleton<EventRelay>();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.Configure<ConnectionStrings>(builder.Configuration.GetSection("ConnectionStrings"));

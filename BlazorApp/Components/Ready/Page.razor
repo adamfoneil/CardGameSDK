@@ -6,7 +6,7 @@
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject IServiceProvider Services
 @inject NavigationManager Nav
-@inject EventBackgroundService Events
+@inject EventRelay Events
 @implements IDisposable
 
 <h3>Ready</h3>
@@ -71,13 +71,13 @@ else
 		//State.OnGameStarted += OnGameStarted;
 	}
 
-	private async Task OnPlayersUpdated(SupportedGames game, string toUser, string? topic = null, string? payload = null)
+	private async void OnPlayersUpdated(SupportedGames game, string toUser, string? topic = null, string? payload = null)
 	{
 		if (game != Game) return;
 		if (CurrentUser!.UserName != toUser) return;
 
 		await ListPlayers();
-		StateHasChanged();
+		await InvokeAsync(StateHasChanged);
 	}
 
 	private async Task ListPlayers()
