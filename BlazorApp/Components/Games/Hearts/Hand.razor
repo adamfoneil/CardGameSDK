@@ -39,7 +39,7 @@
 					break;
 
 				case PlayPhase.Play:
-					GameState.PlayCard(card);
+					GameState.PlayCard(PlayerName, card);
 					Logger.LogInformation("Player {Player} played {Card}", PlayerName, card);
 					break;
 				default:

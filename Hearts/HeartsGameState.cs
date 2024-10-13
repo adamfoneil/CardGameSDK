@@ -119,7 +119,7 @@ public class HeartsGameState : GameState<PlayingCard>
 			DistributePassedCards();
 
 			CurrentPlayer = Players.Single(p => p.Hand.Contains(new PlayingCard(2, ClassicSuits.Clubs)));			
-			PlayCard(new(2, ClassicSuits.Clubs));
+			PlayCard(CurrentPlayer.Name, new(2, ClassicSuits.Clubs));
 		}
 	}
 
@@ -156,15 +156,15 @@ public class HeartsGameState : GameState<PlayingCard>
 		return Passes.GroupBy(p => p.PlayerName).All(g => g.Count() == PassCardsCount);
 	}
 
-	protected override void OnPlayCard(PlayingCard card)
+	protected override void OnPlayCard(string playerName, PlayingCard card)
 	{
 		if (CurrentTrick.Count == 0)
 		{
 			LeadingSuit = card.Suit;
 		}
 
-		CurrentTrick.Add(new(CurrentPlayer!.Name, card));
-		CurrentPlayer.Hand.Remove(card);
+		CurrentTrick.Add(new(playerName, card));
+		PlayersByName[playerName].Hand.Remove(card);
 
 		if (!IsHeartsBroken && card.Suit.Equals(ClassicSuits.Hearts))
 		{			
@@ -274,7 +274,7 @@ public class HeartsGameState : GameState<PlayingCard>
 			firstHeart ?? firstOfLeadingSuit ?? firstOfAny :
 			firstOfLeadingSuit ?? firstNonHeart ?? firstOfAny;		
 
-		OnPlayCard(card);
+		OnPlayCard(CurrentPlayer.Name, card);
 	}
 
 	public string EffectivePlayer(string loggedInUser, string? devViewPlayer) =>

@@ -1,12 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace CardGame.Abstractions;
 
 public abstract class GameState<TCard>
 {
-	public Logger? Logger { get; set; }
-
 	public HashSet<Player<TCard>> Players { get; init; } = [];
 	[JsonIgnore]
 	public Dictionary<int, Player<TCard>> PlayersByIndex => Players.ToDictionary(player => player.Index);
@@ -32,17 +29,15 @@ public abstract class GameState<TCard>
 
 	public abstract (bool IsValid, string? Message) ValidatePlay(string playerName, TCard card);
 
-	public void PlayCard(TCard card)
+	public void PlayCard(string playerName, TCard card)
 	{
-		ArgumentNullException.ThrowIfNull(CurrentPlayer, nameof(CurrentPlayer));
-
-		var (valid, message) = ValidatePlay(CurrentPlayer.Name, card);
+		var (valid, message) = ValidatePlay(playerName, card);
 		if (!valid) throw new Exception(message);
 
-		OnPlayCard(card);
+		OnPlayCard(playerName, card);
 	}
 
-	protected abstract void OnPlayCard(TCard card);
+	protected abstract void OnPlayCard(string playerName, TCard card);
 
 	/// <summary>
 	/// for testing purposes, should generate a valid play so that state can be recorded, validated

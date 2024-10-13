@@ -23,9 +23,9 @@ public class FoxInTheForestState : GameState<PlayingCard>
 		throw new NotImplementedException();
 	}
 
-	protected override void OnPlayCard(PlayingCard card)
+	protected override void OnPlayCard(string playerName, PlayingCard card)
 	{
-		_currentTrick.Add(new Play(CurrentPlayer!.Name, card));
+		_currentTrick.Add(new Play(playerName, card));
 
 		if (_currentTrick.Count == 1)
 		{
