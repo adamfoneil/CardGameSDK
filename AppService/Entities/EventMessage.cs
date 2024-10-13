@@ -21,7 +21,8 @@ public class EventMessage
 	public string? Topic { get; set; }
 	public string? Payload { get; set; }
 
-	public const string GameStarted = "GameStarted";
+	public const string GameStartedTopic = "GameStarted";
+	public const string RoundStartedTopic = "RoundStarted";
 }
 
 public class EventMessageConfiguration : IEntityTypeConfiguration<EventMessage>

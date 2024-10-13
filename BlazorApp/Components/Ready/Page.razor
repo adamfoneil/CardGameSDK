@@ -81,7 +81,7 @@ else
 			return;
 		}
 
-		if (topic.Equals(EventMessage.GameStarted))
+		if (topic.Equals(EventMessage.GameStartedTopic))
 		{
 			using var db = DbFactory.CreateDbContext();
 			await db.ReadyPlayers.Where(p => p.Game == Game).ExecuteDeleteAsync();
@@ -163,7 +163,7 @@ else
 			.Where(row => row.Id == gameInstance.Id)
 			.ExecuteUpdateAsync(u => u.SetProperty(row => row.Url, url));
 
-		await Events.ReadyStateChangedAsync(Game!.Value, CurrentUser!.UserName!, EventMessage.GameStarted, url);
+		await Events.ReadyStateChangedAsync(Game!.Value, CurrentUser!.UserName!, EventMessage.GameStartedTopic, url);
 
 		Nav.NavigateTo(url, forceLoad: true);
 	}

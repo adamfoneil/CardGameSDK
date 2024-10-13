@@ -41,7 +41,7 @@ internal class EventRelay(
 	}
 
 	public async Task GameStartedAsync(SupportedGames game, string fromUser, string url) =>
-		await ReadyStateChangedAsync(game, fromUser, EventMessage.GameStarted, url);
+		await ReadyStateChangedAsync(game, fromUser, EventMessage.GameStartedTopic, url);
 
 	public async Task ReadyStateChangedAsync(SupportedGames game, string fromUser, string? topic = null, string? payload = null)
 	{

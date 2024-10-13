@@ -162,6 +162,7 @@
 		var json = JsonSerializer.Serialize(nextRound);
 
 		await db.CompleteRoundAsync(_gameId, json);
+		await Events.GameStateChangedAsync(_gameId, _effectivePlayer, EventMessage.RoundStartedTopic);
 	}
 
 	private string CardPassStatus()
@@ -174,5 +175,6 @@
 	public void Dispose()
 	{
 		Events.GameStateChanged -= OnStateChange;
+		_state.OnFinishedAsync -= OnRoundFinished;
 	}
 }
