@@ -1,0 +1,21 @@
+﻿@using global::Games.Hearts
+@using static global::Games.Hearts.HeartsGameState
+<div class="d-flex align-items-center">
+	<div class="me-3">
+		<div>Winner: @Trick.Winner</div>
+		<div>Points: @Trick.Points</div>
+		<div>Hearts Broken: @Trick.HeartsBroken</div>
+	</div>
+	@foreach (var play in Trick.Plays)
+	{
+		<div>
+			<p>@play.PlayerName</p>
+			<Card Playable="false" PlayingCard="play.Card" />
+		</div>
+	}
+</div>
+
+@code {
+	[Parameter, EditorRequired]
+	public HeartsGameState.Trick Trick { get; set; } = default!;
+}

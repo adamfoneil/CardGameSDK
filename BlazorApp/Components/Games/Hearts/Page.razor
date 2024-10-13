@@ -78,11 +78,13 @@
 	</div>
 </details>
 
-<AuthorizeView Roles="Developers">
-	<Authorized>
-		@*todo: game state json view*@
-	</Authorized>
-</AuthorizeView>
+@if (_state.IsTestMode)
+{
+	<hr class="mt-4" />
+	<div class="test-console">
+		<StateView State="_state"/>
+	</div>
+}
 
 @code {
 	[Parameter]

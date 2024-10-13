@@ -1,0 +1,32 @@
+﻿@using global::Games.Hearts
+
+<div>
+	<div>Current Hands:</div>
+	@foreach (var p in State.Players)
+	{
+		<details>
+			<summary>@p.Name</summary>
+			<Hand Playable="false" Cards="State.PlayersByName[p.Name].Hand" GameState="State" PlayerName="@p.Name" />
+		</details>
+	}
+
+	<hr class="mt-4" />
+	<div>Tricks:</div>
+	@{
+		int index = 0;
+	}
+	@foreach (var trick in State.Tricks)
+	{		
+		index++;
+		
+		<details>
+			<summary>Trick @index</summary>
+			<TrickDetail Trick="trick" />
+		</details>
+	}
+</div>
+
+@code {
+	[Parameter, EditorRequired]
+	public HeartsGameState State { get; set; } = default!;
+}

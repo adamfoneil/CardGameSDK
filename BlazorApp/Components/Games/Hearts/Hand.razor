@@ -2,7 +2,7 @@
 @inject ILogger<Hand> Logger
 
 <div class="d-flex align-items-center">
-	@foreach (var suit in Cards.GroupBy(c => c.Suit))
+	@foreach (var suit in Cards.GroupBy(c => c.Suit).OrderBy(grp => grp.First().Rank))
 	{
 		foreach (var card in suit.OrderBy(c => c.Rank))
 		{
