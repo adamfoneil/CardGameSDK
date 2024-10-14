@@ -10,12 +10,18 @@ namespace Testing;
 [TestClass]
 public class ShuffleAndDeal
 {
+	private static readonly string[] testHeartsPlayerNames = ["Adam", "Andy", "Dad", "Becky"];
+	private static readonly string[] testFitFPlayerNames = ["Adam", "Becky"];
+
+	private static readonly (string Name, bool IsTest)[] testHeartsPlayers = testHeartsPlayerNames.Select(p => (p, true)).ToArray();
+	private static readonly (string Name, bool Istest)[] testFitFPlayers = testFitFPlayerNames.Select(p => (p, true)).ToArray();
+
 	[TestMethod]
 	public void HeartsDeal()
 	{
 		var hashIds = new Hashids();
 		var hearts = new HeartsGameFactory(hashIds);
-		var game = hearts.Start(false, ["Adam", "Andy", "Dad", "Becky"]);
+		var game = hearts.Start(false, testHeartsPlayers);
 
 		PrintCards(game);
 
@@ -46,9 +52,9 @@ public class ShuffleAndDeal
 	public void HeartsAutoPlay()
 	{
 		var hearts = new HeartsGameFactory(new Hashids());
-		var game = hearts.Start(false, ["Adam", "Andy", "Dad", "Becky"]);
+		var game = hearts.Start(false, testHeartsPlayers);
 
-		while (!game.IsFinished) game.AutoPlay();
+		while (!game.IsRoundFinished) game.AutoPlay();
 
 		var json = JsonSerializer.Serialize(game, new JsonSerializerOptions() { WriteIndented = true });
 		Debug.Print(json);
@@ -70,7 +76,7 @@ public class ShuffleAndDeal
 	public void FoxInTheForestDeal()
 	{
 		var foxInTheForest = new FoxInTheForestGameFactory(new Hashids());
-		var game = foxInTheForest.Start(false, ["Adam", "Becky"]);
+		var game = foxInTheForest.Start(false, testFitFPlayers);
 
 		PrintCards(game);
 

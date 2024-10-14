@@ -4,7 +4,7 @@ namespace Games.FoxInTheForest;
 
 public class FoxInTheForestState : GameState<PlayingCard>
 {
-	public override bool IsFinished => throw new NotImplementedException();
+	public override bool IsRoundFinished => throw new NotImplementedException();
 
 	public required PlayingCard DecreeCard { get; init; }
 
@@ -17,6 +17,8 @@ public class FoxInTheForestState : GameState<PlayingCard>
 
 
 	public List<Trick> Tricks => _tricks;
+
+	public override bool IsGameFinished => throw new NotImplementedException();
 
 	public override void AutoPlay()
 	{

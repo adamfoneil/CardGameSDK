@@ -20,9 +20,9 @@ public class EventMessage
 	public string ToUser { get; set; } = default!;
 	public string? Topic { get; set; }
 	public string? Payload { get; set; }
-
+	
 	public const string GameStartedTopic = "GameStarted";
-	public const string RoundStartedTopic = "RoundStarted";
+	public const string RoundEndedTopic = "RoundEnded";
 }
 
 public class EventMessageConfiguration : IEntityTypeConfiguration<EventMessage>

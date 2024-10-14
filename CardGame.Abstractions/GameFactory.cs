@@ -16,11 +16,7 @@ public abstract class GameFactory<TState, TCard> : IGameDispatcher where TState 
 		HashSet<Player<TCard>> players,
 		Queue<TCard> drawPile);
 
-	/// <summary>
-	/// this is for test code, not intended for real games
-	/// </summary>	
-	public TState Start(bool testMode, string[] playerNames) =>
-		Start(testMode, playerNames.Select(name => (name, false)).ToArray());
+	public abstract TState StartNewRound(TState state);
 
 	public TState Start(bool testMode, (string Name, bool IsTest)[] players)
 	{

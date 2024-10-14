@@ -48,4 +48,9 @@ public class FoxInTheForestGameFactory(IHashids hashids) : GameFactory<FoxInTheF
 	{
 		throw new NotImplementedException();
 	}
+
+	public override FoxInTheForestState StartNewRound(FoxInTheForestState state)
+	{
+		throw new NotImplementedException();
+	}
 }

@@ -163,6 +163,11 @@ else
 			.Where(row => row.Id == gameInstance.Id)
 			.ExecuteUpdateAsync(u => u.SetProperty(row => row.Url, url));
 
+		// you have to delete yourself from the ready list because the state change event will not be sent to you
+		await db.ReadyPlayers
+			.Include(p => p.User)
+			.Where(p => p.Game == Game && p.User!.UserName == CurrentUser!.UserName).ExecuteDeleteAsync();
+
 		await Events.ReadyStateChangedAsync(Game!.Value, CurrentUser!.UserName!, EventMessage.GameStartedTopic, url);
 
 		Nav.NavigateTo(url, forceLoad: true);

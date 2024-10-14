@@ -18,8 +18,7 @@ public enum PlayPhase
 }
 
 public class HeartsGameState : GameState<PlayingCard>
-{
-	private bool _isRoundFinished = false;
+{	
 	public const int PassCardsCount = 3;
 
 	public PlayPhase Phase { get; set; } = PlayPhase.Pass;
@@ -28,8 +27,9 @@ public class HeartsGameState : GameState<PlayingCard>
 	public bool IsHeartsBroken { get; set; }
 	public string? MoonShotPlayer { get; set; }
 
-	public override bool IsFinished => _isRoundFinished;
-	
+	public override bool IsRoundFinished => Tricks.Count == 12;
+	public override bool IsGameFinished => Score.Any(p => p.Value >= 100);
+
 	public List<Play> CurrentTrick { get; set; } = [];
 	public List<Trick> Tricks { get; set; } = [];
 	public List<Play> Passes { get; set; } = [];
@@ -207,10 +207,6 @@ public class HeartsGameState : GameState<PlayingCard>
 			{
 				MoonShotPlayer = playersWithHearts.First();
 			}
-
-			_isRoundFinished = true;
-			
-			Task.Run(CallOnFinishedAsync);
 		}
 	}
 
@@ -261,7 +257,7 @@ public class HeartsGameState : GameState<PlayingCard>
 
 	public override void AutoPlay()
 	{
-		if (_isRoundFinished) return;
+		if (IsRoundFinished) return;
 
 		if (CurrentPlayer is null) throw new Exception("must have current player");
 

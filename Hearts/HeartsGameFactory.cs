@@ -34,4 +34,20 @@ public class HeartsGameFactory(IHashids hashids) : GameFactory<HeartsGameState, 
 	}
 
 	public override string GetUrl(int gameInstanceId) => $"/Hearts/{_hashids.Encode(gameInstanceId)}";
+
+	public override HeartsGameState StartNewRound(HeartsGameState state)
+	{
+		var newRound = Start(state.IsTestMode, state.Players.Select(player => (player.Name, player.IsTest)).ToArray());
+
+		newRound.PassDirection = state.PassDirection switch
+		{
+			PlayerOrientation.Left => PlayerOrientation.Right,
+			PlayerOrientation.Right => PlayerOrientation.Across,
+			PlayerOrientation.Across => PlayerOrientation.Self,
+			PlayerOrientation.Self => PlayerOrientation.Left,
+			_ => throw new Exception("unknown pass direction")
+		};
+
+		return newRound;
+	}
 }

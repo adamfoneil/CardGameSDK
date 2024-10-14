@@ -53,7 +53,7 @@
 
 	private void NewGame()
 	{
-		_gameState = HeartsGame.Start(true, _playerNames);		
+		_gameState = HeartsGame.Start(true, _playerNames.Select(p => (p, true)).ToArray());		
 	}
 
 	private string CurrentPlayerStyle(string playerName) => 

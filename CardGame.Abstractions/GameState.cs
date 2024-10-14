@@ -18,14 +18,8 @@ public abstract class GameState<TCard>
 	/// </summary>
 	public Player<TCard>? CurrentPlayer { get; set; }
 	public Queue<TCard> DrawPile { get; set; } = [];
-	public abstract bool IsFinished { get; }
-
-	public event Func<Task>? OnFinishedAsync;
-
-	protected async Task CallOnFinishedAsync()
-	{
-		if (OnFinishedAsync != null) await OnFinishedAsync.Invoke();
-	}
+	public abstract bool IsRoundFinished { get; }
+	public abstract bool IsGameFinished { get; }
 
 	public abstract (bool IsValid, string? Message) ValidatePlay(string playerName, TCard card);
 
