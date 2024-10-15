@@ -129,8 +129,15 @@
 		await db.GameInstances
 			.Where(g => g.Id == _gameId)
 			.ExecuteUpdateAsync(u => u.SetProperty(p => p.State, json));
-
-		if (_state!.IsRoundFinished) await StartNewRoundAsync(db);
+		
+		if (_state.IsGameFinished)
+		{
+			throw new NotImplementedException();
+		}
+		else if (_state!.IsRoundFinished)
+		{
+			_state = await StartNewRoundAsync(db);
+		}
 
 		StateHasChanged();
 
@@ -144,16 +151,16 @@
 		_state = JsonSerializer.Deserialize<HeartsGameState>(_game.State) ?? throw new Exception("couldn't deserialize");		
 	}
 
-	private async Task StartNewRoundAsync(ApplicationDbContext db)
+	private async Task<HeartsGameState> StartNewRoundAsync(ApplicationDbContext db)
 	{
-		if (_state!.IsGameFinished) throw new NotImplementedException();
-
 		var nextRound = GameFactory.StartNewRound(_state!);		
 
 		var json = JsonSerializer.Serialize(nextRound);
 
 		await db.CompleteRoundAsync(_gameId, json);
 		await Events.GameStateChangedAsync(_gameId, _effectivePlayer, EventMessage.RoundEndedTopic);
+
+		return nextRound;
 	}
 
 	private string CardPassStatus()
