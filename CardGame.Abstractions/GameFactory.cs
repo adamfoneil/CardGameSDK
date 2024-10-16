@@ -88,7 +88,7 @@ public abstract class GameFactory<TState, TCard> : IGameDispatcher where TState 
 	/// <summary>
 	/// this is used with dispatch/launcher pages that are not type-specific
 	/// </summary>
-	public object CreateStateObject(bool devMode, (string Name, bool IsTest)[] players) => Start(devMode, players);
+	public object CreateStateObject(bool testMode, (string Name, bool IsTest)[] players) => Start(testMode, players);
 
 	/// <summary>
 	/// link to page for playing a particular instance of the game
