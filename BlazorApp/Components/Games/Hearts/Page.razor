@@ -20,7 +20,11 @@
 	<RadzenBadge Text="Test Mode" Visible="_game.IsTestMode" class="ms-2" />
 </div>
 
-@if (_state.Phase == PlayPhase.Play)
+@if (_state.IsGameFinished)
+{
+	
+}
+else if (_state.Phase == PlayPhase.Play)
 {
 	<div class="d-flex justify-content-center">	
 		<div class="table-top">
@@ -122,6 +126,8 @@
 
 	private async Task OnCardPlayed()
 	{
+		ArgumentNullException.ThrowIfNull(_state, nameof(_state));
+
 		using var db = DbFactory.CreateDbContext();
 
 		var json = JsonSerializer.Serialize(_state);
@@ -134,7 +140,7 @@
 		{
 			throw new NotImplementedException();
 		}
-		else if (_state!.IsRoundFinished)
+		else if (_state.IsRoundFinished)
 		{
 			_state = await StartNewRoundAsync(db);
 		}
