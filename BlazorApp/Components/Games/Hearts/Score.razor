@@ -1,0 +1,18 @@
+﻿@using global::Games.Hearts
+@if (State is null) return;
+
+@{
+	int index = 0;
+}
+<ul>
+	@foreach (var kp in State.Score.OrderByDescending(kp => kp.Value))
+	{
+		index++;
+		<li>@index: @kp.Key: @kp.Value</li>
+	}
+</ul>
+
+@code {
+	[Parameter, EditorRequired]
+	public HeartsGameState? State { get; set; }
+}

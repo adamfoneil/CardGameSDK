@@ -17,7 +17,7 @@
 <h3>Hearts</h3>
 
 <div class="d-flex align-items-center">
-	<div class="text-muted">game # @_gameId | round @_game.Round</div>
+	<div class="text-muted">game # @_gameId | round @(_game.Round + 1)</div>
 	<RadzenBadge Text="Test Mode" Visible="_game.IsTestMode" class="ms-2" />
 </div>
 
@@ -95,6 +95,13 @@ else if (_state.Phase == PlayPhase.Play)
 	</div>
 </details>
 
+<details>
+	<summary>Score</summary>
+	<div class="d-flex justify-content-center">
+		<Score State="_state" />
+	</div>
+</details>
+
 @if (_state.IsTestMode)
 {
 	<hr class="mt-4" />
@@ -154,7 +161,7 @@ else if (_state.Phase == PlayPhase.Play)
 
 		await db.GameInstances
 			.Where(g => g.Id == _gameId)
-			.ExecuteUpdateAsync(u => u.SetProperty(p => p.State, json));
+			.ExecuteUpdateAsync(u => u.SetProperty(p => p.State, json));			
 
 		if (_state.IsGameFinished)
 		{
@@ -163,6 +170,8 @@ else if (_state.Phase == PlayPhase.Play)
 		else if (_state.IsRoundFinished)
 		{
 			_state = await StartNewRoundAsync(db);
+			// need to refresh the round number
+			_game = await db.GameInstances.FindAsync(_gameId) ?? throw new Exception("game not found");
 		}
 
 		StateHasChanged();
@@ -179,7 +188,7 @@ else if (_state.Phase == PlayPhase.Play)
 
 	private async Task<HeartsGameState> StartNewRoundAsync(ApplicationDbContext db)
 	{
-		var nextRound = GameFactory.StartNewRound(_state!);		
+		var nextRound = GameFactory.StartNewRound(_state!);
 
 		var json = JsonSerializer.Serialize(nextRound);
 
