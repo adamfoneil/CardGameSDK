@@ -1,6 +1,6 @@
 ﻿@if (PlayingCard is null) return;
 
-<div class="py-4 px-2 border rounded-1 d-flex align-items-center me-2" @onclick="(args) => DoOnClick(args)" style="@(PlayableStyle)">
+<div class="py-4 px-2 border rounded-1 d-flex align-items-center me-2 hover-shadow" @onclick="(args) => DoOnClick(args)" style="@(PlayableStyle)">
 	<h2 class="my-0 me-1" style="color:@Color">@DisplayRank</h2>
 	<div><SuitImage Suit="PlayingCard?.Suit" @ref="suitImage" /></div>
 </div>
