@@ -11,6 +11,7 @@ public class GameInstance : BaseTable
 	public int Round { get; set; }
 	public string Url { get; set; } = default!;
 	public string State { get; set; } = default!;
+	public string? Score { get; set; }
 	public DateTime? FinishedAtUtc { get; set; }
 	public bool IsFinished => FinishedAtUtc.HasValue;
 

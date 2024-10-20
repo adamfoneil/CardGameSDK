@@ -23,6 +23,7 @@ public class EventMessage
 	
 	public const string GameStartedTopic = "GameStarted";
 	public const string RoundEndedTopic = "RoundEnded";
+	public const string GameEndedTopic = "GameEnded";
 }
 
 public class EventMessageConfiguration : IEntityTypeConfiguration<EventMessage>

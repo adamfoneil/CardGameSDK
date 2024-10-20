@@ -7,6 +7,7 @@
 @inject HeartsGameFactory GameFactory
 @inject EventRelay Events
 @inject ILogger<Page> Logger
+@inject NavigationManager Nav
 @implements IDisposable
 
 @if (_game is null) return;
@@ -120,6 +121,13 @@ else if (_state.Phase == PlayPhase.Play)
 	{
 		if (gameInstanceId != _gameId) return;
 		if (toUser != _effectivePlayer) return;
+
+		if (topic == EventMessage.GameEndedTopic)
+		{
+			Nav.NavigateTo("/", forceLoad: true);
+			return;
+		}
+
 		await LoadGameAsync();
 		await InvokeAsync(StateHasChanged);
 	}
@@ -135,10 +143,10 @@ else if (_state.Phase == PlayPhase.Play)
 		await db.GameInstances
 			.Where(g => g.Id == _gameId)
 			.ExecuteUpdateAsync(u => u.SetProperty(p => p.State, json));
-		
+
 		if (_state.IsGameFinished)
 		{
-			throw new NotImplementedException();
+			await CompleteGameAsync(db);
 		}
 		else if (_state.IsRoundFinished)
 		{
@@ -167,6 +175,15 @@ else if (_state.Phase == PlayPhase.Play)
 		await Events.GameStateChangedAsync(_gameId, _effectivePlayer, EventMessage.RoundEndedTopic);
 
 		return nextRound;
+	}
+
+	private async Task CompleteGameAsync(ApplicationDbContext db)
+	{
+		var scoreData = _state!.Score;
+		var scoreJson = JsonSerializer.Serialize(scoreData);
+		await db.CompleteGameAsync(_gameId, scoreJson);
+		await Events.GameStateChangedAsync(_gameId, _effectivePlayer, EventMessage.GameEndedTopic);
+		Nav.NavigateTo("/", forceLoad: true);
 	}
 
 	private string CardPassStatus()

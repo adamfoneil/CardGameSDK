@@ -17,4 +17,13 @@ public partial class ApplicationDbContext
 		gameInstance.State = newRoundState;
 		await SaveChangesAsync();
 	}
+
+	public async Task CompleteGameAsync(int gameInstanceId, string score)
+	{
+		var gameInstance = await GameInstances.FindAsync(gameInstanceId) ?? throw new Exception("game not found");
+
+		gameInstance.Score = score;
+		gameInstance.FinishedAtUtc = DateTime.UtcNow;
+		await SaveChangesAsync();
+	}
 }
