@@ -1,5 +1,6 @@
 ﻿@using global::Games.Hearts
 @if (Playslot is null) return;
+@if (CurrentPlayer is null) return;
 
 <div class="d-flex flex-column justify-content-center p-3" style="border-style:solid;border-color:@(Color);border-width:3px">
 	<div class="text-center">@Playslot.PlayerName</div>
@@ -11,7 +12,7 @@
 	public HeartsGameState.Playslot Playslot { get; set; } = default!;
 
 	[Parameter, EditorRequired]
-	public string CurrentPlayer { get; set; } = default!;
+	public string? CurrentPlayer { get; set; } = default!;
 
 	private string Color => Playslot.PlayerName == CurrentPlayer ? "green" : "white";
 }

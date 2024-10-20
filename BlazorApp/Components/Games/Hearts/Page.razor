@@ -17,7 +17,7 @@
 <h3>Hearts</h3>
 
 <div class="d-flex align-items-center">
-	<div class="text-muted">game # @_gameId</div>
+	<div class="text-muted">game # @_gameId | round @_game.Round</div>
 	<RadzenBadge Text="Test Mode" Visible="_game.IsTestMode" class="ms-2" />
 </div>
 
@@ -30,15 +30,15 @@ else if (_state.Phase == PlayPhase.Play)
 	<div class="d-flex justify-content-center">	
 		<div class="table-top">
 			<div><!--placeholder upper left--></div>
-			<div><CardPlay Playslot="_state.GetRelativePlayslot(_effectivePlayer, PlayerOrientation.Across)" CurrentPlayer="@_state.CurrentPlayer!.Name" /></div>
+			<div><CardPlay Playslot="_state.GetRelativePlayslot(_effectivePlayer, PlayerOrientation.Across)" CurrentPlayer="@_state.CurrentPlayer?.Name" /></div>
 			<div><!--placeholder upper right--></div>
 
-			<div><CardPlay Playslot="_state.GetRelativePlayslot(_effectivePlayer, PlayerOrientation.Left)" CurrentPlayer="@_state.CurrentPlayer!.Name" /></div>
+			<div><CardPlay Playslot="_state.GetRelativePlayslot(_effectivePlayer, PlayerOrientation.Left)" CurrentPlayer="@_state.CurrentPlayer?.Name" /></div>
 			<div class="d-flex align-items-center justify-content-center"><SuitImage Suit="_state.LeadingSuit" Opacity="0.5m" /></div>
-			<div><CardPlay Playslot="_state.GetRelativePlayslot(_effectivePlayer, PlayerOrientation.Right)" CurrentPlayer="@_state.CurrentPlayer!.Name" /></div>
+			<div><CardPlay Playslot="_state.GetRelativePlayslot(_effectivePlayer, PlayerOrientation.Right)" CurrentPlayer="@_state.CurrentPlayer?.Name" /></div>
 
 			<div><!--placeholder lower left--></div>
-			<div><CardPlay Playslot="_state.GetRelativePlayslot(_effectivePlayer, PlayerOrientation.Self)" CurrentPlayer="@_state.CurrentPlayer!.Name" /></div>
+			<div><CardPlay Playslot="_state.GetRelativePlayslot(_effectivePlayer, PlayerOrientation.Self)" CurrentPlayer="@_state.CurrentPlayer?.Name" /></div>
 			<div><!--placeholder lower right--></div>
 		</div>
 	</div>
@@ -67,11 +67,23 @@ else if (_state.Phase == PlayPhase.Play)
 		GameState="_state"
 		CardPlayed="OnCardPlayed"
 		Playable="_state.IsPlayable(_effectivePlayer)"
-		PlayerName="@_effectivePlayer" />
+		PlayerName="@_effectivePlayer" />	
 </div>
 
+@if (_state!.Phase == PlayPhase.Pass)
+{
+	<div class="d-flex justify-content-center mt-4">Passing cards:</div>
+	<div class="d-flex justify-content-center">
+		<Hand Cards="_state.MyPasses(_effectivePlayer)"
+			  GameState="_state"
+			  CardPlayed="OnCardPlayed"
+			  Playable="true"
+			  PlayerName="@_effectivePlayer" />
+	</div>
+}
+
 <details>
-	<summary>My Tricks</summary>
+	<summary>My Tricks - @(_state.MyTricks(_effectivePlayer).Sum(t => t.Points)) pts</summary>
 	<div class="d-flex justify-content-center">
 		@foreach (var trick in _state.MyTricks(_effectivePlayer))
 		{
@@ -190,7 +202,8 @@ else if (_state.Phase == PlayPhase.Play)
 	{
 		var passCount = _state!.Passes.Count(p => p.PlayerName.Equals(_effectivePlayer));
 		var totalPassCount = _state!.Passes.Count;
-		return $"{_effectivePlayer}: {passCount} / {HeartsGameState.PassCardsCount} passed / all players: {totalPassCount} / {HeartsGameState.PassCardsCount * _state.Players.Count}";
+		var recipient = _state!.PassingRecipient(_effectivePlayer);
+		return $"{_effectivePlayer} passing to {recipient}: {passCount} | {HeartsGameState.PassCardsCount} passed | all players: {totalPassCount} / {HeartsGameState.PassCardsCount * _state.Players.Count}";
 	}
 
 	public void Dispose()

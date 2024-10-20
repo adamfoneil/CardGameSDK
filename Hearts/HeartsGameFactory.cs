@@ -48,7 +48,12 @@ public class HeartsGameFactory(IHashids hashids) : GameFactory<HeartsGameState, 
 			_ => throw new Exception("unknown pass direction")
 		};
 
-		if (newRound.PassDirection == PlayerOrientation.Self) newRound.Phase = PlayPhase.Play;
+		if (newRound.PassDirection == PlayerOrientation.Self)
+		{
+			newRound.Phase = PlayPhase.Play;
+			newRound.CurrentPlayer = newRound.Players.Single(p => p.Hand.Contains(new PlayingCard(2, ClassicSuits.Clubs)));
+			newRound.PlayCard(newRound.CurrentPlayer.Name, new(2, ClassicSuits.Clubs));						
+		}
 
 		return newRound;
 	}

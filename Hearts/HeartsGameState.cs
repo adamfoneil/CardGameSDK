@@ -109,9 +109,17 @@ public class HeartsGameState : GameState<PlayingCard>
 
 	public void PassCard(string playerName, PlayingCard card)
 	{
-		Passes.Add(new(playerName, card));
-		PlayersByName[playerName].Hand.Remove(card);
-
+		if (PlayersByName[playerName].Hand.Contains(card))
+		{
+			Passes.Add(new(playerName, card));
+			PlayersByName[playerName].Hand.Remove(card);
+		}
+		else if (Passes.Contains(new Play(playerName, card)))
+		{
+			Passes.Remove(new(playerName, card));
+			PlayersByName[playerName].Hand.Add(card);
+		}
+		
 		if (AllCardsPassed())
 		{
 			Phase = PlayPhase.Play;
@@ -130,21 +138,26 @@ public class HeartsGameState : GameState<PlayingCard>
 	{
 		var playerNames = Players.Select(p => p.Name).ToArray();
 		foreach (var player in Players)
-		{
-			var selfIndex = Array.IndexOf(playerNames, player.Name);
-			var targetIndex = PassDirection switch
-			{
-				PlayerOrientation.Left => (selfIndex - 1 + Players.Count) % Players.Count,
-				PlayerOrientation.Right => (selfIndex + 1) % Players.Count,
-				PlayerOrientation.Across => (selfIndex + 2) % Players.Count,
-				_ => throw new ArgumentOutOfRangeException(nameof(PassDirection))
-			};
-
-			var targetPlayer = PlayersByName[playerNames[targetIndex]];
+		{			
+			var targetPlayer = PlayersByName[PassingRecipient(player.Name)];
 			var passedCards = Passes.Where(p => p.PlayerName == player.Name).Select(p => p.Card).ToList();
-
 			foreach (var card in passedCards) targetPlayer.Hand.Add(card);
 		}
+	}
+
+	public string PassingRecipient(string playerName)
+	{
+		var playerNames = Players.Select(p => p.Name).ToArray();
+		var selfIndex = Array.IndexOf(playerNames, playerName);
+		var targetIndex = PassDirection switch
+		{
+			PlayerOrientation.Left => (selfIndex - 1 + Players.Count) % Players.Count,
+			PlayerOrientation.Right => (selfIndex + 1) % Players.Count,
+			PlayerOrientation.Across => (selfIndex + 2) % Players.Count,
+			_ => throw new ArgumentOutOfRangeException(nameof(PassDirection))
+		};
+
+		return playerNames[targetIndex];
 	}
 
 	private bool AllCardsPassed()
