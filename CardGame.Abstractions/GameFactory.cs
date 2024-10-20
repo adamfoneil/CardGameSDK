@@ -94,4 +94,6 @@ public abstract class GameFactory<TState, TCard> : IGameDispatcher where TState 
 	/// link to page for playing a particular instance of the game
 	/// </summary>
 	public abstract string GetUrl(int gameInstanceId);
+
+	public abstract (bool Result, string? Winner, string? FinalScore) IsFinished(string[] roundScores);
 }

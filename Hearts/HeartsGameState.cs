@@ -27,8 +27,7 @@ public class HeartsGameState : GameState<PlayingCard>
 	public bool IsHeartsBroken { get; set; }
 	public string? MoonShotPlayer { get; set; }
 
-	public override bool IsRoundFinished => Tricks.Count == 12;
-	public override bool IsGameFinished => Score.Any(p => p.Value >= 100);
+	public override bool IsRoundFinished => Tricks.Count == 12;	
 
 	public List<Play> CurrentTrick { get; set; } = [];
 	public List<Trick> Tricks { get; set; } = [];

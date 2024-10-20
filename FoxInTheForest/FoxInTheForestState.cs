@@ -15,10 +15,7 @@ public class FoxInTheForestState : GameState<PlayingCard>
 	private readonly List<Play> _currentTrick = [];
 	private readonly List<Trick> _tricks = [];
 
-
 	public List<Trick> Tricks => _tricks;
-
-	public override bool IsGameFinished => throw new NotImplementedException();
 
 	public override void AutoPlay()
 	{

@@ -21,7 +21,7 @@
 	<RadzenBadge Text="Test Mode" Visible="_game.IsTestMode" class="ms-2" />
 </div>
 
-@if (_state.IsGameFinished)
+@if (_game.IsFinished)
 {
 	
 }
@@ -48,8 +48,7 @@ else if (_state.Phase == PlayPhase.Play)
 
 @if (_state.Phase == PlayPhase.Pass)
 {
-	<div class="d-flex align-items-center">
-		<div>Select 3 cards to pass</div>
+	<div class="d-flex align-items-center">		
 		<div class="ms-2">@CardPassStatus()</div>
 	</div>
 
@@ -98,7 +97,7 @@ else if (_state.Phase == PlayPhase.Play)
 <details>
 	<summary>Score</summary>
 	<div class="d-flex justify-content-center">
-		<Score State="_state" />
+		<Score AllScores="_allScores" />
 	</div>
 </details>
 
@@ -119,6 +118,7 @@ else if (_state.Phase == PlayPhase.Play)
 
 	private int _gameId;
 	private GameInstance? _game;
+	private string[] _allScores = [];
 	private HeartsGameState? _state;
 	private string? _viewPlayer;
 	private string _effectivePlayer => 
@@ -161,16 +161,12 @@ else if (_state.Phase == PlayPhase.Play)
 
 		await db.GameInstances
 			.Where(g => g.Id == _gameId)
-			.ExecuteUpdateAsync(u => u.SetProperty(p => p.State, json));			
+			.ExecuteUpdateAsync(u => u.SetProperty(p => p.State, json));					
 
-		if (_state.IsGameFinished)
-		{
-			await CompleteGameAsync(db);
-		}
-		else if (_state.IsRoundFinished)
+		if (_state.IsRoundFinished)
 		{
 			_state = await StartNewRoundAsync(db);
-			// need to refresh the round number
+			// need to refresh the round number by reloading the game
 			_game = await db.GameInstances.FindAsync(_gameId) ?? throw new Exception("game not found");
 		}
 
@@ -183,28 +179,34 @@ else if (_state.Phase == PlayPhase.Play)
 	{
 		using var db = DbFactory.CreateDbContext();
 		_game = await db.GameInstances.FindAsync(_gameId) ?? throw new Exception("game not found");
-		_state = JsonSerializer.Deserialize<HeartsGameState>(_game.State) ?? throw new Exception("couldn't deserialize");		
+
+		_allScores = await db.Rounds
+			.Where(r => r.GameInstanceId == _gameId)
+			.OrderBy(row => row.Number)
+			.Select(r => r.Score)
+			.ToArrayAsync();
+
+		_state = JsonSerializer.Deserialize<HeartsGameState>(_game.State!) ?? throw new Exception("couldn't deserialize");		
 	}
 
 	private async Task<HeartsGameState> StartNewRoundAsync(ApplicationDbContext db)
 	{
 		var nextRound = GameFactory.StartNewRound(_state!);
 
-		var json = JsonSerializer.Serialize(nextRound);
+		var playNext = await db.PlayNextRoundAsync(_gameId, 
+			JsonSerializer.Serialize(nextRound), JsonSerializer.Serialize(_state!.Score),
+			GameFactory);
 
-		await db.CompleteRoundAsync(_gameId, json);
+		if (!playNext)
+		{
+			// game is finished
+			await Events.GameStateChangedAsync(_gameId, _effectivePlayer, EventMessage.GameEndedTopic);
+			Nav.NavigateTo("/", forceLoad: true);
+			return default!;
+		}
+		
 		await Events.GameStateChangedAsync(_gameId, _effectivePlayer, EventMessage.RoundEndedTopic);
-
-		return nextRound;
-	}
-
-	private async Task CompleteGameAsync(ApplicationDbContext db)
-	{
-		var scoreData = _state!.Score;
-		var scoreJson = JsonSerializer.Serialize(scoreData);
-		await db.CompleteGameAsync(_gameId, scoreJson);
-		await Events.GameStateChangedAsync(_gameId, _effectivePlayer, EventMessage.GameEndedTopic);
-		Nav.NavigateTo("/", forceLoad: true);
+		return nextRound;		
 	}
 
 	private string CardPassStatus()

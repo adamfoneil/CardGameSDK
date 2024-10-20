@@ -1,8 +1,14 @@
-﻿namespace AppService;
+﻿using CardGame.Abstractions;
+using Microsoft.EntityFrameworkCore;
+
+namespace AppService;
 
 public partial class ApplicationDbContext
 {
-	public async Task CompleteRoundAsync(int gameInstanceId, string newRoundState)
+	public async Task<bool> PlayNextRoundAsync<TState, TCard>(
+		int gameInstanceId, string nextRoundState, 
+		string priorRoundScore, 
+		GameFactory<TState, TCard> gameFactory) where TState : notnull
 	{
 		var gameInstance = await GameInstances.FindAsync(gameInstanceId) ?? throw new Exception("game not found");
 		gameInstance.Round++;
@@ -10,20 +16,25 @@ public partial class ApplicationDbContext
 		Rounds.Add(new()
 		{
 			GameInstanceId = gameInstanceId,
-			State = gameInstance.State,
-			Number = gameInstance.Round
-		});
+			State = gameInstance.State!,
+			Number = gameInstance.Round,
+			Score = priorRoundScore
+		});		
 
-		gameInstance.State = newRoundState;
+		gameInstance.State = nextRoundState;
 		await SaveChangesAsync();
-	}
 
-	public async Task CompleteGameAsync(int gameInstanceId, string score)
-	{
-		var gameInstance = await GameInstances.FindAsync(gameInstanceId) ?? throw new Exception("game not found");
+		var allScores = await Rounds.Where(r => r.GameInstanceId == gameInstanceId).Select(r => r.Score).ToArrayAsync();
+		var (finished, winner, finalScore) = gameFactory.IsFinished(allScores);
+		if (finished)
+		{
+			gameInstance.State = null!;
+			gameInstance.Score = finalScore;
+			gameInstance.FinishedAtUtc = DateTime.UtcNow;
+			await SaveChangesAsync();
+			return false;
+		}
 
-		gameInstance.Score = score;
-		gameInstance.FinishedAtUtc = DateTime.UtcNow;
-		await SaveChangesAsync();
+		return true;
 	}
 }

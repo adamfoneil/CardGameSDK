@@ -10,8 +10,9 @@ public class GameInstance : BaseTable
 	public bool IsTestMode { get; set; }
 	public int Round { get; set; }
 	public string Url { get; set; } = default!;
-	public string State { get; set; } = default!;
+	public string? State { get; set; }
 	public string? Score { get; set; }
+	public string? Winner { get; set; }
 	public DateTime? FinishedAtUtc { get; set; }
 	public bool IsFinished => FinishedAtUtc.HasValue;
 
@@ -22,7 +23,7 @@ public class GameInstanceConfiguration : IEntityTypeConfiguration<GameInstance>
 {
 	public void Configure(EntityTypeBuilder<GameInstance> builder)
 	{
-		builder.Property(gi => gi.Url).HasMaxLength(100).IsRequired();
-		builder.Property(gi => gi.State).IsRequired();
+		builder.Property(gi => gi.Url).HasMaxLength(100).IsRequired();		
+		builder.Property(gi => gi.Winner).HasMaxLength(50);
 	}
 }

@@ -9,6 +9,7 @@ public class Round : BaseTable
 	public int GameInstanceId { get; set; }
 	public int Number { get; set; }
 	public string State { get; set; } = default!;
+	public string Score { get; set; } = default!;
 }
 
 public class RoundConfiguration : IEntityTypeConfiguration<Round>
@@ -17,5 +18,6 @@ public class RoundConfiguration : IEntityTypeConfiguration<Round>
 	{
 		builder.HasAlternateKey(nameof(Round.GameInstanceId), nameof(Round.Number));
 		builder.Property(r => r.State).IsRequired();
+		builder.Property(r => r.Score).IsRequired();
 	}
 }

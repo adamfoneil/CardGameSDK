@@ -1,18 +1,44 @@
-﻿@using global::Games.Hearts
-@if (State is null) return;
+﻿@using System.Text.Json
+@using global::Games.Hearts
 
-@{
-	int index = 0;
-}
-<ul>
-	@foreach (var kp in State.Score.OrderByDescending(kp => kp.Value))
-	{
-		index++;
-		<li>@index: @kp.Key: @kp.Value</li>
-	}
-</ul>
+<table>
+	<thead>
+		<tr>
+			@foreach (var p in _players)
+			{
+				<th>@p</th>
+			}
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var score in _scores)
+		{
+			<tr>
+				@foreach (var p in _players)
+				{
+					<td>@(score.ContainsKey(p) ? score[p] : 0)</td>
+				}
+			</tr>
+		}
+		<tr>
+			@foreach (var p in _players)
+			{
+				<td class="border-top">@_scores.Sum(d => d[p])</td>
+			}
+		</tr>
+	</tbody>
+</table>
 
 @code {
+	private string[] _players = [];
+	private IEnumerable<Dictionary<string, int>> _scores = [];
+
 	[Parameter, EditorRequired]
-	public HeartsGameState? State { get; set; }
+	public string[] AllScores { get; set; } = [];
+
+	protected override void OnParametersSet()
+	{
+		_scores = AllScores.Select(score => JsonSerializer.Deserialize<Dictionary<string, int>>(score) ?? []);	
+		_players = _scores.SelectMany(score => score.Keys).Distinct().ToArray();
+	}
 }

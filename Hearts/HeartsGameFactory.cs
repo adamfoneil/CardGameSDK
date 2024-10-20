@@ -1,5 +1,6 @@
 ﻿using CardGame.Abstractions;
 using HashidsNet;
+using System.Text.Json;
 
 namespace Games.Hearts;
 
@@ -56,5 +57,28 @@ public class HeartsGameFactory(IHashids hashids) : GameFactory<HeartsGameState, 
 		}
 
 		return newRound;
+	}
+
+	public override (bool Result, string? Winner, string? FinalScore) IsFinished(string[] roundScores)
+	{
+		var scores = roundScores
+			.Select(score => JsonSerializer.Deserialize<Dictionary<string, int>>(score));
+
+		var playerTotals = scores
+			.SelectMany(score => score!)
+			.GroupBy(score => score.Key)
+			.Select(group => (Player: group.Key, Total: group.Sum(score => score.Value)));
+
+		var reachedMax = playerTotals
+			.Where(playerTotals => playerTotals.Total >= 100);
+
+		if (reachedMax.Any())
+		{
+			var winner = playerTotals.MinBy(playerTotals => playerTotals.Total).Player;
+			var finalScore = JsonSerializer.Serialize(playerTotals);
+			return (true, winner, finalScore);
+		}
+
+		return (false, default, default);
 	}
 }

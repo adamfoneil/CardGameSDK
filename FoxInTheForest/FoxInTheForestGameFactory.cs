@@ -53,4 +53,9 @@ public class FoxInTheForestGameFactory(IHashids hashids) : GameFactory<FoxInTheF
 	{
 		throw new NotImplementedException();
 	}
+
+	public override (bool Result, string? Winner, string? FinalScore) IsFinished(string[] roundScores)
+	{
+		throw new NotImplementedException();
+	}
 }
