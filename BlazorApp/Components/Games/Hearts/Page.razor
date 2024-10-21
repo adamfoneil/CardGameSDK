@@ -168,6 +168,7 @@ else if (_state.Phase == PlayPhase.Play)
 			_state = await StartNewRoundAsync(db);
 			// need to refresh the round number by reloading the game
 			_game = await db.GameInstances.FindAsync(_gameId) ?? throw new Exception("game not found");
+			await RefreshScoresAsync();
 		}
 
 		StateHasChanged();
@@ -180,13 +181,20 @@ else if (_state.Phase == PlayPhase.Play)
 		using var db = DbFactory.CreateDbContext();
 		_game = await db.GameInstances.FindAsync(_gameId) ?? throw new Exception("game not found");
 
+		await RefreshScoresAsync();
+
+		_state = JsonSerializer.Deserialize<HeartsGameState>(_game.State!) ?? throw new Exception("couldn't deserialize");		
+	}
+
+	private async Task RefreshScoresAsync()
+	{
+		using var db = DbFactory.CreateDbContext();
+
 		_allScores = await db.Rounds
 			.Where(r => r.GameInstanceId == _gameId)
 			.OrderBy(row => row.Number)
 			.Select(r => r.Score)
 			.ToArrayAsync();
-
-		_state = JsonSerializer.Deserialize<HeartsGameState>(_game.State!) ?? throw new Exception("couldn't deserialize");		
 	}
 
 	private async Task<HeartsGameState> StartNewRoundAsync(ApplicationDbContext db)
