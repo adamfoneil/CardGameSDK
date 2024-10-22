@@ -17,6 +17,8 @@ public class GameInstance : BaseTable
 	public bool IsFinished => FinishedAtUtc.HasValue;
 
 	public ICollection<GameInstancePlayer> Players { get; set; } = [];
+
+	public int CurrentRound => Round + 1;
 }
 
 public class GameInstanceConfiguration : IEntityTypeConfiguration<GameInstance>

@@ -14,7 +14,7 @@
 			@foreach (var game in _activeGames)
 			{
 				<li>
-					<a href="@game.Url">@game.Game # @game.Id, round @(game.Round + 1) - @PlayerList(game)</a>
+					<a href="@game.Url">@game.Game # @game.Id, round @(game.CurrentRound) - @PlayerList(game)</a>
 					<RadzenBadge Text="Test Mode" Visible="game.IsTestMode" class="ms-2" />
 				</li>
 			}

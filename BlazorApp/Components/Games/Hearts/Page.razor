@@ -17,7 +17,7 @@
 <h3>Hearts</h3>
 
 <div class="d-flex align-items-center">
-	<div class="text-muted">game # @_gameId | round @(_game.Round + 1)</div>
+	<div class="text-muted">game # @_gameId | round @(_game.CurrentRound)</div>
 	<RadzenBadge Text="Test Mode" Visible="_game.IsTestMode" class="ms-2" />
 </div>
 
