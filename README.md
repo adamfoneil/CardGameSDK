@@ -21,3 +21,7 @@ I'm still a long ways from having something playable in a web UI, but I needed s
 
 # News
 There's a Server [BlazorApp](https://github.com/adamfoneil/CardGameSDK/tree/master/BlazorApp) in progress running at [cardplace.azurewebsites.net](https://cardplace.azurewebsites.net/). Note it's on a low service tier, so it might be slow to start. You can actually register and experiment with the [Hearts](https://github.com/adamfoneil/CardGameSDK/tree/master/Hearts) game by going to the [Ready page](https://cardplace.azurewebsites.net/Ready). You'll need 4 players online simultaneously.
+
+What the main UI looks like:
+
+![image](https://github.com/user-attachments/assets/a2292007-ab59-4403-801d-75d3637245e1)
