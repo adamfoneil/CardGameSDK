@@ -1,4 +1,5 @@
 ﻿using CardGame.Abstractions;
+using System;
 using System.Text.Json.Serialization;
 
 namespace Games.Hearts;
@@ -292,6 +293,13 @@ public class HeartsGameState : GameState<PlayingCard>
 				CurrentPlayer!.IsTest ? loggedInUser : 
 					CurrentPlayer!.Name :
 				loggedInUser;
+
+	protected override int NextPlayerIndex(int currentIndex)
+	{
+		int result = --currentIndex;
+		if (result < 1) result = 4;
+		return result;
+	}
 
 	public class Trick
 	{

@@ -39,15 +39,16 @@ public abstract class GameState<TCard>
 
 	public abstract Dictionary<string, int> Score { get; }
 
+	protected abstract int NextPlayerIndex(int currentIndex);
+
 	protected Player<TCard> NextPlayer()
 	{
 		ArgumentNullException.ThrowIfNull(CurrentPlayer, nameof(CurrentPlayer));
 
 		var index = PlayersByName[CurrentPlayer.Name].Index;
 
-		index++;
-		if (index > Players.Count) index = 1;
-
+		index = NextPlayerIndex(index);
+		
 		return PlayersByIndex[index];
 	}
 

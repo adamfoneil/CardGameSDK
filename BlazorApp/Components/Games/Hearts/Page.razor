@@ -106,6 +106,14 @@ else if (_state.Phase == PlayPhase.Play)
 	<hr class="mt-4" />
 	<div class="test-console">
 		<StateView State="_state"/>
+
+
+		<AuthorizeView Roles="Developers">
+			<Authorized>
+				<hr />
+				<RadzenButton Text="Restart Round" Icon="restart_alt" Click="RestartRound" />
+			</Authorized>
+		</AuthorizeView>
 	</div>
 }
 
@@ -212,7 +220,7 @@ else if (_state.Phase == PlayPhase.Play)
 			Nav.NavigateTo("/", forceLoad: true);
 			return default!;
 		}
-		
+
 		await Events.GameStateChangedAsync(_gameId, CurrentUser!.UserName!, EventMessage.RoundEndedTopic);
 		return nextRound;		
 	}
@@ -223,6 +231,13 @@ else if (_state.Phase == PlayPhase.Play)
 		var totalPassCount = _state!.Passes.Count;
 		var recipient = _state!.PassingRecipient(_effectivePlayer);
 		return $"{_effectivePlayer} passing to {recipient}: {passCount} | {HeartsGameState.PassCardsCount} passed | all players: {totalPassCount} / {HeartsGameState.PassCardsCount * _state.Players.Count}";
+	}
+
+	private async Task RestartRound()
+	{
+		using var db = DbFactory.CreateDbContext();
+		_state = await StartNewRoundAsync(db);
+		StateHasChanged();
 	}
 
 	public void Dispose()

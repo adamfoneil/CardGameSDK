@@ -69,6 +69,13 @@ public class FoxInTheForestState : GameState<PlayingCard>
 		return (true, default);
 	}
 
+	protected override int NextPlayerIndex(int currentIndex)
+	{
+		int result = currentIndex + 1;
+		if (result > 2) result = 1;
+		return result;
+	}
+
 	public class Trick
 	{
 		public required List<Play> Plays { get; init; } = [];
