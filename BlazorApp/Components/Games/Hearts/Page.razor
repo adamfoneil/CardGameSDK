@@ -139,7 +139,7 @@ else if (_state.Phase == PlayPhase.Play)
 	private async void OnStateChange(int gameInstanceId, string toUser, string? topic = null, string? payload = null)
 	{
 		if (gameInstanceId != _gameId) return;
-		if (toUser != _effectivePlayer) return;
+		if (toUser != CurrentUser?.UserName) return;
 
 		if (topic == EventMessage.GameEndedTopic)
 		{
@@ -173,7 +173,7 @@ else if (_state.Phase == PlayPhase.Play)
 
 		StateHasChanged();
 
-		await Events.GameStateChangedAsync(_gameId, _effectivePlayer);
+		await Events.GameStateChangedAsync(_gameId, CurrentUser!.UserName!);
 	}
 
 	private async Task LoadGameAsync()
@@ -208,12 +208,12 @@ else if (_state.Phase == PlayPhase.Play)
 		if (!playNext)
 		{
 			// game is finished
-			await Events.GameStateChangedAsync(_gameId, _effectivePlayer, EventMessage.GameEndedTopic);
+			await Events.GameStateChangedAsync(_gameId, CurrentUser!.UserName!, EventMessage.GameEndedTopic);
 			Nav.NavigateTo("/", forceLoad: true);
 			return default!;
 		}
 		
-		await Events.GameStateChangedAsync(_gameId, _effectivePlayer, EventMessage.RoundEndedTopic);
+		await Events.GameStateChangedAsync(_gameId, CurrentUser!.UserName!, EventMessage.RoundEndedTopic);
 		return nextRound;		
 	}
 
