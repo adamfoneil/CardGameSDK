@@ -18,7 +18,9 @@ public abstract class GameState<TCard>
 	/// </summary>
 	public Player<TCard>? CurrentPlayer { get; set; }
 	public Queue<TCard> DrawPile { get; set; } = [];
-	public abstract bool IsRoundFinished { get; }	
+	public abstract bool IsRoundFinished { get; }
+
+	public IGameStateLogger? Logger { get; set; }
 
 	public abstract (bool IsValid, string? Message) ValidatePlay(string playerName, TCard card);
 
