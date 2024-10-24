@@ -36,7 +36,7 @@ public class FoxInTheForestGameFactory(IHashids hashids, ILogger<FoxInTheForestS
 	{
 		var startPlayer = players.ToArray()[Random.Shared.Next(1, players.Count)];
 
-		return new(_logger)
+		FoxInTheForestState result = new()
 		{
 			IsTestMode = testMode,
 			DecreeCard = drawPile.Dequeue(),
@@ -44,6 +44,9 @@ public class FoxInTheForestGameFactory(IHashids hashids, ILogger<FoxInTheForestS
 			Players = players,
 			CurrentPlayer = startPlayer
 		};
+
+		result.Logger = _logger;
+		return result;
 	}
 
 	public override string GetUrl(int gameInstanceId)

@@ -19,7 +19,7 @@ public enum PlayPhase
 	Play
 }
 
-public class HeartsGameState(ILogger<HeartsGameState> logger) : GameState<PlayingCard>(logger)
+public class HeartsGameState : GameState<PlayingCard>
 {	
 	public const int PassCardsCount = 3;
 
@@ -112,22 +112,26 @@ public class HeartsGameState(ILogger<HeartsGameState> logger) : GameState<Playin
 	{
 		if (PlayersByName[playerName].Hand.Contains(card))
 		{
+			Log(LogLevel.Information, "{playerName} passing {card} to {targetPlayer}", playerName, card, PassingRecipient(playerName));
 			Passes.Add(new(playerName, card));
 			PlayersByName[playerName].Hand.Remove(card);
 		}
 		else if (Passes.Contains(new Play(playerName, card)))
 		{
+			Log(LogLevel.Information, "{playerName} taking back {card}", playerName, card);
 			Passes.Remove(new(playerName, card));
 			PlayersByName[playerName].Hand.Add(card);
 		}
 		
 		if (AllCardsPassed())
 		{
+			Log(LogLevel.Information, "All cards passed, starting play");
 			Phase = PlayPhase.Play;
 
 			DistributePassedCards();
 
-			CurrentPlayer = Players.Single(p => p.Hand.Contains(new PlayingCard(2, ClassicSuits.Clubs)));			
+			CurrentPlayer = Players.Single(p => p.Hand.Contains(new PlayingCard(2, ClassicSuits.Clubs)));
+			Log(LogLevel.Information, "{playerName} has 2 clubs", CurrentPlayer.Name);
 			PlayCard(CurrentPlayer.Name, new(2, ClassicSuits.Clubs));
 		}
 	}
@@ -174,6 +178,7 @@ public class HeartsGameState(ILogger<HeartsGameState> logger) : GameState<Playin
 	{
 		if (CurrentTrick.Count == 0)
 		{
+			Log(LogLevel.Information, "Leading suit set to {suit}", card.Suit.Name);
 			LeadingSuit = card.Suit;
 		}
 
@@ -181,15 +186,18 @@ public class HeartsGameState(ILogger<HeartsGameState> logger) : GameState<Playin
 		PlayersByName[playerName].Hand.Remove(card);
 
 		if (!IsHeartsBroken && card.Suit.Equals(ClassicSuits.Hearts))
-		{			
+		{
+			Log(LogLevel.Information, "Hearts broken by {playerName}", playerName);
 			IsHeartsBroken = true;
 		}
 
 		if (CurrentTrick.Count == 4)
-		{
+		{			
 			var winner = CurrentTrick
 				.Where(c => c.Card.Suit.Equals(LeadingSuit))
 				.MaxBy(p => p.Card.Rank)!.PlayerName;
+
+			Log(LogLevel.Information, "Trick complete, winner is {winner}", winner);
 
 			Tricks.Add(new()
 			{

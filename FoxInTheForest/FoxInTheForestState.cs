@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Games.FoxInTheForest;
 
-public class FoxInTheForestState(ILogger<FoxInTheForestState> logger) : GameState<PlayingCard>(logger)
+public class FoxInTheForestState : GameState<PlayingCard>
 {
 	public override bool IsRoundFinished => throw new NotImplementedException();
 

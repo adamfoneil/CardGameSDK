@@ -3,9 +3,10 @@ using System.Text.Json.Serialization;
 
 namespace CardGame.Abstractions;
 
-public abstract class GameState<TCard>(ILogger<GameState<TCard>> logger)
+public abstract class GameState<TCard>
 {
-	protected readonly ILogger<GameState<TCard>> Logger = logger;
+	[JsonIgnore]
+	public ILogger<GameState<TCard>>? Logger { get; set; }
 
 	/// <summary>
 	/// for logging purposes during a game
@@ -33,8 +34,6 @@ public abstract class GameState<TCard>(ILogger<GameState<TCard>> logger)
 
 	public void PlayCard(string playerName, TCard card)
 	{
-		using var scope = (GameInstanceId.HasValue) ? Logger.BeginScope("PlayCard {GameInstanceId}", GameInstanceId) : default;
-
 		var (valid, message) = ValidatePlay(playerName, card);
 		if (!valid) throw new Exception(message);
 
@@ -54,15 +53,24 @@ public abstract class GameState<TCard>(ILogger<GameState<TCard>> logger)
 
 	protected Player<TCard> NextPlayer()
 	{
-		ArgumentNullException.ThrowIfNull(CurrentPlayer, nameof(CurrentPlayer));
-
-		using var scope = (GameInstanceId.HasValue) ? Logger.BeginScope("NextPlayer {GameInstanceId}", GameInstanceId) : default;
+		ArgumentNullException.ThrowIfNull(CurrentPlayer, nameof(CurrentPlayer));		
 
 		var index = PlayersByName[CurrentPlayer.Name].Index;
 
+		Log(LogLevel.Information, "Current player is {CurrentPlayer}, index {index}", CurrentPlayer.Name, index);
+
 		index = NextPlayerIndex(index);
-		
+
+		Log(LogLevel.Information, "Next player is {index}, {name}", index, PlayersByIndex[index].Name);
+
 		return PlayersByIndex[index];
+	}
+
+	protected void Log(LogLevel level, string messageTemplate, params object?[] parameters)
+	{
+		if (Logger == null) return;
+		using var scope = (GameInstanceId.HasValue) ? Logger.BeginScope("GameInstance {GameInstanceId}", GameInstanceId) : default;
+		Logger.Log(level, messageTemplate, parameters);
 	}
 
 	public record Play(string PlayerName, TCard Card);	

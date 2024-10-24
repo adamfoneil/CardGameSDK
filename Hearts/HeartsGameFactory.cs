@@ -27,12 +27,13 @@ public class HeartsGameFactory(IHashids hashids, ILogger<HeartsGameState> logger
 		HashSet<Player<PlayingCard>> players,
 		Queue<PlayingCard> drawPile)
 	{
-		HeartsGameState result = new(_logger)
+		HeartsGameState result = new()
 		{
 			IsTestMode = testMode,
 			Players = players,
 		};		
 
+		result.Logger = _logger;
 		return result;
 	}
 
