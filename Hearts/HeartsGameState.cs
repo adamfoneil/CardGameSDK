@@ -97,14 +97,19 @@ public class HeartsGameState : GameState<PlayingCard>
 		card.Suit.Equals(ClassicSuits.Spades) && card.Rank == ClassicNamedRanks.Queen ? 13 :
 		0;
 
-	public bool IsPlayable(string playerName)
+	public bool IsPlayable(string loggedInUser, string playerName)
 	{
 		if (Phase == PlayPhase.Pass)
 		{
 			return Passes.Count(p => p.PlayerName.Equals(playerName)) < PassCardsCount;
 		}
 
-		return CurrentPlayer?.Name.Equals(playerName) ?? false;
+		var result = 
+			loggedInUser.Equals(playerName) ||			
+			PlayersByName[playerName].IsTest && (CurrentPlayer?.Name.Equals(playerName) ?? false);
+
+		Log(LogLevel.Information, "IsPlayable = {result} for player {playerName}, logged in user {user}", result, playerName, loggedInUser);
+		return result;
 	}
 
 	public void PassCard(string playerName, PlayingCard card)

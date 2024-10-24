@@ -66,7 +66,7 @@ else if (_state.Phase == PlayPhase.Play)
 		Cards="_state.PlayersByName[_effectivePlayer].Hand!"
 		GameState="_state"
 		CardPlayed="OnCardPlayed"
-		Playable="_state.IsPlayable(_effectivePlayer)"
+		Playable="_state.IsPlayable(CurrentUser.UserName, _effectivePlayer)"
 		PlayerName="@_effectivePlayer" />	
 </div>
 

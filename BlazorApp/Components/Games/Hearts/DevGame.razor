@@ -17,7 +17,7 @@
 				<hr />
 				<h4 style="@CurrentPlayerStyle(player.Name)" class="p-2 rounded-2">@player.Name</h4>
 				<div class="d-flex justify-content-between">
-					<Hand Cards="player.Hand" GameState="_gameState" CardPlayed="OnCardPlayed" Playable="_gameState.IsPlayable(player.Name)" PlayerName="@player.Name" />
+					<Hand Cards="player.Hand" GameState="_gameState" CardPlayed="OnCardPlayed" Playable="_gameState.IsPlayable(CurrentUser.UserName, player.Name)" PlayerName="@player.Name" />
 					<div>
 					@if (_gameState.Phase == PlayPhase.Pass)
 					{
@@ -50,6 +50,9 @@
 	private static string[] _playerNames = ["Alice", "Bob", "Charlie", "David"];
 
 	private HeartsGameState? _gameState;
+
+	[CascadingParameter]
+	public ApplicationUser? CurrentUser { get; set; }
 
 	private void NewGame()
 	{
