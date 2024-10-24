@@ -1,12 +1,14 @@
 ﻿using CardGame.Abstractions;
 using HashidsNet;
+using Microsoft.Extensions.Logging;
 using System.Text.Json;
 
 namespace Games.Hearts;
 
-public class HeartsGameFactory(IHashids hashids) : GameFactory<HeartsGameState, PlayingCard>
+public class HeartsGameFactory(IHashids hashids, ILogger<HeartsGameState> logger) : GameFactory<HeartsGameState, PlayingCard>
 {
 	private readonly IHashids _hashids = hashids;
+	private readonly ILogger<HeartsGameState> _logger = logger;
 
 	public override uint MinPlayers => 4;
 
@@ -24,8 +26,8 @@ public class HeartsGameFactory(IHashids hashids) : GameFactory<HeartsGameState, 
 		bool testMode,
 		HashSet<Player<PlayingCard>> players,
 		Queue<PlayingCard> drawPile)
-	{       	
-		HeartsGameState result = new()
+	{
+		HeartsGameState result = new(_logger)
 		{
 			IsTestMode = testMode,
 			Players = players,

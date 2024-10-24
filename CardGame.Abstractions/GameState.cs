@@ -1,9 +1,18 @@
-﻿using System.Text.Json.Serialization;
+﻿using Microsoft.Extensions.Logging;
+using System.Text.Json.Serialization;
 
 namespace CardGame.Abstractions;
 
-public abstract class GameState<TCard>
+public abstract class GameState<TCard>(ILogger<GameState<TCard>> logger)
 {
+	protected readonly ILogger<GameState<TCard>> Logger = logger;
+
+	/// <summary>
+	/// for logging purposes during a game
+	/// </summary>
+	[JsonIgnore]
+	public int? GameInstanceId { get; set; }
+
 	public HashSet<Player<TCard>> Players { get; init; } = [];
 	[JsonIgnore]
 	public Dictionary<int, Player<TCard>> PlayersByIndex => Players.ToDictionary(player => player.Index);
@@ -20,12 +29,12 @@ public abstract class GameState<TCard>
 	public Queue<TCard> DrawPile { get; set; } = [];
 	public abstract bool IsRoundFinished { get; }
 
-	public IGameStateLogger? Logger { get; set; }
-
 	public abstract (bool IsValid, string? Message) ValidatePlay(string playerName, TCard card);
 
 	public void PlayCard(string playerName, TCard card)
 	{
+		using var scope = (GameInstanceId.HasValue) ? Logger.BeginScope("PlayCard {GameInstanceId}", GameInstanceId) : default;
+
 		var (valid, message) = ValidatePlay(playerName, card);
 		if (!valid) throw new Exception(message);
 
@@ -46,6 +55,8 @@ public abstract class GameState<TCard>
 	protected Player<TCard> NextPlayer()
 	{
 		ArgumentNullException.ThrowIfNull(CurrentPlayer, nameof(CurrentPlayer));
+
+		using var scope = (GameInstanceId.HasValue) ? Logger.BeginScope("NextPlayer {GameInstanceId}", GameInstanceId) : default;
 
 		var index = PlayersByName[CurrentPlayer.Name].Index;
 

@@ -2,6 +2,7 @@ using CardGame.Abstractions;
 using Games.FoxInTheForest;
 using Games.Hearts;
 using HashidsNet;
+using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using System.Text.Json;
 
@@ -16,11 +17,13 @@ public class ShuffleAndDeal
 	private static readonly (string Name, bool IsTest)[] testHeartsPlayers = testHeartsPlayerNames.Select(p => (p, true)).ToArray();
 	private static readonly (string Name, bool Istest)[] testFitFPlayers = testFitFPlayerNames.Select(p => (p, true)).ToArray();
 
+	private static ILogger<T> GetLogger<T>() => new LoggerFactory().CreateLogger<T>();
+
 	[TestMethod]
 	public void HeartsDeal()
 	{
 		var hashIds = new Hashids();
-		var hearts = new HeartsGameFactory(hashIds);
+		var hearts = new HeartsGameFactory(hashIds, GetLogger<HeartsGameState>());
 		var game = hearts.Start(false, testHeartsPlayers);
 
 		PrintCards(game);
@@ -51,7 +54,7 @@ public class ShuffleAndDeal
 	[TestMethod]
 	public void HeartsAutoPlay()
 	{
-		var hearts = new HeartsGameFactory(new Hashids());
+		var hearts = new HeartsGameFactory(new Hashids(), GetLogger<HeartsGameState>());
 		var game = hearts.Start(false, testHeartsPlayers);
 
 		while (!game.IsRoundFinished) game.AutoPlay();
@@ -75,7 +78,7 @@ public class ShuffleAndDeal
 	[TestMethod]
 	public void FoxInTheForestDeal()
 	{
-		var foxInTheForest = new FoxInTheForestGameFactory(new Hashids());
+		var foxInTheForest = new FoxInTheForestGameFactory(new Hashids(), GetLogger<FoxInTheForestState>());
 		var game = foxInTheForest.Start(false, testFitFPlayers);
 
 		PrintCards(game);

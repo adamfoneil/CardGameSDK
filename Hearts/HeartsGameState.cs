@@ -1,4 +1,5 @@
 ﻿using CardGame.Abstractions;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Text.Json.Serialization;
 
@@ -18,7 +19,7 @@ public enum PlayPhase
 	Play
 }
 
-public class HeartsGameState : GameState<PlayingCard>
+public class HeartsGameState(ILogger<HeartsGameState> logger) : GameState<PlayingCard>(logger)
 {	
 	public const int PassCardsCount = 3;
 

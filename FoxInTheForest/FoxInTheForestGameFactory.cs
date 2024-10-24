@@ -1,11 +1,13 @@
 ﻿using CardGame.Abstractions;
 using HashidsNet;
+using Microsoft.Extensions.Logging;
 
 namespace Games.FoxInTheForest;
 
-public class FoxInTheForestGameFactory(IHashids hashids) : GameFactory<FoxInTheForestState, PlayingCard>
+public class FoxInTheForestGameFactory(IHashids hashids, ILogger<FoxInTheForestState> logger) : GameFactory<FoxInTheForestState, PlayingCard>
 {
 	private readonly IHashids _hashids = hashids;
+	private readonly ILogger<FoxInTheForestState> _logger = logger;
 
 	public override string Name => "Fox in the Forest";
 
@@ -34,7 +36,7 @@ public class FoxInTheForestGameFactory(IHashids hashids) : GameFactory<FoxInTheF
 	{
 		var startPlayer = players.ToArray()[Random.Shared.Next(1, players.Count)];
 
-		return new()
+		return new(_logger)
 		{
 			IsTestMode = testMode,
 			DecreeCard = drawPile.Dequeue(),
