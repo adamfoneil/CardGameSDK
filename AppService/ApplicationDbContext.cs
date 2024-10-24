@@ -24,7 +24,7 @@ public partial class ApplicationDbContext(DbContextOptions<ApplicationDbContext>
 	{
 		base.OnModelCreating(builder);
 		builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
-	}	
+	}
 }
 
 public class AppDbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>

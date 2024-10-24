@@ -30,7 +30,7 @@ builder.Services.Configure<HashIdOptions>(builder.Configuration.GetSection("Hash
 builder.Services.AddSingleton<IHashids>(sp =>
 {
 	var options = sp.GetRequiredService<IOptions<HashIdOptions>>().Value;
-    return new Hashids(options.Salt, minHashLength: options.MinLength);
+	return new Hashids(options.Salt, minHashLength: options.MinLength);
 });
 builder.Services.AddSingleton<HeartsGameFactory>();
 builder.Services.AddSingleton<FoxInTheForestGameFactory>();

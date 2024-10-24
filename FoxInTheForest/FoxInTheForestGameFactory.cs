@@ -27,7 +27,7 @@ public class FoxInTheForestGameFactory(IHashids hashids, ILogger<FoxInTheForestS
 		"Moons",
 		"Keys",
 		"Bells"
-	];	
+	];
 
 	protected override FoxInTheForestState CreateGameState(
 		bool testMode,

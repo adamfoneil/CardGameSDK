@@ -1,5 +1,4 @@
-﻿using AppService.Entities.Conventions;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AppService.Entities;
@@ -20,7 +19,7 @@ public class EventMessage
 	public string ToUser { get; set; } = default!;
 	public string? Topic { get; set; }
 	public string? Payload { get; set; }
-	
+
 	public const string GameStartedTopic = "GameStarted";
 	public const string RoundEndedTopic = "RoundEnded";
 	public const string GameEndedTopic = "GameEnded";

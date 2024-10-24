@@ -1,21 +1,18 @@
-﻿using AppService;
-using AppService.Entities;
+﻿using AppService.Entities;
 using BlazorApp.Extensions;
-using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace BlazorApp;
 
 internal class EventBackgroundService(
 	EventRelay eventRelay,
-	ILogger<EventBackgroundService> logger,	
+	ILogger<EventBackgroundService> logger,
 	IOptions<ConnectionStrings> connectionStrings) : BackgroundService
 {
 	private readonly EventRelay _eventRelay = eventRelay;
-	private readonly ILogger<EventBackgroundService> _logger = logger;	
-	private readonly ConnectionStrings _connectionStrings = connectionStrings.Value;	
+	private readonly ILogger<EventBackgroundService> _logger = logger;
+	private readonly ConnectionStrings _connectionStrings = connectionStrings.Value;
 
 	protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 	{

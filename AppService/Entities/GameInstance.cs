@@ -25,7 +25,7 @@ public class GameInstanceConfiguration : IEntityTypeConfiguration<GameInstance>
 {
 	public void Configure(EntityTypeBuilder<GameInstance> builder)
 	{
-		builder.Property(gi => gi.Url).HasMaxLength(100).IsRequired();		
+		builder.Property(gi => gi.Url).HasMaxLength(100).IsRequired();
 		builder.Property(gi => gi.Winner).HasMaxLength(50);
 	}
 }

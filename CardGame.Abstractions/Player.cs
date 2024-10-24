@@ -5,7 +5,7 @@ namespace CardGame.Abstractions;
 [DebuggerDisplay("{Name}")]
 public class Player<TCard>
 {
-	public string Name { get; init; } = default!;	
+	public string Name { get; init; } = default!;
 	public HashSet<TCard> Hand { get; init; } = [];
 	public int Index { get; init; }
 	/// <summary>

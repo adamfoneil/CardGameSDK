@@ -82,7 +82,7 @@ internal class EventRelay(
 	/// called by background service when event message is dequeued
 	/// </summary>
 	public void NotifyReadyStateChanged(SupportedGames game, string toUser, string? topic = null, string? payload = null)
-	{		
+	{
 		ReadyStateChanged?.Invoke(game, toUser, topic, payload);
 	}
 
@@ -90,7 +90,7 @@ internal class EventRelay(
 	/// called by background service when event message is dequeued
 	/// </summary>
 	public void NotifyGameStateChanged(int gameInstanceId, string toUser, string? topic = null, string? payload = null)
-	{		
+	{
 		GameStateChanged?.Invoke(gameInstanceId, toUser, topic, payload);
-	}		
+	}
 }

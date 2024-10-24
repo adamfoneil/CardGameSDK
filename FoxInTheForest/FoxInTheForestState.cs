@@ -1,5 +1,4 @@
 ﻿using CardGame.Abstractions;
-using Microsoft.Extensions.Logging;
 
 namespace Games.FoxInTheForest;
 
