@@ -4,5 +4,5 @@ namespace CardGame.Abstractions;
 
 public interface IGameStateLogger
 {
-	Task LogAsync(int gameInstanceId, string message, [CallerMemberName]string? methodName = null);
+	Task LogAsync(int gameInstanceId, string message, [CallerMemberName] string? methodName = null);
 }

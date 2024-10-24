@@ -53,7 +53,7 @@ public abstract class GameState<TCard>
 
 	protected Player<TCard> NextPlayer()
 	{
-		ArgumentNullException.ThrowIfNull(CurrentPlayer, nameof(CurrentPlayer));		
+		ArgumentNullException.ThrowIfNull(CurrentPlayer, nameof(CurrentPlayer));
 
 		var index = PlayersByName[CurrentPlayer.Name].Index;
 
@@ -73,5 +73,5 @@ public abstract class GameState<TCard>
 		Logger.Log(level, messageTemplate, parameters);
 	}
 
-	public record Play(string PlayerName, TCard Card);	
+	public record Play(string PlayerName, TCard Card);
 }

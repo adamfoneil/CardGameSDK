@@ -6,8 +6,8 @@ namespace AppService;
 public partial class ApplicationDbContext
 {
 	public async Task<bool> PlayNextRoundAsync<TState, TCard>(
-		int gameInstanceId, string nextRoundState, 
-		string priorRoundScore, 
+		int gameInstanceId, string nextRoundState,
+		string priorRoundScore,
 		GameFactory<TState, TCard> gameFactory) where TState : notnull
 	{
 		var gameInstance = await GameInstances.FindAsync(gameInstanceId) ?? throw new Exception("game not found");
@@ -19,7 +19,7 @@ public partial class ApplicationDbContext
 			State = gameInstance.State!,
 			Number = gameInstance.Round,
 			Score = priorRoundScore
-		});		
+		});
 
 		gameInstance.State = nextRoundState;
 		await SaveChangesAsync();

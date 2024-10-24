@@ -1,6 +1,5 @@
 ﻿using CardGame.Abstractions;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Text.Json.Serialization;
 
 namespace Games.Hearts;
@@ -10,17 +9,17 @@ public enum PlayerOrientation
 	Self = 0,
 	Left = 1,
 	Right = 2,
-	Across = 3	
+	Across = 3
 }
 
 public enum PlayPhase
-{	
+{
 	Pass,
 	Play
 }
 
 public class HeartsGameState : GameState<PlayingCard>
-{	
+{
 	public const int PassCardsCount = 3;
 
 	public PlayPhase Phase { get; set; } = PlayPhase.Pass;
@@ -29,7 +28,7 @@ public class HeartsGameState : GameState<PlayingCard>
 	public bool IsHeartsBroken { get; set; }
 	public string? MoonShotPlayer { get; set; }
 
-	public override bool IsRoundFinished => Tricks.Count == 12;	
+	public override bool IsRoundFinished => Tricks.Count == 12;
 
 	public List<Play> CurrentTrick { get; set; } = [];
 	public List<Trick> Tricks { get; set; } = [];
@@ -59,8 +58,8 @@ public class HeartsGameState : GameState<PlayingCard>
 		var playsByName = CurrentTrick.ToDictionary(t => t.PlayerName);
 		var playerAtIndex = playerNames[targetIndex];
 
-		return playsByName.TryGetValue(playerAtIndex, out var play) ? 
-			new Playslot() { Card = play.Card, PlayerName = playerAtIndex } : 
+		return playsByName.TryGetValue(playerAtIndex, out var play) ?
+			new Playslot() { Card = play.Card, PlayerName = playerAtIndex } :
 			new Playslot() { PlayerName = playerAtIndex };
 	}
 
@@ -96,7 +95,7 @@ public class HeartsGameState : GameState<PlayingCard>
 	private static int PointValue(PlayingCard card) =>
 		card.Suit.Equals(ClassicSuits.Hearts) ? 1 :
 		card.Suit.Equals(ClassicSuits.Spades) && card.Rank == ClassicNamedRanks.Queen ? 13 :
-		0;	
+		0;
 
 	public bool IsPlayable(string playerName)
 	{
@@ -122,7 +121,7 @@ public class HeartsGameState : GameState<PlayingCard>
 			Passes.Remove(new(playerName, card));
 			PlayersByName[playerName].Hand.Add(card);
 		}
-		
+
 		if (AllCardsPassed())
 		{
 			Log(LogLevel.Information, "All cards passed, starting play");
@@ -143,7 +142,7 @@ public class HeartsGameState : GameState<PlayingCard>
 	{
 		var playerNames = Players.Select(p => p.Name).ToArray();
 		foreach (var player in Players)
-		{			
+		{
 			var targetPlayer = PlayersByName[PassingRecipient(player.Name)];
 			var passedCards = Passes.Where(p => p.PlayerName == player.Name).Select(p => p.Card).ToList();
 			foreach (var card in passedCards) targetPlayer.Hand.Add(card);
@@ -192,7 +191,7 @@ public class HeartsGameState : GameState<PlayingCard>
 		}
 
 		if (CurrentTrick.Count == 4)
-		{			
+		{
 			var winner = CurrentTrick
 				.Where(c => c.Card.Suit.Equals(LeadingSuit))
 				.MaxBy(p => p.Card.Rank)!.PlayerName;
@@ -286,11 +285,11 @@ public class HeartsGameState : GameState<PlayingCard>
 		var firstHeart = CurrentPlayer.Hand.FirstOrDefault(c => c.Suit.Equals(ClassicSuits.Hearts));
 		var firstOfLeadingSuit = CurrentPlayer.Hand.FirstOrDefault(c => c.Suit.Equals(LeadingSuit));
 		var firstNonHeart = CurrentPlayer.Hand.FirstOrDefault(c => !c.Suit.Equals(ClassicSuits.Hearts));
-		var firstOfAny = CurrentPlayer.Hand.First();	
+		var firstOfAny = CurrentPlayer.Hand.First();
 
 		var card = IsHeartsBroken ?
 			firstHeart ?? firstOfLeadingSuit ?? firstOfAny :
-			firstOfLeadingSuit ?? firstNonHeart ?? firstOfAny;		
+			firstOfLeadingSuit ?? firstNonHeart ?? firstOfAny;
 
 		OnPlayCard(CurrentPlayer.Name, card);
 	}
@@ -299,7 +298,7 @@ public class HeartsGameState : GameState<PlayingCard>
 		Phase == PlayPhase.Pass ?
 			devViewPlayer ?? loggedInUser :
 			IsTestMode ?
-				CurrentPlayer!.IsTest ? loggedInUser : 
+				CurrentPlayer!.IsTest ? loggedInUser :
 					CurrentPlayer!.Name :
 				loggedInUser;
 

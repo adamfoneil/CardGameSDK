@@ -31,7 +31,7 @@ public class HeartsGameFactory(IHashids hashids, ILogger<HeartsGameState> logger
 		{
 			IsTestMode = testMode,
 			Players = players,
-		};		
+		};
 
 		result.Logger = _logger;
 		return result;
@@ -56,7 +56,7 @@ public class HeartsGameFactory(IHashids hashids, ILogger<HeartsGameState> logger
 		{
 			newRound.Phase = PlayPhase.Play;
 			newRound.CurrentPlayer = newRound.Players.Single(p => p.Hand.Contains(new PlayingCard(2, ClassicSuits.Clubs)));
-			newRound.PlayCard(newRound.CurrentPlayer.Name, new(2, ClassicSuits.Clubs));						
+			newRound.PlayCard(newRound.CurrentPlayer.Name, new(2, ClassicSuits.Clubs));
 		}
 
 		return newRound;

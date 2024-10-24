@@ -6,7 +6,7 @@ namespace CardGame.Abstractions;
 /// without explicit reference to game's state type
 /// </summary>
 public interface IGameDispatcher
-{	
+{
 	uint MaxPlayers { get; }
 	uint MinPlayers { get; }
 	string Name { get; }
