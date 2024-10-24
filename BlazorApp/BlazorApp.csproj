@@ -20,6 +20,12 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.8" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
     <PackageReference Include="Radzen.Blazor" Version="5.2.9" />
+	<PackageReference Include="Pekspro.BuildInformationGenerator" Version="0.3.0" PrivateAssets="all" ExcludeAssets="runtime">
+	  <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	</PackageReference>
+	  <PackageReference Include="GitVersion.MsBuild" Version="6.0.0">
+		  <PrivateAssets>All</PrivateAssets>
+	  </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
