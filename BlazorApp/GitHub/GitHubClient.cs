@@ -62,18 +62,18 @@ internal class GitHubClient
 
 		if (buildCommitId == latestCommiId) return (0, url);
 
-		((int count, string compareUrl), bool isLive) = await _cache.GetOrAddAsync("commits-behind", async () =>
+		(int count, bool isLive) = await _cache.GetOrAddAsync("commits-behind", async () =>
         {
             try
             {                
 				var response = await _httpClient.GetStringAsync(url);
 				var json = JsonDocument.Parse(response);
-				return (json.RootElement.GetProperty("ahead_by").GetInt32(), url);
+				return json.RootElement.GetProperty("ahead_by").GetInt32();
 			}
             catch (HttpRequestException exc) when (exc.StatusCode == HttpStatusCode.NotFound)
 			{
 				// the commitId is not in the branch because it's still local, probably
-				return (-1, url);
+				return -1;
 			}
 			catch
             {
@@ -83,6 +83,6 @@ internal class GitHubClient
 
         _logger.LogDebug("GetCommitsBehindAsync: {count} (live: {isLive})", count, isLive);
 
-        return (count, compareUrl);
+        return (count, url);
 	}
 }

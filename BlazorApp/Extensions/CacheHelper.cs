@@ -6,8 +6,8 @@ namespace BlazorApp.Extensions;
 internal static class CacheHelper
 {
 	public static async Task<(T Result, bool IsLive)> GetOrAddAsync<T>(
-		this IDistributedCache cache, string key, Func<Task<T>> factory, 
-		TimeSpan expiresAfter)
+		this IDistributedCache cache, string key, 
+		Func<Task<T>> factory, TimeSpan expiresAfter)
 	{
 		var bytes = await cache.GetAsync(key);
 		if (bytes != null)
