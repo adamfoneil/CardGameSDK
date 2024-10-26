@@ -2,7 +2,7 @@
 
 namespace BlazorApp;
 
-// sample commit
+// once more with feeling
 
 [BuildInformation(AddGitCommitId = true, AddLocalBuildTime = true, FakeIfDebug = false, FakeIfRelease = false, AddGitBranch = true)]
 partial class BuildInfo
