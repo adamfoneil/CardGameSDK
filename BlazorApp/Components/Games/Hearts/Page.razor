@@ -20,6 +20,11 @@
 <div class="d-flex align-items-center">
 	<div class="text-muted">game # @_gameId | round @(_game.CurrentRound)</div>
 	<RadzenBadge Text="Test Mode" Visible="_game.IsTestMode" class="ms-2" />
+	<RadzenSwitch @bind-Value="_testPlayersAutoPlay" Visible="_game.IsTestMode" class="ms-3" />
+	@if (_game.IsTestMode)
+	{
+		<div class="text-muted ms-2">auto play test players</div>
+	}
 </div>
 
 @if (_game.IsFinished)
@@ -124,6 +129,7 @@ else if (_state.Phase == PlayPhase.Play)
 	public ApplicationUser? CurrentUser { get; set; }
 
 	private int _gameId;
+	private bool _testPlayersAutoPlay;
 	private GameInstance? _game;
 	private string[] _allScores = [];
 	private HeartsGameState? _state;
@@ -163,12 +169,15 @@ else if (_state.Phase == PlayPhase.Play)
 		ArgumentNullException.ThrowIfNull(_state, nameof(_state));
 
 		using var db = DbFactory.CreateDbContext();
+	
+		await UpdateGameStateAsync();
 
-		var json = JsonSerializer.Serialize(_state);
-
-		await db.GameInstances
-			.Where(g => g.Id == _gameId)
-			.ExecuteUpdateAsync(u => u.SetProperty(p => p.State, json));					
+		while (_testPlayersAutoPlay && (_state.CurrentPlayer?.IsTest ?? false))
+		{
+			_state.AutoPlay();
+			await UpdateGameStateAsync();
+			if (_state.IsRoundFinished) break;
+		}
 
 		if (_state.IsRoundFinished)
 		{
@@ -181,6 +190,14 @@ else if (_state.Phase == PlayPhase.Play)
 		StateHasChanged();
 
 		await Events.GameStateChangedAsync(_gameId, CurrentUser!.UserName!);
+
+		async Task UpdateGameStateAsync()
+		{
+			var json = JsonSerializer.Serialize(_state);
+			await db.GameInstances
+			.Where(g => g.Id == _gameId)
+			.ExecuteUpdateAsync(u => u.SetProperty(p => p.State, json));
+		}
 	}
 
 	private async Task LoadGameAsync()

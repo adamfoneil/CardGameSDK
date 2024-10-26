@@ -319,7 +319,7 @@ public class HeartsGameState : GameState<PlayingCard>
 		public required List<Play> Plays { get; init; } = [];
 		public required string Winner { get; init; }
 		public required int Points { get; init; }
-		public bool HeartsBroken { get; init; }
+		public bool HeartsBroken { get; init; }		
 
 		[JsonIgnore]
 		public Dictionary<string, PlayingCard> PlaysByName => Plays.ToDictionary(p => p.PlayerName, p => p.Card);

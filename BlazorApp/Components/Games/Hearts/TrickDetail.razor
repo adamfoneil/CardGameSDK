@@ -5,6 +5,7 @@
 		<div>Winner: @Trick.Winner</div>
 		<div>Points: @Trick.Points</div>
 		<div>Hearts Broken: @Trick.HeartsBroken</div>
+		<div>Lead Suit: @Trick.Plays.First().Card.Suit.Name</div>
 	</div>
 	@foreach (var play in Trick.Plays)
 	{
