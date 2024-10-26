@@ -58,7 +58,7 @@ internal class GitHubClient
 	{
         var latestCommiId = await GetLatestCommitIdAsync();        
 
-		var url = $"repos/{_options.RepositoryOwner}/{_options.RepositoryName}/compare/{buildCommitId}...{latestCommiId}";
+		var url = $"{_options.RepositoryOwner}/{_options.RepositoryName}/compare/{buildCommitId}...{latestCommiId}";
 
 		if (buildCommitId == latestCommiId) return (0, url);
 
@@ -66,7 +66,7 @@ internal class GitHubClient
         {
             try
             {                
-				var response = await _httpClient.GetStringAsync(url);
+				var response = await _httpClient.GetStringAsync($"repos/{url}");
 				var json = JsonDocument.Parse(response);
 				return json.RootElement.GetProperty("ahead_by").GetInt32();
 			}
