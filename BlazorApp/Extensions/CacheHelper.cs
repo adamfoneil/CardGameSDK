@@ -3,6 +3,8 @@ using System.Text.Json;
 
 namespace BlazorApp.Extensions;
 
+// sample commit
+
 internal static class CacheHelper
 {
 	public static async Task<T> GetOrAddAsync<T>(
