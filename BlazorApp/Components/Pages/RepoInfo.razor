@@ -1,18 +1,34 @@
-﻿<details>
+﻿@using BlazorApp.GitHub
+@inject GitHubClient GitHub
+
+<details>
 	<summary>Build info</summary>
 	<dl class="ms-3">
 		<dt>Date</dt>
 		<dd>@BuildInfo.LocalBuildTime, @BuildInfo.LocalBuildTime.Humanize()</dd>
 
 		<dt>Commit</dt>
-		<dd>
+		<dd class="d-flex align-items-center">
 			<a href="https://github.com/adamfoneil/CardGameSDK/commit/@(BuildInfo.Git.CommitId)" target="_blank">
 				@BuildInfo.Git.Branch @BuildInfo.Git.ShortCommitId
 			</a>
+			@if (CommitsBehind > 0)
+			{
+				<span class="badge bg-danger ms-2">@CommitsBehind Commits Behind</span>
+			}
+			else
+			{
+				<span class="badge bg-success ms-2">Latest</span>
+			}
 		</dd>
 	</dl>
 </details>
 
 @code {
+	private int CommitsBehind { get; set; }
 
+	protected override async Task OnInitializedAsync()
+	{		
+		CommitsBehind = await GitHub.GetCommitsBehindAsync(BuildInfo.Git.CommitId);
+	}
 }
