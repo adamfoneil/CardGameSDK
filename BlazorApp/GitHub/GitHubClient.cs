@@ -55,7 +55,7 @@ internal class GitHubClient
             {
 				var response = await _httpClient.GetStringAsync($"repos/{_options.RepositoryOwner}/{_options.RepositoryName}/compare/{buildCommitId}...{latestCommiId}");
 				var json = JsonDocument.Parse(response);
-				return json.RootElement.GetProperty("behind_by").GetInt32();
+				return json.RootElement.GetProperty("ahead_by").GetInt32();
 			}
             catch (HttpRequestException exc) when (exc.StatusCode == HttpStatusCode.NotFound)
 			{
