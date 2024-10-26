@@ -1,8 +1,6 @@
 ﻿@using BlazorApp.GitHub
 @inject GitHubClient GitHub
 
-@*sample commit*@
-
 <details>
 	<summary>Build info</summary>
 	<dl class="ms-3">
@@ -10,22 +8,25 @@
 		<dd>@BuildInfo.LocalBuildTime, @BuildInfo.LocalBuildTime.Humanize()</dd>
 
 		<dt>Commit</dt>
-		<dd class="d-flex align-items-center">
-			<a href="https://github.com/adamfoneil/CardGameSDK/commit/@(BuildInfo.Git.CommitId)" target="_blank">
-				@BuildInfo.Git.Branch @BuildInfo.Git.ShortCommitId
-			</a>
-			@if (CommitsBehind > 0)
-			{
-				<span class="badge bg-warning ms-2">@CommitsBehind Commits Behind</span>
-			}
-			else if (CommitsBehind == 0)
-			{
-				<span class="badge bg-success ms-2">Latest</span>
-			}
-			else if (CommitsBehind < 0)
-			{
-				<span class="badge bg-danger ms-2">Local Commits Not Pushed</span>
-			}
+		<dd>
+			<div class="d-flex align-items-center">
+				<a href="https://github.com/adamfoneil/CardGameSDK/commit/@(BuildInfo.Git.CommitId)" target="_blank">
+					@BuildInfo.Git.Branch @BuildInfo.Git.ShortCommitId
+				</a>
+				@if (CommitsBehind > 0)
+				{
+					<span class="badge bg-warning ms-2">@CommitsBehind Commits Behind</span>
+				}
+				else if (CommitsBehind == 0)
+				{
+					<span class="badge bg-success ms-2">Latest</span>
+				}
+				else if (CommitsBehind < 0)
+				{
+					<span class="badge bg-danger ms-2">Local Commits Not Pushed</span>
+				}
+			</div>			
+			<span class="text-muted small">Note there's a 5-minute lag on this info</span>
 		</dd>
 	</dl>
 </details>
