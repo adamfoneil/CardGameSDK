@@ -24,6 +24,15 @@
 			<TrickDetail Trick="trick" />
 		</details>
 	}
+
+	<hr class="mt-4" />
+	<div>Score (this round):</div>
+	<ul>
+		@foreach (var kp in State.Score)
+		{
+			<li>@kp.Key: @kp.Value</li>
+		}
+	</ul>
 </div>
 
 @code {
