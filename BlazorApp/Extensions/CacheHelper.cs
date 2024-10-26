@@ -7,7 +7,7 @@ internal static class CacheHelper
 {
 	public static async Task<T> GetOrAddAsync<T>(
 		this IDistributedCache cache, string key, Func<Task<T>> factory, 
-		TimeSpan slidingExpiration)
+		TimeSpan expiresAfter)
 	{
 		var bytes = await cache.GetAsync(key);
 		if (bytes != null)
@@ -18,7 +18,7 @@ internal static class CacheHelper
 		T value = await factory();
 		await cache.SetAsync(key, JsonSerializer.SerializeToUtf8Bytes(value), new DistributedCacheEntryOptions
 		{
-			SlidingExpiration = slidingExpiration
+			AbsoluteExpirationRelativeToNow = expiresAfter			
 		});
 		
 		return value;
