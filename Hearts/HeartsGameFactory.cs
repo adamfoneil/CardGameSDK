@@ -14,7 +14,7 @@ public class HeartsGameFactory(IHashids hashids, ILogger<HeartsGameState> logger
 
 	public override uint MaxPlayers => 4;
 
-	protected override uint CardsPerHand => 12;
+	protected override uint CardsPerHand => 13;
 
 	public override IEnumerable<PlayingCard> Deck => PlayingCard.ClassicDeck;
 
