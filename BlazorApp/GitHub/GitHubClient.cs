@@ -35,37 +35,41 @@ internal class GitHubClient
 		_cache = cache;
 	}
 
-    public async Task<string> GetLatestCommitIdAsync()
+    public const int CacheMinutes = 3;
+
+	public async Task<string> GetLatestCommitIdAsync()
     {
         return await _cache.GetOrAddAsync("latest-commit-id", async () =>
 		{
 			var response = await _httpClient.GetStringAsync($"repos/{_options.RepositoryOwner}/{_options.RepositoryName}/commits/{_options.Branch}?per_page=1");
 			var json = JsonDocument.Parse(response);
 			return json.RootElement.GetProperty("sha").GetString() ?? throw new InvalidOperationException("Could not get commit id.");
-		}, TimeSpan.FromMinutes(2));
+		}, TimeSpan.FromMinutes(CacheMinutes));
 	}
 
-    public async Task<int> GetCommitsBehindAsync(string buildCommitId)
+    public async Task<(int Count, string CompareUrl)> GetCommitsBehindAsync(string buildCommitId)
 	{
         var latestCommiId = await GetLatestCommitIdAsync();
 
-        return await _cache.GetOrAddAsync("commits-behind", async () =>
+		var url = $"repos/{_options.RepositoryOwner}/{_options.RepositoryName}/compare/{buildCommitId}...{latestCommiId}";
+
+		return await _cache.GetOrAddAsync("commits-behind", async () =>
         {
             try
-            {
-				var response = await _httpClient.GetStringAsync($"repos/{_options.RepositoryOwner}/{_options.RepositoryName}/compare/{buildCommitId}...{latestCommiId}");
+            {                
+				var response = await _httpClient.GetStringAsync(url);
 				var json = JsonDocument.Parse(response);
-				return json.RootElement.GetProperty("ahead_by").GetInt32();
+				return (json.RootElement.GetProperty("ahead_by").GetInt32(), url);
 			}
             catch (HttpRequestException exc) when (exc.StatusCode == HttpStatusCode.NotFound)
 			{
 				// the commitId is not in the branch because it's still local, probably
-				return -1;
+				return (-1, url);
 			}
 			catch
             {
                 throw;
             }
-        }, TimeSpan.FromMinutes(5));
+        }, TimeSpan.FromMinutes(CacheMinutes));
 	}
 }

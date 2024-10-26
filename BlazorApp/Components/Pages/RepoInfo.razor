@@ -16,6 +16,7 @@
 				@if (CommitsBehind > 0)
 				{
 					<span class="badge bg-warning ms-2">@CommitsBehind Commits Behind</span>
+					<a href="https://github.com/@(CompareUrl)" target="_blank">Compare</a>
 				}
 				else if (CommitsBehind == 0)
 				{
@@ -26,16 +27,17 @@
 					<span class="badge bg-danger ms-2">Local Commits Not Pushed</span>
 				}
 			</div>			
-			<span class="text-muted small">Note there's a 5-minute lag on this info</span>
+			<span class="text-muted small">Note there's a @(GitHubClient.CacheMinutes)-minute lag on this info</span>
 		</dd>
 	</dl>
 </details>
 
 @code {
-	private int CommitsBehind { get; set; }
+	private int CommitsBehind;
+	private string CompareUrl;
 
 	protected override async Task OnInitializedAsync()
 	{		
-		CommitsBehind = await GitHub.GetCommitsBehindAsync(BuildInfo.Git.CommitId);
+		(CommitsBehind, CompareUrl) = await GitHub.GetCommitsBehindAsync(BuildInfo.Git.CommitId);
 	}
 }
