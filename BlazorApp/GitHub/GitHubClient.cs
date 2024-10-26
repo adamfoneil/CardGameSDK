@@ -60,7 +60,7 @@ internal class GitHubClient
 				// the commitId is not in the branch because it's still local, probably
 				return -1;
 			}
-			catch (Exception)
+			catch
             {
                 throw;
             }
