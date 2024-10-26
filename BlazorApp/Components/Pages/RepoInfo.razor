@@ -36,6 +36,7 @@
 
 	protected override async Task OnInitializedAsync()
 	{
+		var latestCommit = await GitHub.GetLatestCommitIdAsync();
 		CommitsBehind = await GitHub.GetCommitsBehindAsync(BuildInfo.Git.CommitId);
 	}
 }

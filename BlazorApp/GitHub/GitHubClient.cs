@@ -45,13 +45,15 @@ internal class GitHubClient
 		}, TimeSpan.FromMinutes(2));
 	}
 
-    public async Task<int> GetCommitsBehindAsync(string commitId)
+    public async Task<int> GetCommitsBehindAsync(string buildCommitId)
 	{
+        var latestCommiId = await GetLatestCommitIdAsync();
+
         return await _cache.GetOrAddAsync("commits-behind", async () =>
         {
             try
             {
-				var response = await _httpClient.GetStringAsync($"repos/{_options.RepositoryOwner}/{_options.RepositoryName}/compare/{commitId}...{_options.Branch}");
+				var response = await _httpClient.GetStringAsync($"repos/{_options.RepositoryOwner}/{_options.RepositoryName}/compare/{buildCommitId}...{latestCommiId}");
 				var json = JsonDocument.Parse(response);
 				return json.RootElement.GetProperty("behind_by").GetInt32();
 			}
