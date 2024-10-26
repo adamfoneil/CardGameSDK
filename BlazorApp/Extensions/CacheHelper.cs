@@ -18,7 +18,7 @@ internal static class CacheHelper
 		T value = await factory();
 		await cache.SetAsync(key, JsonSerializer.SerializeToUtf8Bytes(value), new DistributedCacheEntryOptions
 		{
-			AbsoluteExpirationRelativeToNow = expiresAfter			
+			AbsoluteExpirationRelativeToNow = expiresAfter
 		});
 		
 		return value;
