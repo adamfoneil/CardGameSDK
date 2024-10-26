@@ -1,6 +1,7 @@
 ﻿@page "/"
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject IHashids Hashids
+@inject NavigationManager Nav
 
 <PageTitle>Cardplace</PageTitle>
 
@@ -9,7 +10,10 @@
 
 <AuthorizeView>
 	<Authorized>
-		<h2>My Games</h2>
+		<h2>Start New Game</h2>
+		<RadzenButton Text="Go to Ready Page" Click="GotoReady" />
+
+		<h2 class="mt-4">My Games</h2>
 		<ul>
 			@foreach (var game in _activeGames)
 			{
@@ -45,4 +49,6 @@
 	}
 
 	private string PlayerList(GameInstance gameInstance) => string.Join(", ", gameInstance.Players.Select(p => p.User!.UserName));
+
+	private	void GotoReady() => Nav.NavigateTo("/Ready", forceLoad: true);
 }
