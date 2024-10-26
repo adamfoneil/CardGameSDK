@@ -14,11 +14,15 @@
 			</a>
 			@if (CommitsBehind > 0)
 			{
-				<span class="badge bg-danger ms-2">@CommitsBehind Commits Behind</span>
+				<span class="badge bg-warning ms-2">@CommitsBehind Commits Behind</span>
 			}
-			else
+			else if (CommitsBehind == 0)
 			{
 				<span class="badge bg-success ms-2">Latest</span>
+			}
+			else if (CommitsBehind < 0)
+			{
+				<span class="badge bg-danger ms-2">Local Commits Not Pushed</span>
 			}
 		</dd>
 	</dl>
@@ -28,7 +32,7 @@
 	private int CommitsBehind { get; set; }
 
 	protected override async Task OnInitializedAsync()
-	{		
+	{
 		CommitsBehind = await GitHub.GetCommitsBehindAsync(BuildInfo.Git.CommitId);
 	}
 }
