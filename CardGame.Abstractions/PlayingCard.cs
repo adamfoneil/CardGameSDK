@@ -24,6 +24,7 @@ public class PlayingCard(int rank, Suit suit)
 		ClassicSuits.All.SelectMany(s =>
 			Enumerable.Range(2, 8).Select(val => new PlayingCard(val, s)).Concat(
 			[
+				new PlayingCard(10, s) { Name = "X" }, // "10" is too wide for the UI, so I use Roman numeral
 				new PlayingCard(ClassicNamedRanks.Jack, s) { Name = nameof(ClassicNamedRanks.Jack) },
 				new PlayingCard(ClassicNamedRanks.Queen, s) { Name = nameof(ClassicNamedRanks.Queen) },
 				new PlayingCard(ClassicNamedRanks.King, s) { Name = nameof(ClassicNamedRanks.King) },

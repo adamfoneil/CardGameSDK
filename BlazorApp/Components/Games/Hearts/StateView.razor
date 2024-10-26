@@ -11,6 +11,12 @@
 	}
 
 	<hr class="mt-4" />
+	<details>
+		<summary>Hearts Remaining (@State.HeartsRemaining.Count)</summary>
+		<Hand Playable="false" Cards="State.HeartsRemaining" GameState="State" />
+	</details>
+
+	<hr class="mt-4" />
 	<div>Tricks:</div>
 	@{
 		int index = 0;
@@ -20,19 +26,22 @@
 		index++;
 		
 		<details>
-			<summary>Trick @index</summary>
+			<summary>Trick @index - @trick.Points pts</summary>
 			<TrickDetail Trick="trick" />
 		</details>
 	}
+	<div>Total points: @State.Tricks.Sum(t => t.Points)</div>
 
 	<hr class="mt-4" />
-	<div>Score (this round):</div>
-	<ul>
-		@foreach (var kp in State.Score)
-		{
-			<li>@kp.Key: @kp.Value</li>
-		}
-	</ul>
+	<details>
+		<summary>Score (this round) @State.Score.Sum(kp => kp.Value) total pts</summary>
+		<ul>
+			@foreach (var kp in State.Score)
+			{
+				<li>@kp.Key: @kp.Value</li>
+			}
+		</ul>
+	</details>		
 </div>
 
 @code {
