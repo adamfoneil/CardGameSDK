@@ -195,8 +195,8 @@ else if (_state.Phase == PlayPhase.Play)
 		{
 			var json = JsonSerializer.Serialize(_state);
 			await db.GameInstances
-			.Where(g => g.Id == _gameId)
-			.ExecuteUpdateAsync(u => u.SetProperty(p => p.State, json));
+				.Where(g => g.Id == _gameId)
+				.ExecuteUpdateAsync(u => u.SetProperty(p => p.State, json));
 		}
 	}
 
