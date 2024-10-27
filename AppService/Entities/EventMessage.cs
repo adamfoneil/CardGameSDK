@@ -13,7 +13,7 @@ public class EventMessage
 	public SupportedGames? Game { get; set; }
 	public int? GameInstanceId { get; set; }
 	/// <summary>
-	/// message is not relayed to this use because it's the event originator
+	/// message is not relayed to this user because it's the event originator
 	/// </summary>
 	public string FromUser { get; set; } = default!;
 	public string ToUser { get; set; } = default!;
