@@ -29,7 +29,7 @@ public class HeartsGameState : GameState<PlayingCard>
 	public bool IsHeartsBroken { get; set; }
 	public string? MoonShotPlayer { get; set; }
 
-	public override bool IsRoundFinished => Tricks.Count == 12;
+	public override bool IsRoundFinished => Tricks.Count == TricksPerRound;
 
 	public List<Play> CurrentTrick { get; set; } = [];
 	public List<Trick> Tricks { get; set; } = [];
