@@ -21,6 +21,7 @@ public enum PlayPhase
 public class HeartsGameState : GameState<PlayingCard>
 {
 	public const int PassCardsCount = 3;
+	public const int TricksPerRound = 13;
 
 	public PlayPhase Phase { get; set; } = PlayPhase.Pass;
 	public PlayerOrientation PassDirection { get; set; } = PlayerOrientation.Left;
@@ -224,7 +225,7 @@ public class HeartsGameState : GameState<PlayingCard>
 		}
 
 		// on the last trick...
-		if (Tricks.Count == 12)
+		if (Tricks.Count == TricksPerRound)
 		{
 			// did anyone get all the hearts (shoot the moon)?
 			var playersWithHearts = Tricks

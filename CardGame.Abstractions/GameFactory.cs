@@ -5,7 +5,7 @@ public abstract class GameFactory<TState, TCard> : IGameDispatcher where TState 
 	public abstract string Name { get; }
 	public abstract uint MinPlayers { get; }
 	public abstract uint MaxPlayers { get; }
-	protected abstract uint CardsPerHand { get; }
+	public abstract uint CardsPerHand { get; }
 
 	public abstract IEnumerable<TCard> Deck { get; }
 

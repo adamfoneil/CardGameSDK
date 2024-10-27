@@ -15,7 +15,7 @@ public class FoxInTheForestGameFactory(IHashids hashids, ILogger<FoxInTheForestS
 
 	public override uint MaxPlayers => 2;
 
-	protected override uint CardsPerHand => 13;
+	public override uint CardsPerHand => 13;
 
 	public override IEnumerable<PlayingCard> Deck => Suits
 		.SelectMany(suit => Enumerable.Range(1, 11).Select(val => new PlayingCard(val, suit)));
