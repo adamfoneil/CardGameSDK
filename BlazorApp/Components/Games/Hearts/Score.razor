@@ -1,30 +1,41 @@
 ﻿@using System.Text.Json
 @using global::Games.Hearts
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
 
 <table>
 	<thead>
 		<tr>
+			<th class="text-muted"><span class="me-2">Round #</span></th>
 			@foreach (var p in _players)
 			{
-				<th>@p</th>
+				<th><span class="me-2">@p</span></th>
 			}
+			<th></th>
 		</tr>
 	</thead>
 	<tbody>
+		@{
+			int number = 0;
+		}
 		@foreach (var score in _scores)
 		{
+			number++;
 			<tr>
+				<td><span class="text-muted me-2">@number</span></td>
 				@foreach (var p in _players)
 				{
 					<td>@(score.ContainsKey(p) ? score[p] : 0)</td>
 				}
+				<td><RadzenButton Icon="zoom_in" Click="() => InspectRound(number)" /></td>
 			</tr>
 		}
 		<tr>
+			<td></td>
 			@foreach (var p in _players)
 			{
 				<td class="border-top">@_scores.Sum(d => d[p])</td>
 			}
+			<td></td>
 		</tr>
 	</tbody>
 </table>
@@ -33,6 +44,9 @@
 	private string[] _players = [];
 	private IEnumerable<Dictionary<string, int>> _scores = [];
 
+	[Parameter]
+	public int GameInstanceId { get; set; }
+
 	[Parameter, EditorRequired]
 	public string[] AllScores { get; set; } = [];
 
@@ -40,5 +54,20 @@
 	{
 		_scores = AllScores.Select(score => JsonSerializer.Deserialize<Dictionary<string, int>>(score) ?? []);	
 		_players = _scores.SelectMany(score => score.Keys).Distinct().ToArray();
+	}
+
+	private async Task InspectRound(int roundNumber)
+	{
+		using var db = DbFactory.CreateDbContext();
+		var round = await db
+			.Rounds
+			.Where(row => row.GameInstanceId == GameInstanceId && row.Number == roundNumber)
+			.SingleOrDefaultAsync() ?? throw new Exception("round not found");
+
+		var roundState = JsonSerializer.Deserialize<HeartsGameState>(round.State!) ?? throw new Exception("couldn't deserialize");
+		await Dialogs.OpenAsync<StateView>("Round Details", new Dictionary<string, object>
+		{
+			{ "State", roundState }			
+		});
 	}
 }
