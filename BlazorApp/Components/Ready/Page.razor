@@ -69,25 +69,23 @@ else
 		Events.ReadyStateChanged += OnReadyStateChanged;
 	}
 
-	private async void OnReadyStateChanged(SupportedGames game, string toUser, string? topic = null, string? payload = null)
+	private async void OnReadyStateChanged(EventMessage message)
 	{
-		if (game != Game) return;
-		if (CurrentUser!.UserName != toUser) return;
+		if (message.Game != Game) return;
+		if (CurrentUser!.UserName != message.ToUser) return;
 
-		if (string.IsNullOrEmpty(topic))
+		if (string.IsNullOrEmpty(message.Topic))
 		{
 			await ListPlayers();
 			await InvokeAsync(StateHasChanged);
 			return;
 		}
 
-		if (topic.Equals(EventMessage.GameStartedTopic))
+		if (message.Topic.Equals(EventMessage.GameStartedTopic))
 		{
 			using var db = DbFactory.CreateDbContext();
-			await db.ReadyPlayers.Where(p => p.Game == Game).ExecuteDeleteAsync();
-
-			var url = payload!;
-			Nav.NavigateTo(url, forceLoad: true);
+			await db.ReadyPlayers.Where(p => p.Game == Game).ExecuteDeleteAsync();			
+			Nav.NavigateTo(message.Payload!, forceLoad: true);
 		}
 	}
 

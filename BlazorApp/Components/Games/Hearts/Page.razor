@@ -149,12 +149,12 @@ else if (_state.Phase == PlayPhase.Play)
 		await LoadGameAsync();
 	}
 
-	private async void OnStateChange(int gameInstanceId, string toUser, string? topic = null, string? payload = null)
+	private async void OnStateChange(EventMessage message)
 	{
-		if (gameInstanceId != _gameId) return;
-		if (toUser != CurrentUser?.UserName) return;
+		if (message.GameInstanceId != _gameId) return;
+		if (message.ToUser != CurrentUser?.UserName) return;
 
-		if (topic == EventMessage.GameEndedTopic)
+		if (message.Topic == EventMessage.GameEndedTopic)
 		{
 			Nav.NavigateTo("/", forceLoad: true);
 			return;

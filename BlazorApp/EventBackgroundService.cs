@@ -24,14 +24,14 @@ internal class EventBackgroundService(
 			if (readyMessage != null)
 			{
 				_logger.LogDebug("Ready state changed: {@message}", readyMessage);
-				_eventRelay.NotifyReadyStateChanged(readyMessage.Game!.Value, readyMessage.ToUser, readyMessage.Topic, readyMessage.Payload);
+				_eventRelay.NotifyReadyStateChanged(readyMessage);
 			}
 
 			var gameStateMessage = await cn.DequeueAsync<EventMessage>("[dbo].[Events]", "[GameInstanceId] IS NOT NULL");
 			if (gameStateMessage != null)
 			{
 				_logger.LogDebug("Game state changed: {@message}", gameStateMessage);
-				_eventRelay.NotifyGameStateChanged(gameStateMessage.GameInstanceId!.Value, gameStateMessage.ToUser, gameStateMessage.Topic, gameStateMessage.Payload);
+				_eventRelay.NotifyGameStateChanged(gameStateMessage);
 			}
 
 			await Task.Delay(500, stoppingToken);

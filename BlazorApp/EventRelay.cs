@@ -4,8 +4,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BlazorApp;
 
-internal delegate void ReadyStateChangedHandler(SupportedGames game, string toUser, string? topic = null, string? payload = null);
-internal delegate void GameStateChangedHandler(int gameInstanceId, string toUser, string? topic = null, string? payload = null);
+internal delegate void ReadyStateChangedHandler(EventMessage message);
+internal delegate void GameStateChangedHandler(EventMessage message);
 
 internal class EventRelay(
 	IDbContextFactory<ApplicationDbContext> dbFactory,
@@ -81,16 +81,10 @@ internal class EventRelay(
 	/// <summary>
 	/// called by background service when event message is dequeued
 	/// </summary>
-	public void NotifyReadyStateChanged(SupportedGames game, string toUser, string? topic = null, string? payload = null)
-	{
-		ReadyStateChanged?.Invoke(game, toUser, topic, payload);
-	}
+	public void NotifyReadyStateChanged(EventMessage message) => ReadyStateChanged?.Invoke(message);
 
 	/// <summary>
 	/// called by background service when event message is dequeued
 	/// </summary>
-	public void NotifyGameStateChanged(int gameInstanceId, string toUser, string? topic = null, string? payload = null)
-	{
-		GameStateChanged?.Invoke(gameInstanceId, toUser, topic, payload);
-	}
+	public void NotifyGameStateChanged(EventMessage message) => GameStateChanged?.Invoke(message);	
 }
