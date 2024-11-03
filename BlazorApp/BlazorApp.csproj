@@ -32,8 +32,8 @@
   <ItemGroup>
     <ProjectReference Include="..\AppService\AppService.csproj" />
     <ProjectReference Include="..\CardGame.Abstractions\CardGame.Abstractions.csproj" />
-    <ProjectReference Include="..\FoxInTheForest\FoxInTheForest.csproj" />
-    <ProjectReference Include="..\Hearts\Hearts.csproj" />
+    <ProjectReference Include="..\Games.FoxInTheForest\Games.FoxInTheForest.csproj" />
+    <ProjectReference Include="..\Games.Hearts\Games.Hearts.csproj" />
   </ItemGroup>
 
   <ItemGroup>
