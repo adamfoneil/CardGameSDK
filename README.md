@@ -16,6 +16,8 @@ Hearts components:
 I'm still a long ways from having something playable in a web UI, but I needed some feedback on whether what I've done so far is valid -- as far as my implementation of Hearts. So, I have a few superficial [tests](https://github.com/adamfoneil/CardGame/blob/master/Testing/ShuffleAndDeal.cs). These don't make many useful assertions, but at this point I'm just seeing if the very basics work. In order to test a real-ish game, I had to introduce the notion of [AutoPlay](https://github.com/adamfoneil/CardGame/blob/master/CardGame.Abstractions/Games/Hearts/HeartsGameState.cs#L128). Simulated play does not need to be good or strategic, but I needed some way to play a round from end to end to see how the scoring worked, whether hearts would "break" as expected. Since the deals are random however (by design), I get different results every time. So, there are still some difficulties with this.
 
 # Stuff I Learned
+See my detailed notes in the [Wiki](https://github.com/adamfoneil/CardGameSDK/wiki).
+
 - When comparing suits, I need to use the `Equals` method instead of `==`. I was a little confused by this. Using `==` resulted in false negatives. I think this is a side effect of overriding the `Equals` method. I considered using `records` instead of `classes` for suits. I might have to revisit.
 - Not sure all of my Hearts rules are right. Trying to progammatically articulate rules I know "intuitively" or from habit was pretty of hard -- for example when trying to simulate [automatic play](https://github.com/adamfoneil/CardGameSDK/blob/master/Hearts/HeartsGameState.cs#L146). When reading Hearts rules online, I found many of them confusing, even though I know the game.
 
