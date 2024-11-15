@@ -1,0 +1,12 @@
+﻿@page "/Scom/{key}"
+@attribute [Authorize]
+@inject IHashids Hashids
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject EventRelay Events
+@inject ILogger<Page> Logger
+
+<h3>Scom</h3>
+
+@code {
+
+}

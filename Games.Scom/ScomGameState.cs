@@ -21,6 +21,9 @@ public class Piece
 
 public class ScomGameState : GameState<Piece>
 {
+	public const int BoardSize = 18;
+	public const int MovesPerTurn = 5;
+
 	/// <summary>
 	/// player name + piece name -> location
 	/// </summary>
