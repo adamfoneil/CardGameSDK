@@ -13,8 +13,16 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Radzen;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddSerilog();
+
+Log.Logger = new LoggerConfiguration()	
+	.Enrich.WithProperty("Application", "CardPlace")
+	.ReadFrom.Configuration(builder.Configuration)
+	.WriteTo.Console()
+	.CreateLogger();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
