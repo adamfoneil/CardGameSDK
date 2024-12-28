@@ -29,7 +29,12 @@ public class HeartsGameState : GameState<PlayingCard>
 	public bool IsHeartsBroken { get; set; }
 	public string? MoonShotPlayer { get; set; }
 
-	public override bool IsRoundFinished => Tricks.Count == TricksPerRound;
+	public override bool IsRoundFinished => Tricks.Count == TricksPerRound;	
+	[JsonIgnore]
+	public bool IsTrickStarting => CurrentTrick.Count == 0 && Tricks.Count > 0;
+
+	[JsonIgnore]
+	public string? LastTrickWinner { get; private set; }
 
 	public List<Play> CurrentTrick { get; set; } = [];
 	public List<Trick> Tricks { get; set; } = [];
@@ -66,6 +71,45 @@ public class HeartsGameState : GameState<PlayingCard>
 		return playsByName.TryGetValue(playerAtIndex, out var play) ?
 			new Playslot() { Card = play.Card, PlayerName = playerAtIndex, Points = points } :
 			new Playslot() { PlayerName = playerAtIndex, Points = points };
+	}
+
+	public (string XOffset, string YOffset) GetWinnerAnimationOffset(string currentPlayer)
+	{
+		if (LastTrickWinner is null) return ("0px", "0px");
+
+		PlayerOrientation orientation = GetPlayerOrientation(currentPlayer, LastTrickWinner);
+
+		return orientation switch
+		{
+			PlayerOrientation.Self => ("0px", "100px"),
+			PlayerOrientation.Left => ("-100px", "0px"),
+			PlayerOrientation.Right => ("100px", "0px"),
+			PlayerOrientation.Across => ("0px", "-100px"),
+			_ => throw new ArgumentOutOfRangeException(nameof(orientation))
+		};
+	}
+
+	private PlayerOrientation GetPlayerOrientation(string currentPlayer, string winningPlayer)
+	{
+		var playerNames = Players.Select(p => p.Name).ToArray();
+		var currentIndex = Array.IndexOf(playerNames, currentPlayer);
+		var winningIndex = Array.IndexOf(playerNames, winningPlayer);
+
+		if (currentIndex == -1 || winningIndex == -1)
+		{
+			throw new ArgumentException("Player not found");
+		}
+
+		var relativeIndex = (winningIndex - currentIndex + Players.Count) % Players.Count;
+
+		return relativeIndex switch
+		{
+			0 => PlayerOrientation.Self,
+			1 => PlayerOrientation.Right,
+			2 => PlayerOrientation.Across,
+			3 => PlayerOrientation.Left,
+			_ => throw new ArgumentOutOfRangeException(nameof(relativeIndex))
+		};
 	}
 
 	public Trick[] MyTricks(string playerName) => Tricks.Where(t => t.Winner.Equals(playerName)).ToArray();
@@ -204,23 +248,23 @@ public class HeartsGameState : GameState<PlayingCard>
 
 		if (CurrentTrick.Count == 4)
 		{
-			var winner = CurrentTrick
+			LastTrickWinner = CurrentTrick
 				.Where(c => c.Card.Suit.Equals(LeadingSuit))
 				.MaxBy(p => p.Card.Rank)!.PlayerName;
 
-			Log(LogLevel.Information, "Trick complete, winner is {winner}", winner);
+			Log(LogLevel.Information, "Trick complete, winner is {winner}", LastTrickWinner);
 
 			Tricks.Add(new()
 			{
 				Plays = [.. CurrentTrick],
-				Winner = winner,
+				Winner = LastTrickWinner,
 				Points = CurrentTrick.Sum(play => PointValue(play.Card)),
 				HeartsBroken = IsHeartsBroken
 			});
 
 			CurrentTrick.Clear();
 			LeadingSuit = null;
-			CurrentPlayer = PlayersByName[winner];
+			CurrentPlayer = PlayersByName[LastTrickWinner];
 		}
 		else
 		{

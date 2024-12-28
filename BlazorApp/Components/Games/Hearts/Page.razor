@@ -30,7 +30,7 @@
 
 @if (_game.IsFinished)
 {
-	
+
 }
 else if (_state.Phase == PlayPhase.Play)
 {
@@ -41,7 +41,16 @@ else if (_state.Phase == PlayPhase.Play)
 			<div><!--placeholder upper right--></div>
 
 			<div><CardPlay Playslot="_state.GetRelativePlayslot(_effectivePlayer, PlayerOrientation.Left)" CurrentPlayer="@_state.CurrentPlayer?.Name" /></div>
-			<div class="d-flex align-items-center justify-content-center"><SuitImage Suit="_state.LeadingSuit" Opacity="0.5m" /></div>
+			<div class="d-flex align-items-center justify-content-center">
+				@if (_state.IsTrickStarting)
+				{
+					<div class="move-to-winner" style="@_animationOffsetStyle">@_state.LastTrickWinner</div>
+				}
+				else
+				{
+					<SuitImage Suit="_state.LeadingSuit" Opacity="0.5m" />
+				}				
+			</div>
 			<div><CardPlay Playslot="_state.GetRelativePlayslot(_effectivePlayer, PlayerOrientation.Right)" CurrentPlayer="@_state.CurrentPlayer?.Name" /></div>
 
 			<div><!--placeholder lower left--></div>
@@ -81,15 +90,15 @@ else if (_state.Phase == PlayPhase.Play)
 	<div class="d-flex justify-content-center mt-4">Passing cards:</div>
 	<div class="d-flex justify-content-center">
 		<Hand Cards="_state.MyPasses(_effectivePlayer)"
-			  GameState="_state"
-			  CardPlayed="OnCardPlayed"
-			  Playable="true"
-			  PlayerName="@_effectivePlayer" />
+			GameState="_state"
+			CardPlayed="OnCardPlayed"
+			Playable="true"
+			PlayerName="@_effectivePlayer" />
 	</div>
 }
 
 <details>
-	<summary>My Tricks - @(_state.MyTricks(_effectivePlayer).Sum(t => t.Points)) pts</summary>
+	<summary>My Tricks - @(_state.MyScore(_effectivePlayer)) pts</summary>
 	<div class="d-flex justify-content-center">
 		@foreach (var trick in _state.MyTricks(_effectivePlayer))
 		{
@@ -135,12 +144,17 @@ else if (_state.Phase == PlayPhase.Play)
 	private string[] _allScores = [];
 	private HeartsGameState? _state;
 	private string? _viewPlayer;
+	private string? _winnerX;
+	private string? _winnerY;
+	private string? _animationOffsetStyle => _state?.IsTrickStarting ?? false ? $"--winner-x:{_winnerX}; --winner-y:{_winnerY};" : string.Empty;
 	private string _effectivePlayer => 
 		_state!.Phase == PlayPhase.Pass ?
 			(_viewPlayer ?? CurrentUser?.UserName ?? "<no player>") :
 			_state.IsTestMode ?
 				(_state!.CurrentPlayer?.Name ?? "<no player>") : // todo: if placeholder, use current user	 
 				CurrentUser!.UserName!;
+
+	private string CenterSquareCssClass => $"d-flex align-items-center justify-content-center{(_state?.IsTrickStarting ?? false ? " move-to-winner" : string.Empty)}";
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -170,7 +184,7 @@ else if (_state.Phase == PlayPhase.Play)
 		ArgumentNullException.ThrowIfNull(_state, nameof(_state));
 
 		using var db = DbFactory.CreateDbContext();
-	
+
 		await UpdateGameStateAsync();
 
 		while (_testPlayersAutoPlay && (_state.CurrentPlayer?.IsTest ?? false))
@@ -179,6 +193,8 @@ else if (_state.Phase == PlayPhase.Play)
 			await UpdateGameStateAsync();
 			if (_state.IsRoundFinished) break;
 		}
+
+		(_winnerX, _winnerY) = (_state.IsTrickStarting) ? _state.GetWinnerAnimationOffset(_effectivePlayer) : ("0px", "0px");
 
 		if (_state.IsRoundFinished)
 		{

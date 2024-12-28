@@ -67,3 +67,17 @@ h1:focus {
     background-color: #808080a7;
     color: white;
 }
+
+@keyframes moveToWinner {
+    0% {
+        transform: translate(0, 0);
+    }
+
+    100% {
+        transform: translate(var(--winner-x), var(--winner-y));
+    }
+}
+
+.move-to-winner {
+    animation: moveToWinner 1s ease-in-out forwards;
+}

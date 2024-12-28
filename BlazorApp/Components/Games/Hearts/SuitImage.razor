@@ -1,11 +1,18 @@
-﻿<img src="@ImageHref" style="width:40px;opacity:@Opacity.ToString()" />
+﻿@if (Suit is null) return;
+
+<img src="@ImageHref" style="@FullStyle" alt="suit" />
 
 @code {
 	[Parameter]
 	public Suit? Suit { get; set; }
-	
+
 	[Parameter]
 	public decimal Opacity { get; set; } = 1m;
+
+	[Parameter]
+	public string? Style { get; set; }
+
+	private string FullStyle => $"width:40px;opacity:{Opacity};{Style}";
 
 	private string ImageHref => (Suit is not null) ? ($"img/Suits/" + (
 		Suit.Equals(ClassicSuits.Spades) ? "spades.svg" :
