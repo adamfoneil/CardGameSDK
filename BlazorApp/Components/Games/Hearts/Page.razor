@@ -140,7 +140,7 @@ else if (_state.Phase == PlayPhase.Play)
 			(_viewPlayer ?? CurrentUser?.UserName ?? "<no player>") :
 			_state.IsTestMode ?
 				(_state!.CurrentPlayer?.Name ?? "<no player>") : // todo: if placeholder, use current user	 
-				CurrentUser!.UserName;
+				CurrentUser!.UserName!;
 
 	protected override async Task OnInitializedAsync()
 	{
