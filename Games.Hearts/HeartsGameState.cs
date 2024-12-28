@@ -61,13 +61,16 @@ public class HeartsGameState : GameState<PlayingCard>
 
 		var playsByName = CurrentTrick.ToDictionary(t => t.PlayerName);
 		var playerAtIndex = playerNames[targetIndex];
+		int points = MyScore(playerAtIndex);
 
 		return playsByName.TryGetValue(playerAtIndex, out var play) ?
-			new Playslot() { Card = play.Card, PlayerName = playerAtIndex } :
-			new Playslot() { PlayerName = playerAtIndex };
+			new Playslot() { Card = play.Card, PlayerName = playerAtIndex, Points = points } :
+			new Playslot() { PlayerName = playerAtIndex, Points = points };
 	}
 
 	public Trick[] MyTricks(string playerName) => Tricks.Where(t => t.Winner.Equals(playerName)).ToArray();
+
+	public int MyScore(string playerName) => MyTricks(playerName).Sum(t => t.Points);
 
 	public PlayingCard[] MyPasses(string playerName) => Passes.Where(p => p.PlayerName.Equals(playerName)).Select(p => p.Card).ToArray();
 
@@ -335,5 +338,6 @@ public class HeartsGameState : GameState<PlayingCard>
 	{
 		public string PlayerName { get; init; } = default!;
 		public PlayingCard? Card { get; set; }
+		public int Points { get; set; }
 	}
 }
