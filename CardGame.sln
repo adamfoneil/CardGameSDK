@@ -15,8 +15,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Games.FoxInTheForest", "Gam
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Games.Hearts", "Games.Hearts\Games.Hearts.csproj", "{16993EDA-6C18-472C-A020-7D12922D76D2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Games.Scom", "Games.Scom\Games.Scom.csproj", "{089A3663-CA15-4612-B492-C4A8F7AC03F7}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,10 +45,6 @@ Global
 		{16993EDA-6C18-472C-A020-7D12922D76D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{16993EDA-6C18-472C-A020-7D12922D76D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{16993EDA-6C18-472C-A020-7D12922D76D2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{089A3663-CA15-4612-B492-C4A8F7AC03F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{089A3663-CA15-4612-B492-C4A8F7AC03F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{089A3663-CA15-4612-B492-C4A8F7AC03F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{089A3663-CA15-4612-B492-C4A8F7AC03F7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
