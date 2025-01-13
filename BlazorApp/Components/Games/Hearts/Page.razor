@@ -30,10 +30,14 @@
 
 @if (_game.IsFinished)
 {
-	
+
 }
 else if (_state.Phase == PlayPhase.Play)
 {
+	<FadingBanner @bind-Visible="_showBanner">
+		<span>last winner info</span>
+	</FadingBanner>
+
 	<div class="d-flex justify-content-center">	
 		<div class="table-top">
 			<div><!--placeholder upper left--></div>
@@ -69,11 +73,11 @@ else if (_state.Phase == PlayPhase.Play)
 
 <div class="d-flex justify-content-center mt-4">	
 	<Hand 
-		Cards="_state.PlayersByName[_effectivePlayer].Hand!"
-		GameState="_state"
-		CardPlayed="OnCardPlayed"
-		Playable="_state.IsPlayable(CurrentUser.UserName, _effectivePlayer)"
-		PlayerName="@_effectivePlayer" />	
+	Cards="_state.PlayersByName[_effectivePlayer].Hand!"
+	GameState="_state"
+	CardPlayed="OnCardPlayed"
+	Playable="_state.IsPlayable(CurrentUser.UserName!, _effectivePlayer)"
+	PlayerName="@_effectivePlayer" />	
 </div>
 
 @if (_state!.Phase == PlayPhase.Pass)
@@ -81,10 +85,10 @@ else if (_state.Phase == PlayPhase.Play)
 	<div class="d-flex justify-content-center mt-4">Passing cards:</div>
 	<div class="d-flex justify-content-center">
 		<Hand Cards="_state.MyPasses(_effectivePlayer)"
-			  GameState="_state"
-			  CardPlayed="OnCardPlayed"
-			  Playable="true"
-			  PlayerName="@_effectivePlayer" />
+		GameState="_state"
+		CardPlayed="OnCardPlayed"
+		Playable="true"
+		PlayerName="@_effectivePlayer" />
 	</div>
 }
 
@@ -130,7 +134,9 @@ else if (_state.Phase == PlayPhase.Play)
 	public ApplicationUser? CurrentUser { get; set; }
 
 	private int _gameId;
-	private bool _testPlayersAutoPlay;
+	private bool _testPlayersAutoPlay;	
+	private Timer? _bannerTimer;
+	private bool _showBanner;
 	private GameInstance? _game;
 	private string[] _allScores = [];
 	private HeartsGameState? _state;
@@ -140,7 +146,7 @@ else if (_state.Phase == PlayPhase.Play)
 			(_viewPlayer ?? CurrentUser?.UserName ?? "<no player>") :
 			_state.IsTestMode ?
 				(_state!.CurrentPlayer?.Name ?? "<no player>") : // todo: if placeholder, use current user	 
-				CurrentUser!.UserName;
+				CurrentUser!.UserName!;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -170,7 +176,9 @@ else if (_state.Phase == PlayPhase.Play)
 		ArgumentNullException.ThrowIfNull(_state, nameof(_state));
 
 		using var db = DbFactory.CreateDbContext();
-	
+
+		_showBanner = _state.CurrentTrick.Count == 0 && _state.Tricks.Count > 0;
+
 		await UpdateGameStateAsync();
 
 		while (_testPlayersAutoPlay && (_state.CurrentPlayer?.IsTest ?? false))
@@ -211,6 +219,7 @@ else if (_state.Phase == PlayPhase.Play)
 		_state = JsonSerializer.Deserialize<HeartsGameState>(_game.State!) ?? throw new Exception("couldn't deserialize");		
 		_state.Logger = StateLogger;
 		_state.GameInstanceId = _gameId;
+		_showBanner = _state.CurrentTrick.Count == 0 && _state.Tricks.Count > 0;
 	}
 
 	private async Task RefreshScoresAsync()

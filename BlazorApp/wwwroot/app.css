@@ -67,3 +67,12 @@ h1:focus {
     background-color: #808080a7;
     color: white;
 }
+
+.fading-banner {
+    opacity: 1;
+    transition: opacity 1s ease-out;
+}
+
+    .fading-banner.hidden {
+        opacity: 0;
+    }

@@ -1,0 +1,26 @@
+﻿<div class="@CssClass">
+	@ChildContent
+</div>
+
+@code {
+	private Timer? _timer;
+
+	private string CssClass => $"d-flex justify-content-center alert alert-info fading-banner {(Visible ? "" : "hidden")}";
+
+	[Parameter] public bool Visible { get; set; }
+	[Parameter] public int Duration { get; set; } = 4000;
+	[Parameter] public EventCallback<bool> VisibleChanged { get; set; }
+	[Parameter] public RenderFragment? ChildContent { get; set; }
+
+	protected override void OnParametersSet()
+	{
+		if (Visible)
+		{
+			_timer = new Timer(async (state) =>
+			{
+				Visible = false;
+				await InvokeAsync(StateHasChanged);
+			}, null, Duration, Timeout.Infinite);			
+		}
+	}
+}
