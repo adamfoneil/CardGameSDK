@@ -34,8 +34,11 @@
 }
 else if (_state.Phase == PlayPhase.Play)
 {
-	<FadingBanner @bind-Visible="_showBanner">
-		<span>last winner info</span>
+	<FadingBanner @bind-Visible="_showBanner" Duration="4000">		
+		@if (_state.Tricks.Any())
+		{
+			<TrickDetail Trick="_state.Tricks.Last()" />
+		}		
 	</FadingBanner>
 
 	<div class="d-flex justify-content-center">	
@@ -177,7 +180,7 @@ else if (_state.Phase == PlayPhase.Play)
 
 		using var db = DbFactory.CreateDbContext();
 
-		_showBanner = _state.CurrentTrick.Count == 0 && _state.Tricks.Count > 0;
+		if (_state.CurrentTrick.Count == 0 && _state.Tricks.Count > 0) _showBanner = true;
 
 		await UpdateGameStateAsync();
 
